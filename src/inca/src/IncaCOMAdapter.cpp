@@ -1,6 +1,9 @@
 #include "inca/IncaCOMAdapter.hpp"
 
+#include <chrono>
 #include <stdexcept>
+#include <thread>
+
 
 #include "utils.hpp"
 
@@ -61,10 +64,15 @@ auto inca::IncaCOMAdapter::reset() -> void
 
 auto inca::IncaCOMAdapter::start_recording() -> void
 {
-  throw std::logic_error("Not implemented");
+  this->p_exp->StartRecording();
 }
 
 auto inca::IncaCOMAdapter::stop_recording(std::string_view filename) -> void
 {
-  throw std::logic_error("Not implemented");
+  (void)(filename);
+  using namespace std::chrono_literals;
+  std::this_thread::sleep_for(40ms);
+  this->p_exp->StopRecordingAndSave();
+  this->p_exp->StopMeasurement();
+  this->reset();
 }
