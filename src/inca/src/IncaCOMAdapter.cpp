@@ -6,10 +6,21 @@
 
 inca::IncaCOMAdapter::IncaCOMAdapter()
 {
+  {
+    Inca_Dispatch *raw{nullptr};
+    HRESULT        hr = CoCreateInstance(CLSID_Inca,
+                                         nullptr,
+                                         CLSCTX_INPROC_SERVER,
+                                         __uuidof(Inca_Dispatch),
+                                         reinterpret_cast<void **>(&raw));
+    if (FAILED(hr)) throw std::runtime_error("Failed to instantiate INCA COM object. Verify that INCA is installed.");
+    this->p_inca = unique_com_ptr<Inca_Dispatch>(raw);
+  }
 }
 
 inca::IncaCOMAdapter::~IncaCOMAdapter()
 {
+  if(this->p_inca) this->p_inca->DisconnectFromTool();
 }
 
 auto inca::IncaCOMAdapter::add_param(std::string_view name) -> void

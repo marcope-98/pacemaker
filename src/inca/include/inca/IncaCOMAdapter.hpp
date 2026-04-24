@@ -3,6 +3,10 @@
 
 #include <string_view>
 
+#include "inca/unique_com_ptr.hpp"
+
+struct Inca_Dispatch;
+
 namespace inca
 {
   class IncaCOMAdapter
@@ -20,6 +24,9 @@ namespace inca
     auto reset() -> void;
     auto start_recording() -> void;
     auto stop_recording(std::string_view filename) -> void;
+
+  private:
+    unique_com_ptr<Inca_Dispatch> p_inca;
   };
 } // namespace inca
 
