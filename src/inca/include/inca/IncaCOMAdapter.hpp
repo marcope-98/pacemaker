@@ -6,6 +6,7 @@
 #include "inca/unique_com_ptr.hpp"
 
 struct Inca_Dispatch;
+struct IncaOnlineExperiment_Dispatch;
 
 namespace inca
 {
@@ -27,6 +28,7 @@ namespace inca
 
   private:
     unique_com_ptr<Inca_Dispatch> p_inca;
+    unique_com_ptr<IncaOnlineExperiment_Dispatch> p_exp;
   };
 } // namespace inca
 

@@ -1,5 +1,7 @@
 #include "inca/IncaCOMAdapter.hpp"
 
+#include "utils.hpp"
+
 #include <stdexcept>
 
 #import "incacom.tlb" named_guids no_namespace
@@ -16,6 +18,8 @@ inca::IncaCOMAdapter::IncaCOMAdapter()
     if (FAILED(hr)) throw std::runtime_error("Failed to instantiate INCA COM object. Verify that INCA is installed.");
     this->p_inca = unique_com_ptr<Inca_Dispatch>(raw);
   }
+  this->p_exp = query_interface<IncaOnlineExperiment_Dispatch>(this->p_inca->GetOpenedExperiment());
+  this->p_exp->StopMeasurement();
 }
 
 inca::IncaCOMAdapter::~IncaCOMAdapter()
