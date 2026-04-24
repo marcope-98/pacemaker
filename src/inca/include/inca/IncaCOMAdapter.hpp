@@ -8,6 +8,7 @@
 struct Inca_Dispatch;
 struct IncaOnlineExperiment_Dispatch;
 struct IncaExperimentView_Dispatch;
+struct ExperimentDevice_Dispatch;
 
 namespace inca
 {
@@ -31,6 +32,7 @@ namespace inca
     unique_com_ptr<Inca_Dispatch>                 p_inca;
     unique_com_ptr<IncaOnlineExperiment_Dispatch> p_exp;
     unique_com_ptr<IncaExperimentView_Dispatch>   p_expview;
+    unique_com_ptr<ExperimentDevice_Dispatch>     p_device;
   };
 } // namespace inca
 

@@ -1,8 +1,8 @@
 #include "inca/IncaCOMAdapter.hpp"
 
-#include "utils.hpp"
-
 #include <stdexcept>
+
+#include "utils.hpp"
 
 #import "incacom.tlb" named_guids no_namespace
 
@@ -20,12 +20,28 @@ inca::IncaCOMAdapter::IncaCOMAdapter()
   }
   this->p_exp = query_interface<IncaOnlineExperiment_Dispatch>(this->p_inca->GetOpenedExperiment());
   this->p_exp->StopMeasurement();
+
   this->p_expview = query_interface<IncaExperimentView_Dispatch>(this->p_inca->GetOpenedExperimentView());
+
+  _variant_t device_list = this->p_exp->GetAllDevices();
+  if (device_list.vt != (VT_ARRAY | VT_VARIANT)) throw std::runtime_error("GetAllDevices returned an unexpected type.");
+
+  SAFEARRAY *psa = V_ARRAY(&device_list);
+  long       lLower{}, lUpper{};
+  SafeArrayGetLBound(psa, 1, &lLower);
+  SafeArrayGetUBound(psa, 1, &lUpper);
+
+  if (lLower < 0 || lUpper < lLower) throw std::runtime_error("Device list has invalid bounds or is empty");
+
+  _variant_t device;
+  SafeArrayGetElement(psa, &lLower, &device);
+  if (device.vt != VT_DISPATCH) throw std::runtime_error("First device in the device list is not of IDispatch* type.");
+  query_interface<ExperimentDevice_Dispatch>(V_DISPATCH(&device));
 }
 
 inca::IncaCOMAdapter::~IncaCOMAdapter()
 {
-  if(this->p_inca) this->p_inca->DisconnectFromTool();
+  if (this->p_inca) this->p_inca->DisconnectFromTool();
 }
 
 auto inca::IncaCOMAdapter::add_param(std::string_view name) -> void
