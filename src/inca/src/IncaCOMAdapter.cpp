@@ -4,7 +4,6 @@
 #include <stdexcept>
 #include <thread>
 
-
 #include "utils.hpp"
 
 #import "incacom.tlb" named_guids no_namespace
@@ -47,9 +46,17 @@ inca::IncaCOMAdapter::~IncaCOMAdapter()
   if (this->p_inca) this->p_inca->DisconnectFromTool();
 }
 
-auto inca::IncaCOMAdapter::add_param(std::string_view name) -> void
+auto inca::IncaCOMAdapter::add_param(const std::string& name) -> void
 {
-  throw std::logic_error("Not implemented");
+  if (this->m_calibrations_map.count(name) > 0) return;
+
+  this->m_calibrations_map[name] = this->m_calibrations_vector.size();
+  auto calib                     = query_interface<CalibrationScalarData_Dispatch>(
+      this->p_exp->GetCalibrationValueInDevice(
+          name.c_str(),
+          this->p_device.get()));
+  this->p_expview->OpenViewForExperimentDataItem(calib.get());
+  this->m_calibrations_vector.emplace_back(std::move(calib));
 }
 
 auto inca::IncaCOMAdapter::set_param(std::string_view name, double value) -> void
