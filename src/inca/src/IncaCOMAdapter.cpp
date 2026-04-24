@@ -46,7 +46,7 @@ inca::IncaCOMAdapter::~IncaCOMAdapter()
   if (this->p_inca) this->p_inca->DisconnectFromTool();
 }
 
-auto inca::IncaCOMAdapter::add_param(const std::string& name) -> void
+auto inca::IncaCOMAdapter::add_param(const std::string &name) -> void
 {
   if (this->m_calibrations_map.count(name) > 0) return;
 
@@ -67,7 +67,8 @@ auto inca::IncaCOMAdapter::set_param(const std::string &name, double value) -> v
 
 auto inca::IncaCOMAdapter::reset() -> void
 {
-  throw std::logic_error("Not implemented");
+  for (auto &calib : this->m_calibrations_vector)
+    calib->ResetValueToRP();
 }
 
 auto inca::IncaCOMAdapter::start_recording() -> void
