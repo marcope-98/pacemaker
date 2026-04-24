@@ -7,6 +7,7 @@
 
 struct Inca_Dispatch;
 struct IncaOnlineExperiment_Dispatch;
+struct IncaExperimentView_Dispatch;
 
 namespace inca
 {
@@ -27,8 +28,9 @@ namespace inca
     auto stop_recording(std::string_view filename) -> void;
 
   private:
-    unique_com_ptr<Inca_Dispatch> p_inca;
+    unique_com_ptr<Inca_Dispatch>                 p_inca;
     unique_com_ptr<IncaOnlineExperiment_Dispatch> p_exp;
+    unique_com_ptr<IncaExperimentView_Dispatch>   p_expview;
   };
 } // namespace inca
 

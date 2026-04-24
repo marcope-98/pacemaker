@@ -20,6 +20,7 @@ inca::IncaCOMAdapter::IncaCOMAdapter()
   }
   this->p_exp = query_interface<IncaOnlineExperiment_Dispatch>(this->p_inca->GetOpenedExperiment());
   this->p_exp->StopMeasurement();
+  this->p_expview = query_interface<IncaExperimentView_Dispatch>(this->p_inca->GetOpenedExperimentView());
 }
 
 inca::IncaCOMAdapter::~IncaCOMAdapter()
