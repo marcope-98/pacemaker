@@ -59,9 +59,10 @@ auto inca::IncaCOMAdapter::add_param(const std::string& name) -> void
   this->m_calibrations_vector.emplace_back(std::move(calib));
 }
 
-auto inca::IncaCOMAdapter::set_param(std::string_view name, double value) -> void
+auto inca::IncaCOMAdapter::set_param(const std::string &name, double value) -> void
 {
-  throw std::logic_error("Not implemented");
+  const auto m_calibrations_vector_index = this->m_calibrations_map[name];
+  this->m_calibrations_vector[m_calibrations_vector_index]->SetImplValue(value);
 }
 
 auto inca::IncaCOMAdapter::reset() -> void

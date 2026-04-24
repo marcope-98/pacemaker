@@ -27,8 +27,8 @@ namespace inca
     IncaCOMAdapter &operator=(const IncaCOMAdapter &) = delete;
     IncaCOMAdapter &operator=(IncaCOMAdapter &&)      = delete;
 
-    auto set_param(std::string_view name, double value) -> void;
     auto add_param(const std::string& name) -> void;
+    auto set_param(const std::string& name, double value) -> void;
     auto reset() -> void;
     auto start_recording() -> void;
     auto stop_recording(std::string_view filename) -> void;
