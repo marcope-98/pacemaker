@@ -10,7 +10,7 @@
 namespace inca
 {
   template<class T>
-  auto query_interface(IDispatch *src) -> unique_com_ptr<T>
+  auto query_interface(::IDispatch *const src) -> unique_com_ptr<T>
   {
     if (src == nullptr)
       throw std::invalid_argument("Attempt on calling QueryInterface on nullptr");
