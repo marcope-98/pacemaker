@@ -6,6 +6,7 @@ add_library(
   ${PROJECT_NAME}
   STATIC 
   src/IncaCOMAdapter.cpp
+  src/com/IncaProxy.cpp
 )
 
 target_precompile_headers(
