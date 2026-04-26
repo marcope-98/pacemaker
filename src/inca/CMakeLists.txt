@@ -9,6 +9,7 @@ add_library(
   src/com/IncaProxy.cpp
   src/com/IncaOnlineExperimentProxy.cpp
   src/com/IncaExperimentViewProxy.cpp
+  src/com/ExperimentDeviceProxy.cpp
 )
 
 target_precompile_headers(
