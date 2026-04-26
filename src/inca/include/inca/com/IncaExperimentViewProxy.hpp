@@ -2,27 +2,20 @@
 #define INCA_COM_INCAEXPERIMENTVIEWPROXY_HPP_
 
 #include "inca/unique_com_ptr.hpp"
+#include "inca/traits/COMProxy.hpp"
 
 struct IncaExperimentView_Dispatch;
 struct IDispatch;
 
 namespace inca::com
 {
-  class IncaExperimentViewProxy
+  class IncaExperimentViewProxy : private inca::traits::COMProxy<::IncaExperimentView_Dispatch>
   {
   public:
     IncaExperimentViewProxy() = default;
     explicit IncaExperimentViewProxy(::IDispatch *const idispatch);
-    ~IncaExperimentViewProxy()                                          = default;
-    IncaExperimentViewProxy(const IncaExperimentViewProxy &)            = delete;
-    IncaExperimentViewProxy(IncaExperimentViewProxy &&)                 = delete;
-    IncaExperimentViewProxy &operator=(const IncaExperimentViewProxy &) = delete;
-    IncaExperimentViewProxy &operator=(IncaExperimentViewProxy &&)      = delete;
 
     auto OpenViewForExperimentDataItem(::IDispatch *const dataitem) -> void;
-
-  private:
-    inca::unique_com_ptr<::IncaExperimentView_Dispatch> p_subject{nullptr};
   };
 } // namespace inca::com
 
