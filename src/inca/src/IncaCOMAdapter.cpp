@@ -6,7 +6,7 @@
 
 #include "utils.hpp"
 
-#import "incacom.tlb" named_guids no_namespace
+#include "incacom.hpp"
 
 inca::IncaCOMAdapter::IncaCOMAdapter()
 {

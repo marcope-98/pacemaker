@@ -8,6 +8,12 @@ add_library(
   src/IncaCOMAdapter.cpp
 )
 
+target_precompile_headers(
+  ${PROJECT_NAME}
+  PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/incacom.hpp
+)
+
 target_include_directories(
   ${PROJECT_NAME}
   PUBLIC
@@ -21,7 +27,7 @@ target_compile_options(
   ${PROJECT_NAME}
   PRIVATE
   $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>: -Wall -O2>
-  $<$<CXX_COMPILER_ID:MSVC>: /W2 /O2>
+  $<$<CXX_COMPILER_ID:MSVC>: /W2 /O2 /DINCACOM_TLB="${INCACOM_TLB}">
 )
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
