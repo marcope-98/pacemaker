@@ -13,9 +13,10 @@ namespace inca::com
   {
   public:
     IncaExperimentViewProxy() = default;
-    explicit IncaExperimentViewProxy(::IDispatch *const idispatch);
+    explicit IncaExperimentViewProxy(inca::unique_com_ptr<::IDispatch> idispatch);
+    ~IncaExperimentViewProxy();
 
-    auto OpenViewForExperimentDataItem(::IDispatch *const dataitem) -> void;
+    auto OpenViewForExperimentDataItem(inca::unique_com_ptr<::IDispatch> dataitem) -> void;
   };
 } // namespace inca::com
 
