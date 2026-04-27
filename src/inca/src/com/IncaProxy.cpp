@@ -1,6 +1,7 @@
 #include "inca/com/IncaProxy.hpp"
 
 #include <stdexcept>
+#include <iostream>
 
 #include "incacom.hpp"
 
@@ -22,12 +23,12 @@ inca::com::IncaProxy::~IncaProxy()
   this->p_subject->DisconnectFromTool();
 }
 
-auto inca::com::IncaProxy::GetOpenedExperiment() -> ::IDispatch *
+auto inca::com::IncaProxy::GetOpenedExperiment() -> inca::unique_com_ptr<::IDispatch>
 {
-  return this->p_subject->GetOpenedExperiment();
+  return inca::unique_com_ptr<::IDispatch>(this->p_subject->GetOpenedExperiment().Detach());
 }
 
-auto inca::com::IncaProxy::GetOpenedExperimentView() -> ::IDispatch *
+auto inca::com::IncaProxy::GetOpenedExperimentView() -> inca::unique_com_ptr<::IDispatch>
 {
-  return this->p_subject->GetOpenedExperimentView();
+  return inca::unique_com_ptr<::IDispatch>(this->p_subject->GetOpenedExperimentView().Detach());
 }
