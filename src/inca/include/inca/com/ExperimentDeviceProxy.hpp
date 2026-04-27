@@ -13,7 +13,8 @@ namespace inca::com
   {
   public:
     ExperimentDeviceProxy() = default;
-    explicit ExperimentDeviceProxy(::IDispatch *const idispatch);
+    explicit ExperimentDeviceProxy(inca::unique_com_ptr<::IDispatch> idispatch);
+    ~ExperimentDeviceProxy();
   };
 } // namespace inca::com
 
