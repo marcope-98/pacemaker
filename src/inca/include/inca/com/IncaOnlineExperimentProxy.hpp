@@ -16,7 +16,8 @@ namespace inca::com
   {
   public:
     IncaOnlineExperimentProxy() = default;
-    explicit IncaOnlineExperimentProxy(::IDispatch *const idispatch);
+    explicit IncaOnlineExperimentProxy(inca::unique_com_ptr<::IDispatch> idispatch);
+    ~IncaOnlineExperimentProxy();
 
     auto GetAllDevices() -> std::vector<inca::unique_com_ptr<::IDispatch>>;
     auto StopMeasurement() -> void;

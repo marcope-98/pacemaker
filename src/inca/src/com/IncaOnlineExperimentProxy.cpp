@@ -6,10 +6,12 @@
 #include "incacom.hpp"
 #include "utils.hpp"
 
+inca::com::IncaOnlineExperimentProxy::~IncaOnlineExperimentProxy() {}
+
 inca::com::IncaOnlineExperimentProxy::IncaOnlineExperimentProxy(
-    ::IDispatch *const idispatch)
+    inca::unique_com_ptr<::IDispatch> idispatch)
 {
-  this->p_subject = query_interface<::IncaOnlineExperiment_Dispatch>(idispatch);
+  this->p_subject = query_interface<::IncaOnlineExperiment_Dispatch>(std::move(idispatch));
 }
 
 auto inca::com::IncaOnlineExperimentProxy::StopMeasurement() -> void
