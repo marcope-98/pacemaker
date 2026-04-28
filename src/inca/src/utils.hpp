@@ -5,12 +5,12 @@
 
 #include <comdef.h>
 
-#include "inca/unique_com_ptr.hpp"
+#include "inca/detail/unique_com_ptr.hpp"
 
 namespace inca
 {
   template<class T>
-  auto query_interface(inca::unique_com_ptr<::IDispatch> src) -> unique_com_ptr<T>
+  auto query_interface(inca::detail::unique_com_ptr<::IDispatch> src) -> inca::detail::unique_com_ptr<T>
   {
     if (src == nullptr)
       throw std::invalid_argument("Attempt on calling QueryInterface on nullptr");
@@ -21,7 +21,7 @@ namespace inca
     if (FAILED(hr))
       throw std::runtime_error("QueryInterface failed.");
 
-    return unique_com_ptr<T>(out);
+    return inca::detail::unique_com_ptr<T>(out);
   }
 } // namespace inca
 

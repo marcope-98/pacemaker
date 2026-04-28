@@ -1,15 +1,15 @@
-#ifndef INCA_TRAITS_COMPROXY_HPP_
-#define INCA_TRAITS_COMPROXY_HPP_
+#ifndef INCA_DETAIL_COMPROXY_HPP_
+#define INCA_DETAIL_COMPROXY_HPP_
 
-#include "inca/unique_com_ptr.hpp"
+#include "inca/detail/unique_com_ptr.hpp"
 
-namespace inca::traits
+namespace inca::detail
 {
   template<class T>
   class COMProxy
   {
   protected:
-    explicit COMProxy(inca::unique_com_ptr<T> subject) noexcept
+    explicit COMProxy(inca::detail::unique_com_ptr<T> subject) noexcept
         : p_subject{std::move(subject)}
     {
     }
@@ -22,8 +22,8 @@ namespace inca::traits
     COMProxy()  = default;
     ~COMProxy() = default;
 
-    inca::unique_com_ptr<T> p_subject{nullptr};
+    inca::detail::unique_com_ptr<T> p_subject{nullptr};
   };
-} // namespace inca::traits
+} // namespace inca::detail
 
-#endif // INCA_TRAITS_COMPROXY_HPP_
+#endif // INCA_DETAIL_COMPROXY_HPP_

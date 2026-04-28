@@ -1,9 +1,9 @@
-#ifndef INCA_UNIQUE_COM_PTR_HPP_
-#define INCA_UNIQUE_COM_PTR_HPP_
+#ifndef INCA_DETAIL_UNIQUE_COM_PTR_HPP_
+#define INCA_DETAIL_UNIQUE_COM_PTR_HPP_
 
 #include <memory>
 
-namespace inca
+namespace inca::detail
 {
   template<class T>
   struct ComObjDeleter
@@ -20,4 +20,4 @@ namespace inca
 
 }; // namespace inca
 
-#endif // INCA_UNIQUE_COM_PTR_HPP_
+#endif // INCA_DETAIL_UNIQUE_COM_PTR_HPP_

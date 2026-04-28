@@ -4,25 +4,25 @@
 #include <string>
 #include <vector>
 
-#include "inca/traits/COMProxy.hpp"
-#include "inca/unique_com_ptr.hpp"
+#include "inca/detail/COMProxy.hpp"
+#include "inca/detail/unique_com_ptr.hpp"
 
 struct IncaOnlineExperiment_Dispatch;
 struct IDispatch;
 
 namespace inca::com
 {
-  class IncaOnlineExperimentProxy : private inca::traits::COMProxy<::IncaOnlineExperiment_Dispatch>
+  class IncaOnlineExperimentProxy : private inca::detail::COMProxy<::IncaOnlineExperiment_Dispatch>
   {
   public:
-    explicit IncaOnlineExperimentProxy(inca::unique_com_ptr<::IDispatch> idispatch);
+    explicit IncaOnlineExperimentProxy(inca::detail::unique_com_ptr<::IDispatch> idispatch);
 
     IncaOnlineExperimentProxy(IncaOnlineExperimentProxy &&)            = default;
     IncaOnlineExperimentProxy &operator=(IncaOnlineExperimentProxy &&) = default;
 
     ~IncaOnlineExperimentProxy();
 
-    auto GetAllDevices() -> std::vector<inca::unique_com_ptr<::IDispatch>>;
+    auto GetAllDevices() -> std::vector<inca::detail::unique_com_ptr<::IDispatch>>;
     auto StopMeasurement() -> void;
     auto StartRecording() -> void;
     auto StopRecordingAndSave() -> void;

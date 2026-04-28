@@ -9,7 +9,7 @@
 inca::com::IncaOnlineExperimentProxy::~IncaOnlineExperimentProxy() {}
 
 inca::com::IncaOnlineExperimentProxy::IncaOnlineExperimentProxy(
-    inca::unique_com_ptr<::IDispatch> idispatch)
+    inca::detail::unique_com_ptr<::IDispatch> idispatch)
 {
   this->p_subject = query_interface<::IncaOnlineExperiment_Dispatch>(std::move(idispatch));
 }
@@ -19,7 +19,7 @@ auto inca::com::IncaOnlineExperimentProxy::StopMeasurement() -> void
   this->p_subject->StopMeasurement();
 }
 
-auto inca::com::IncaOnlineExperimentProxy::GetAllDevices() -> std::vector<inca::unique_com_ptr<::IDispatch>>
+auto inca::com::IncaOnlineExperimentProxy::GetAllDevices() -> std::vector<inca::detail::unique_com_ptr<::IDispatch>>
 {
   _variant_t device_list = this->p_subject->GetAllDevices();
   if (device_list.vt != (VT_ARRAY | VT_VARIANT))
@@ -30,7 +30,7 @@ auto inca::com::IncaOnlineExperimentProxy::GetAllDevices() -> std::vector<inca::
   SafeArrayGetLBound(psa, 1, &lLower);
   SafeArrayGetUBound(psa, 1, &lUpper);
 
-  std::vector<inca::unique_com_ptr<::IDispatch>> out{};
+  std::vector<inca::detail::unique_com_ptr<::IDispatch>> out{};
   out.reserve(lUpper - lLower + 1);
   for (long i{lLower}; i <= lUpper; ++i)
   {
@@ -41,7 +41,7 @@ auto inca::com::IncaOnlineExperimentProxy::GetAllDevices() -> std::vector<inca::
     ::IDispatch *idispatch = V_DISPATCH(&device);
     std::size_t  refcount  = idispatch->AddRef();
     std::cerr << "IDispatch::RefCount is " << refcount << "\n";
-    out.emplace_back(inca::unique_com_ptr<::IDispatch>(idispatch));
+    out.emplace_back(inca::detail::unique_com_ptr<::IDispatch>(idispatch));
   }
   return out;
 }
