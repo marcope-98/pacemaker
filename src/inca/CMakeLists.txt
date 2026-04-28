@@ -5,7 +5,6 @@ project(inca VERSION 0.0.1 LANGUAGES C CXX)
 add_library(
   ${PROJECT_NAME}
   STATIC 
-  src/IncaCOMAdapter.cpp
   src/com/IncaProxy.cpp
   src/com/IncaOnlineExperimentProxy.cpp
   src/com/IncaExperimentViewProxy.cpp
