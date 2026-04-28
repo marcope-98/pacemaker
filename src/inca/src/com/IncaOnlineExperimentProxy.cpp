@@ -1,6 +1,5 @@
 #include "inca/com/IncaOnlineExperimentProxy.hpp"
 
-#include <iostream>
 #include <stdexcept>
 
 #include "detail/incacom.hpp"
@@ -10,8 +9,8 @@ inca::com::IncaOnlineExperimentProxy::~IncaOnlineExperimentProxy() {}
 
 inca::com::IncaOnlineExperimentProxy::IncaOnlineExperimentProxy(
     inca::detail::unique_com_ptr<::IDispatch> idispatch)
+    : COMProxy{inca::detail::query_interface<::IncaOnlineExperiment_Dispatch>(std::move(idispatch))}
 {
-  this->p_subject = inca::detail::query_interface<::IncaOnlineExperiment_Dispatch>(std::move(idispatch));
 }
 
 auto inca::com::IncaOnlineExperimentProxy::StopMeasurement() -> void
@@ -40,7 +39,6 @@ auto inca::com::IncaOnlineExperimentProxy::GetAllDevices() -> std::vector<inca::
       throw std::runtime_error("Device in device list is not of IDispatch* type.");
     ::IDispatch *idispatch = V_DISPATCH(&device);
     std::size_t  refcount  = idispatch->AddRef();
-    std::cerr << "IDispatch::RefCount is " << refcount << "\n";
     out.emplace_back(inca::detail::unique_com_ptr<::IDispatch>(idispatch));
   }
   return out;

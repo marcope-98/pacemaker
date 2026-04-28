@@ -7,8 +7,8 @@ inca::com::IncaExperimentViewProxy::~IncaExperimentViewProxy() {}
 
 inca::com::IncaExperimentViewProxy::IncaExperimentViewProxy(
     inca::detail::unique_com_ptr<::IDispatch> idispatch)
+    : COMProxy{inca::detail::query_interface<::IncaExperimentView_Dispatch>(std::move(idispatch))}
 {
-  this->p_subject = inca::detail::query_interface<::IncaExperimentView_Dispatch>(std::move(idispatch));
 }
 
 auto inca::com::IncaExperimentViewProxy::OpenViewForExperimentDataItem(
