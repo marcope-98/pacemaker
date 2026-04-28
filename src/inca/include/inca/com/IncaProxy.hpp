@@ -21,8 +21,8 @@ namespace inca::com
 
     ~IncaProxy();
 
-    auto GetOpenedExperiment() -> inca::detail::unique_com_ptr<::IDispatch>;
-    auto GetOpenedExperimentView() -> inca::detail::unique_com_ptr<::IDispatch>;
+    [[nodiscard]] auto GetOpenedExperiment() -> inca::detail::unique_com_ptr<::IDispatch>;
+    [[nodiscard]] auto GetOpenedExperimentView() -> inca::detail::unique_com_ptr<::IDispatch>;
   };
 } // namespace inca::com
 #endif // INCA_COM_INCAPROXY_HPP_
