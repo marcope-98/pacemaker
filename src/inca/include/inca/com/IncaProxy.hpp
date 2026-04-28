@@ -16,8 +16,8 @@ namespace inca::com
 
     IncaProxy(const IncaProxy &)            = delete;
     IncaProxy &operator=(const IncaProxy &) = delete;
-    IncaProxy(IncaProxy &&)                 = delete;
-    IncaProxy &operator=(IncaProxy &&)      = delete;
+    IncaProxy(IncaProxy &&)                 = default;
+    IncaProxy &operator=(IncaProxy &&)      = default;
 
     ~IncaProxy();
 
