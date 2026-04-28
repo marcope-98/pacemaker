@@ -22,7 +22,8 @@ namespace inca::com
 
     ~IncaOnlineExperimentProxy();
 
-    auto GetAllDevices() -> std::vector<inca::detail::unique_com_ptr<::IDispatch>>;
+    [[nodiscard]] auto GetAllDevices() -> std::vector<inca::detail::unique_com_ptr<::IDispatch>>;
+
     auto StopMeasurement() -> void;
     auto StartRecording() -> void;
     auto StopRecordingAndSave() -> void;

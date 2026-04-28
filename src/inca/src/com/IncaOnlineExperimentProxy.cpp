@@ -30,16 +30,19 @@ auto inca::com::IncaOnlineExperimentProxy::GetAllDevices() -> std::vector<inca::
   SafeArrayGetUBound(psa, 1, &lUpper);
 
   std::vector<inca::detail::unique_com_ptr<::IDispatch>> out{};
-  out.reserve(lUpper - lLower + 1);
+  out.reserve(static_cast<std::size_t>(lUpper - lLower + 1));
   for (long i{lLower}; i <= lUpper; ++i)
   {
     _variant_t device;
-    SafeArrayGetElement(psa, &lLower, &device);
+    if (FAILED(SafeArrayGetElement(psa, &i, &device)))
+      throw std::runtime_error("GetAllDevices: SafeArrayGetElement failed");
+
     if (device.vt != VT_DISPATCH)
-      throw std::runtime_error("Device in device list is not of IDispatch* type.");
+      throw std::runtime_error("GetAllDevices: device element is not VT_DISPATCH");
+
     ::IDispatch *idispatch = V_DISPATCH(&device);
-    std::size_t  refcount  = idispatch->AddRef();
-    out.emplace_back(inca::detail::unique_com_ptr<::IDispatch>(idispatch));
+    idispatch->AddRef();
+    out.emplace_back(idispatch);
   }
   return out;
 }
