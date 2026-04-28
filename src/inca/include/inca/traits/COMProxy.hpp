@@ -3,15 +3,25 @@
 
 #include "inca/unique_com_ptr.hpp"
 
-#include "inca/traits/NonCopyable.hpp"
-#include "inca/traits/NonMovable.hpp"
-
 namespace inca::traits
 {
   template<class T>
-  class COMProxy : private inca::traits::NonCopyable, inca::traits::NonMovable
+  class COMProxy
   {
   protected:
+    explicit COMProxy(inca::unique_com_ptr<T> subject) noexcept
+        : p_subject{std::move(subject)}
+    {
+    }
+    COMProxy(const COMProxy &)            = delete;
+    COMProxy &operator=(const COMProxy &) = delete;
+
+    COMProxy(COMProxy &&)            = default;
+    COMProxy &operator=(COMProxy &&) = default;
+
+    COMProxy()  = default;
+    ~COMProxy() = default;
+
     inca::unique_com_ptr<T> p_subject{nullptr};
   };
 } // namespace inca::traits
