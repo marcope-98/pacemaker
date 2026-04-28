@@ -13,6 +13,7 @@ namespace inca::com
   {
   public:
     IncaProxy();
+    IncaProxy(inca::unique_com_ptr<::IDispatch> idispatch);
     ~IncaProxy();
 
     auto GetOpenedExperiment() -> inca::unique_com_ptr<::IDispatch>;

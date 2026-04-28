@@ -4,18 +4,11 @@
 #include <iostream>
 
 #include "incacom.hpp"
+#include "utils.hpp"
 
-inca::com::IncaProxy::IncaProxy()
+inca::com::IncaProxy::IncaProxy(inca::unique_com_ptr<::IDispatch> idispatch)
 {
-  Inca_Dispatch *raw{nullptr};
-  HRESULT        hr = CoCreateInstance(CLSID_Inca,
-                                       nullptr,
-                                       CLSCTX_INPROC_SERVER,
-                                       __uuidof(Inca_Dispatch),
-                                       reinterpret_cast<void **>(&raw));
-  if (FAILED(hr))
-    throw std::runtime_error("Failed to instantiate INCA COM object. Verify that INCA is installed.");
-  this->p_subject = unique_com_ptr<::Inca_Dispatch>(raw);
+  this->p_subject = query_interface<::Inca_Dispatch>(std::move(idispatch));
 }
 
 inca::com::IncaProxy::~IncaProxy()
