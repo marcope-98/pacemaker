@@ -3,12 +3,12 @@
 #include <stdexcept>
 #include <iostream>
 
-#include "incacom.hpp"
-#include "utils.hpp"
+#include "detail/incacom.hpp"
+#include "detail/utils.hpp"
 
 inca::com::IncaProxy::IncaProxy(inca::detail::unique_com_ptr<::IDispatch> idispatch)
 {
-  this->p_subject = query_interface<::Inca_Dispatch>(std::move(idispatch));
+  this->p_subject = inca::detail::query_interface<::Inca_Dispatch>(std::move(idispatch));
 }
 
 inca::com::IncaProxy::~IncaProxy()

@@ -3,15 +3,15 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "incacom.hpp"
-#include "utils.hpp"
+#include "detail/incacom.hpp"
+#include "detail/utils.hpp"
 
 inca::com::IncaOnlineExperimentProxy::~IncaOnlineExperimentProxy() {}
 
 inca::com::IncaOnlineExperimentProxy::IncaOnlineExperimentProxy(
     inca::detail::unique_com_ptr<::IDispatch> idispatch)
 {
-  this->p_subject = query_interface<::IncaOnlineExperiment_Dispatch>(std::move(idispatch));
+  this->p_subject = inca::detail::query_interface<::IncaOnlineExperiment_Dispatch>(std::move(idispatch));
 }
 
 auto inca::com::IncaOnlineExperimentProxy::StopMeasurement() -> void
