@@ -14,7 +14,6 @@
 #include "inca/com/IncaProxy.hpp"
 #include "inca/detail/unique_com_ptr.hpp"
 
-
 #include "detail/incacom.hpp"
 
 namespace
@@ -47,11 +46,17 @@ auto inca::Session::connect() -> Session
         "Verify that a device is configured and online.");
   inca::com::ExperimentDeviceProxy device{std::move(devices[0])};
 
-  return Session{std::move(inca)};
+  inca::Experiment experiment{
+      std::move(exp),
+      std::move(expview),
+      std::move(device)};
+
+  return Session{std::move(inca), std::move(experiment)};
 }
 
-inca::Session::Session(inca::com::IncaProxy inca)
-    : m_inca{std::move(inca)}
+inca::Session::Session(inca::com::IncaProxy inca, inca::Experiment experiment)
+    : m_inca{std::move(inca)},
+      m_experiment{std::move(experiment)}
 {
 }
 
