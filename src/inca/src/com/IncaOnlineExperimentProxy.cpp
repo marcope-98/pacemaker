@@ -59,7 +59,10 @@ auto inca::com::IncaOnlineExperimentProxy::StopRecordingAndSave() -> void
 
 auto inca::com::IncaOnlineExperimentProxy::GetCalibrationValueInDevice(
     const std::string &name,
-    ::IDispatch *const device) -> ::IDispatch *
+    ::IDispatch *const device) -> inca::detail::unique_com_ptr<::IDispatch>
 {
-  return this->p_subject->GetCalibrationValueInDevice(name.c_str(), device);
+  ::IDispatch *raw = this->p_subject->GetCalibrationValueInDevice(name.c_str(), device).Detach();
+  if (raw == nullptr)
+    throw std::runtime_error("GetCalibrationValueInDevice: parameter not found " + name);
+  return inca::detail::unique_com_ptr<::IDispatch>(raw);
 }
