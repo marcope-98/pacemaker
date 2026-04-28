@@ -10,6 +10,7 @@ add_library(
   src/com/IncaExperimentViewProxy.cpp
   src/com/ExperimentDeviceProxy.cpp
   src/Session.cpp
+  src/Experiment.cpp
 )
 
 target_precompile_headers(
