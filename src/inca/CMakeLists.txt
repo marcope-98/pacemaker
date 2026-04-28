@@ -12,6 +12,7 @@ add_library(
   src/com/CalibrationScalarDataProxy.cpp
   src/Session.cpp
   src/Experiment.cpp
+  src/CalibrationSet.cpp
 )
 
 target_precompile_headers(
