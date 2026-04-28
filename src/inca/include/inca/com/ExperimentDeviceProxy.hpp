@@ -12,8 +12,10 @@ namespace inca::com
   class ExperimentDeviceProxy : private inca::traits::COMProxy<::ExperimentDevice_Dispatch>
   {
   public:
-    ExperimentDeviceProxy() = default;
     explicit ExperimentDeviceProxy(inca::unique_com_ptr<::IDispatch> idispatch);
+
+    ExperimentDeviceProxy(ExperimentDeviceProxy&&) = default;
+    ExperimentDeviceProxy&operator=(ExperimentDeviceProxy&&) = default;
     ~ExperimentDeviceProxy();
   };
 } // namespace inca::com

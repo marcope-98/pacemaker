@@ -15,8 +15,11 @@ namespace inca::com
   class IncaOnlineExperimentProxy : private inca::traits::COMProxy<::IncaOnlineExperiment_Dispatch>
   {
   public:
-    IncaOnlineExperimentProxy() = default;
     explicit IncaOnlineExperimentProxy(inca::unique_com_ptr<::IDispatch> idispatch);
+
+    IncaOnlineExperimentProxy(IncaOnlineExperimentProxy &&)            = default;
+    IncaOnlineExperimentProxy &operator=(IncaOnlineExperimentProxy &&) = default;
+
     ~IncaOnlineExperimentProxy();
 
     auto GetAllDevices() -> std::vector<inca::unique_com_ptr<::IDispatch>>;
