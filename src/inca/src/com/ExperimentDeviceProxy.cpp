@@ -10,3 +10,9 @@ inca::com::ExperimentDeviceProxy::ExperimentDeviceProxy(
 {
   this->p_subject = inca::detail::query_interface<ExperimentDevice_Dispatch>(std::move(idispatch));
 }
+
+auto inca::com::ExperimentDeviceProxy::GetName() -> std::wstring
+{
+  _bstr_t bs = this->p_subject->GetName();
+  return std::wstring(bs, SysStringLen(bs));
+}
