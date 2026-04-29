@@ -3,9 +3,10 @@
 
 #include <chrono>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
-#include "inca/CalibrationSet.hpp"
-
+#include "inca/com/CalibrationScalarDataProxy.hpp"
 #include "inca/com/ExperimentDeviceProxy.hpp"
 #include "inca/com/IncaExperimentViewProxy.hpp"
 #include "inca/com/IncaOnlineExperimentProxy.hpp"
@@ -26,17 +27,20 @@ namespace inca
 
     ~Experiment() = default;
 
-    [[nodiscard]] auto calibrations() noexcept -> inca::CalibrationSet & { return this->m_calibrations; }
-
     auto start_recording() -> void;
     auto stop_recording(const std::string &filename) -> void;
+
+    auto add_param(const std::string &name) -> void;
+    auto set_param(const std::string &name, double value) -> void;
+    auto reset() -> void;
 
   private:
     inca::com::IncaOnlineExperimentProxy m_exp;
     inca::com::IncaExperimentViewProxy   m_expview;
     inca::com::ExperimentDeviceProxy     m_device;
 
-    inca::CalibrationSet m_calibrations;
+    std::unordered_map<std::string, std::size_t>       m_map;
+    std::vector<inca::com::CalibrationScalarDataProxy> m_values;
 
     static constexpr std::chrono::milliseconds k_flush_delay{40};
   };
