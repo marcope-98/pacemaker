@@ -4,14 +4,14 @@
 
 #include <iostream>
 
-#include "inca/IncaCOMAdapter.hpp"
+#include "inca/Session.hpp"
 
 int main(void)
 {
   CoInitialize(NULL);
   try
   {
-    inca::IncaCOMAdapter inca{};
+    auto  session = inca::Session::connect();
   }
   catch (const std::exception &e)
   {
