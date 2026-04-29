@@ -7,8 +7,8 @@ inca::com::ExperimentDeviceProxy::~ExperimentDeviceProxy() {}
 
 inca::com::ExperimentDeviceProxy::ExperimentDeviceProxy(
     inca::detail::unique_com_ptr<::IDispatch> idispatch)
+    : COMProxy{inca::detail::query_interface<::ExperimentDevice_Dispatch>(std::move(idispatch))}
 {
-  this->p_subject = inca::detail::query_interface<ExperimentDevice_Dispatch>(std::move(idispatch));
 }
 
 auto inca::com::ExperimentDeviceProxy::GetName() -> std::wstring
