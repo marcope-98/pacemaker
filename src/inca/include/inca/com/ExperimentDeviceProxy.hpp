@@ -20,7 +20,7 @@ namespace inca::com
     ExperimentDeviceProxy &operator=(ExperimentDeviceProxy &&) = default;
     ~ExperimentDeviceProxy();
 
-    auto get() const noexcept -> ::IDispatch * { return reinterpret_cast<::IDispatch*>(this->p_subject.get()); }
+    auto get() const noexcept -> ::ExperimentDevice_Dispatch * { return this->p_subject.get(); }
 
     [[nodiscard]] auto GetName() -> std::wstring;
   };

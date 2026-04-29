@@ -9,6 +9,7 @@
 
 struct IncaOnlineExperiment_Dispatch;
 struct IDispatch;
+struct ExperimentDevice_Dispatch;
 
 namespace inca::com
 {
@@ -27,7 +28,7 @@ namespace inca::com
     auto StopMeasurement() -> void;
     auto StartRecording() -> void;
     auto StopRecordingAndSave() -> void;
-    auto GetCalibrationValueInDevice(const std::string &name, ::IDispatch *const device) -> inca::detail::unique_com_ptr<::IDispatch>;
+    auto GetCalibrationValueInDevice(const std::string &name, ::ExperimentDevice_Dispatch *const device) -> inca::detail::unique_com_ptr<::IDispatch>;
   };
 
 } // namespace inca::com
