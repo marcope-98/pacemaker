@@ -1,0 +1,34 @@
+% ===================================================================
+\section{REQ-001 -- \texttt{unique\_com\_ptr} (RAII COM Pointer)}
+% ===================================================================
+\label{sec:unique_com_ptr}
+
+\reqfield{Title:} RAII ownership wrapper for COM objects \status{implemented}
+
+\medskip
+\reqfield{Intent:}
+The user needs a way to hold COM object pointers whose lifetime is automatically managed.
+When the wrapper goes out of scope the COM object's \texttt{Release()} method must be
+called exactly once, preventing resource leaks without requiring explicit cleanup code at
+every call site.
+
+\medskip
+\reqfield{Acceptance criteria:}
+
+\reqdef{\textbf{AC-001-1}}{\texttt{unique\_com\_ptr<T>} shall call \texttt{T::Release()} on destruction when the stored pointer is non-null.}
+\reqdef{\textbf{AC-001-2}}{\texttt{unique\_com\_ptr<T>} shall \emph{not} call \texttt{Release()} when the stored pointer is \texttt{nullptr}.}
+\reqdef{\textbf{AC-001-3}}{The type shall be move-constructible and move-assignable; move shall transfer ownership without calling \texttt{Release()} on the moved-from value.}
+\reqdef{\textbf{AC-001-4}}{The type shall be non-copyable.}
+\reqdef{\textbf{AC-001-5}}{\texttt{get()} shall return the raw pointer without affecting ownership.}
+\reqdef{\textbf{AC-001-6}}{The type shall be compatible with \texttt{std::unique\_ptr} semantics (i.e.\ implemented as an alias to \texttt{std::unique\_ptr<T, ComObjDeleter<T>>}).}
+
+\medskip
+\reqfield{Non-functional constraints:}
+\begin{itemize}[leftmargin=*]
+  \item Platform: Windows only (COM is a Windows technology).
+  \item Zero overhead: the deleter is a stateless functor; no heap allocation per wrapper.
+\end{itemize}
+
+\medskip
+\reqfield{Testing:}
+See test document, section \textit{TC-001}.

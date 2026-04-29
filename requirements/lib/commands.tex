@@ -1,0 +1,45 @@
+% -----------------------------------------------------------------------
+% Colours
+% -----------------------------------------------------------------------
+\definecolor{reqblue}{RGB}{30,80,160}
+\definecolor{statusgreen}{RGB}{34,139,34}
+\definecolor{lightgray}{RGB}{245,245,245}
+\definecolor{rulegray}{RGB}{180,180,180}
+
+% -----------------------------------------------------------------------
+% Header / footer
+% -----------------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textbf{pacemaker} -- Software Requirements Specification}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% -----------------------------------------------------------------------
+% Section formatting
+% -----------------------------------------------------------------------
+\titleformat{\section}{\large\bfseries\color{reqblue}}{}{0em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries}{}{0em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{}{0em}{}
+
+% -----------------------------------------------------------------------
+% Requirement environment
+% -----------------------------------------------------------------------
+\newmdenv[
+  backgroundcolor=lightgray,
+  linecolor=reqblue,
+  linewidth=1.5pt,
+  leftline=true,
+  rightline=false,
+  topline=false,
+  bottomline=false,
+  innerleftmargin=10pt,
+  innerrightmargin=10pt,
+  innertopmargin=6pt,
+  innerbottommargin=6pt,
+]{reqbox}
+
+\newcommand{\reqfield}[1]{\textbf{#1}\par\vspace{2pt}}
+\newcommand{\status}[1]{\hfill{\small\color{statusgreen}\texttt{[#1]}}}
+
+\newcommand{\reqdef}[2]{\begin{reqbox}\reqfield{#1} #2 \end{reqbox}}

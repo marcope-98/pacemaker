@@ -1,0 +1,22 @@
+% ===================================================================
+\section{REQ-005 -- \texttt{IncaExperimentViewProxy}}
+% ===================================================================
+\label{sec:incaexperimentviewproxy}
+
+\reqfield{Title:} Proxy for the INCA experiment-view COM object \status{implemented}
+
+\medskip
+\reqfield{Intent:}
+The user needs to programmatically open a measurement view for a specific calibration
+data item inside INCA, so that data can be observed in the INCA GUI during an automated
+experiment run.
+
+\medskip
+\reqfield{Acceptance criteria:}
+\reqdef{\textbf{AC-005-1}}{The constructor shall narrow the supplied \texttt{IDispatch} to \texttt{IncaExperimentView\_Dispatch} via \texttt{query\_interface}.}
+\reqdef{\textbf{AC-005-2}}{\texttt{OpenViewForExperimentDataItem(dataitem)} shall forward the raw \texttt{IDispatch*} pointer (without transferring ownership) to the underlying COM method.}
+\reqdef{\textbf{AC-005-3}}{The class shall be move-only.}
+
+\medskip
+\reqfield{Testing:}
+See test document, section \textit{TC-005}.

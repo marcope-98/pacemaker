@@ -1,0 +1,27 @@
+% ===================================================================
+\section{REQ-004 -- \texttt{IncaOnlineExperimentProxy}}
+% ===================================================================
+\label{sec:incaonlineexperimentproxy}
+
+\reqfield{Title:} Proxy for the INCA online experiment COM object \status{implemented}
+
+\medskip
+\reqfield{Intent:}
+The user needs to start and stop measurement recordings, enumerate connected ECU devices,
+and retrieve calibration data items from a specific device, all through a safe C++ API
+that hides COM SAFEARRAY marshalling and BSTR string handling.
+
+\medskip
+\reqfield{Acceptance criteria:}
+\reqdef{\textbf{AC-004-1}}{The constructor shall narrow the supplied \texttt{IDispatch} to \texttt{IncaOnlineExperiment\_Dispatch} via \texttt{query\_interface}.}
+\reqdef{\textbf{AC-004-2}}{\texttt{GetAllDevices()} shall return a \texttt{std::vector} of \texttt{unique\_com\_ptr<IDispatch>}, one element per device reported by INCA.}
+\reqdef{\textbf{AC-004-3}}{\texttt{GetAllDevices()} shall throw \texttt{std::runtime\_error} if the returned SAFEARRAY is not of type \texttt{VT\_ARRAY | VT\_VARIANT} or if any element is not \texttt{VT\_DISPATCH}.}
+\reqdef{\textbf{AC-004-4}}{\texttt{StartRecording()} shall delegate to the underlying COM method without additional side-effects.}
+\reqdef{\textbf{AC-004-5}}{\texttt{StopRecordingAndSave()} shall delegate to the underlying COM method.}
+\reqdef{\textbf{AC-004-6}}{\texttt{StopMeasurement()} shall delegate to the underlying COM method.}
+\reqdef{\textbf{AC-004-7}}{\texttt{GetCalibrationValueInDevice(name, device)} shall return a \texttt{unique\_com\_ptr<IDispatch>} owning the calibration object, and shall throw \texttt{std::runtime\_error} if the returned pointer is null.}
+\reqdef{\textbf{AC-004-8}}{The class shall be move-only.}
+
+\medskip
+\reqfield{Testing:}
+See test document, section \textit{TC-004}.

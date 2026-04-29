@@ -1,0 +1,24 @@
+% ===================================================================
+\section{REQ-003 -- \texttt{IncaProxy}}
+% ===================================================================
+\label{sec:incaproxy}
+
+\reqfield{Title:} Proxy for the top-level INCA COM object \status{implemented}
+
+\medskip
+\reqfield{Intent:}
+The user needs a C++ object that connects to a running INCA instance and retrieves the
+currently open experiment and experiment-view COM objects. On destruction the proxy must
+politely disconnect from the tool so that INCA is not left in a stale connected state.
+
+\medskip
+\reqfield{Acceptance criteria:}
+\reqdef{\textbf{AC-003-1}}{The constructor shall narrow the supplied \texttt{IDispatch} to \texttt{Inca\_Dispatch} via \texttt{query\_interface}; it shall throw if the narrowing fails.}
+\reqdef{\textbf{AC-003-2}}{The destructor shall call \texttt{DisconnectFromTool()} if the internal pointer is non-null.}
+\reqdef{\textbf{AC-003-3}}{\texttt{GetOpenedExperiment()} shall return a \texttt{unique\_com\_ptr<IDispatch>} owning the experiment object.}
+\reqdef{\textbf{AC-003-4}}{\texttt{GetOpenedExperimentView()} shall return a \texttt{unique\_com\_ptr<IDispatch>} owning the experiment-view object.}
+\reqdef{\textbf{AC-003-5}}{The class shall be move-only (copy deleted).}
+
+\medskip
+\reqfield{Testing:}
+See test document, section \textit{TC-003}.

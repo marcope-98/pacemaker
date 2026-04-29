@@ -1,0 +1,24 @@
+% ===================================================================
+\section{REQ-002 -- \texttt{COMProxy<T>} (Base Proxy Template)}
+% ===================================================================
+\label{sec:comproxy}
+
+\reqfield{Title:} Generic non-copyable base class for COM dispatch proxies \status{implemented}
+
+\medskip
+\reqfield{Intent:}
+The user wants a single, reusable base that stores the typed COM pointer and enforces
+ownership rules, so that concrete proxy classes do not repeat boilerplate and cannot
+accidentally be copied (which would silently duplicate COM reference counts).
+
+\medskip
+\reqfield{Acceptance criteria:}
+\reqdef{\textbf{AC-002-1}}{\texttt{COMProxy<T>} shall be copy-constructible and copy-assignable only when explicitly deleted (not available to callers).}
+\reqdef{\textbf{AC-002-2}}{\texttt{COMProxy<T>} shall be move-constructible and move-assignable.}
+\reqdef{\textbf{AC-002-3}}{The constructor shall accept a \texttt{unique\_com\_ptr<T>} by value (taking ownership via move).}
+\reqdef{\textbf{AC-002-4}}{The protected member \texttt{p\_subject} shall be accessible to derived classes.}
+\reqdef{\textbf{AC-002-5}}{The destructor shall be non-virtual and defaulted; derived classes are responsible for their own destructors.}
+
+\medskip
+\reqfield{Testing:}
+See test document, section \textit{TC-002}.

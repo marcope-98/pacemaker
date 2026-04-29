@@ -1,0 +1,41 @@
+% ===================================================================
+\section{REQ-009 -- \texttt{Session}}
+% ===================================================================
+\label{sec:session}
+
+\reqfield{Title:} Top-level session factory and lifetime manager \status{implemented}
+
+\medskip
+\reqfield{Intent:}
+The user needs a single entry point that establishes a COM connection to a running INCA
+instance, validates that the environment is ready (experiment open, device online), and
+returns a fully-initialised object through which the experiment can be controlled. The
+session shall be non-copyable and non-movable to prevent accidental duplication of COM
+connections.
+
+\medskip
+\reqfield{Acceptance criteria:}
+\reqdef{\textbf{AC-009-1}}{\texttt{Session::connect()} shall call \texttt{CoCreateInstance} with the \texttt{CLSID\_Inca} class identifier and \texttt{CLSCTX\_LOCAL\_SERVER}.}
+\reqdef{\textbf{AC-009-2}}{If \texttt{CoCreateInstance} fails, \texttt{connect()} shall throw \texttt{std::runtime\_error} with a message indicating that INCA may not be installed.}
+\reqdef{\textbf{AC-009-3}}{\texttt{connect()} shall retrieve the open experiment and experiment-view objects via \texttt{IncaProxy}.}
+\reqdef{\textbf{AC-009-4}}{\texttt{connect()} shall enumerate devices; if none are found it shall throw \texttt{std::runtime\_error} with a message indicating no device is configured or online.}
+\reqdef{\textbf{AC-009-5}}{On success, \texttt{connect()} shall return a \texttt{Session} owning an \texttt{IncaProxy} and an \texttt{Experiment} built from the first available device.}
+\reqdef{\textbf{AC-009-6}}{\texttt{experiment()} shall return a non-const reference to the owned \texttt{Experiment}.}
+\reqdef{\textbf{AC-009-7}}{The class shall be non-copyable and non-movable.}
+
+\medskip
+\reqfield{Non-functional constraints:}
+\begin{itemize}[leftmargin=*]
+  \item COM must be initialised by the caller before invoking \texttt{connect()} (e.g.\ via \texttt{CoInitializeEx}).
+  \item Platform: Windows only.
+\end{itemize}
+
+\medskip
+\reqfield{Notes:}
+The \texttt{Session} destructor is explicitly defined (even if empty) to ensure that the
+\texttt{IncaProxy} destructor (which calls \texttt{DisconnectFromTool}) is invoked at a
+predictable point during session teardown.
+
+\medskip
+\reqfield{Testing:}
+See test document, section \textit{TC-009}.

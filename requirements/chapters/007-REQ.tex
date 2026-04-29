@@ -1,0 +1,23 @@
+% ===================================================================
+\section{REQ-007 -- \texttt{CalibrationScalarDataProxy}}
+% ===================================================================
+\label{sec:calibrationscalardataproxy}
+
+\reqfield{Title:} Proxy for an INCA calibration scalar data COM object \status{implemented}
+
+\medskip
+\reqfield{Intent:}
+The user needs to set a scalar calibration parameter to a specific numeric value during
+an experiment, and to restore it to its reference-page value when the experiment ends,
+through a simple C++ interface that hides the underlying COM dispatch calls.
+
+\medskip
+\reqfield{Acceptance criteria:}
+\reqdef{\textbf{AC-007-1}}{The constructor shall narrow the supplied \texttt{IDispatch} to \texttt{CalibrationScalarData\_Dispatch} via \texttt{query\_interface}.}
+\reqdef{\textbf{AC-007-2}}{\texttt{SetImplValue(value)} shall forward the \texttt{double} to the underlying COM \texttt{SetImplValue} method.}
+\reqdef{\textbf{AC-007-3}}{\texttt{ResetValueToRP()} shall call the underlying COM \texttt{ResetValueToRP} method.}
+\reqdef{\textbf{AC-007-4}}{The class shall be move-only (move constructor and move assignment defaulted; copy deleted implicitly via base).}
+
+\medskip
+\reqfield{Testing:}
+See test document, section \textit{TC-007}.
