@@ -6,21 +6,14 @@
 \definecolor{lightgray}{RGB}{245,245,245}
 \definecolor{rulegray}{RGB}{180,180,180}
 
-% -----------------------------------------------------------------------
-% Header / footer
-% -----------------------------------------------------------------------
-\pagestyle{fancy}
-\fancyhf{}
-\fancyhead[L]{\textbf{pacemaker} -- Software Requirements Specification}
-\fancyhead[R]{\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
+\definecolor{testred}{RGB}{160,30,30}
+\definecolor{steelblue}{RGB}{30,80,160}
+\definecolor{givencolor}{RGB}{0,100,60}
+\definecolor{whencolor}{RGB}{0,60,140}
+\definecolor{thencolor}{RGB}{130,30,0}
+\definecolor{passcol}{RGB}{34,139,34}
+\definecolor{failcol}{RGB}{180,30,30}
 
-% -----------------------------------------------------------------------
-% Section formatting
-% -----------------------------------------------------------------------
-\titleformat{\section}{\large\bfseries\color{reqblue}}{}{0em}{}[\titlerule]
-\titleformat{\subsection}{\normalsize\bfseries}{}{0em}{}
-\titleformat{\subsubsection}{\normalsize\itshape}{}{0em}{}
 
 % -----------------------------------------------------------------------
 % Requirement environment
@@ -41,5 +34,39 @@
 
 \newcommand{\reqfield}[1]{\textbf{#1}\par\vspace{2pt}}
 \newcommand{\status}[1]{\hfill{\small\color{statusgreen}\texttt{[#1]}}}
-
 \newcommand{\reqdef}[2]{\begin{reqbox}\reqfield{#1} #2 \end{reqbox}}
+
+% -----------------------------------------------------------------------
+% GWT shorthand
+% -----------------------------------------------------------------------
+\newcommand{\given}[1]{\par\textbf{\color{givencolor}Given} #1}
+\newcommand{\when}[1]{\par\textbf{\color{whencolor}When} #1}
+\newcommand{\then}[1]{\par\textbf{\color{thencolor}Then} #1}
+\newcommand{\andstep}[1]{\par\textbf{\color{steelblue}And} #1}
+
+
+% -----------------------------------------------------------------------
+% Test-case environment
+% -----------------------------------------------------------------------
+\newmdenv[
+  backgroundcolor=lightgray,
+  linecolor=testred,
+  linewidth=1.5pt,
+  leftline=true,
+  rightline=false,
+  topline=false,
+  bottomline=false,
+  innerleftmargin=10pt,
+  innerrightmargin=10pt,
+  innertopmargin=6pt,
+  innerbottommargin=6pt,
+]{tcbox}
+
+\newcommand{\tcfield}[1]{\textbf{#1}\par\vspace{2pt}}
+\newcommand{\reqref}[1]{\hfill{\small\texttt{[#1]}}}
+
+
+% -----------------------------------------------------------------------
+% Column types for step tables
+% -----------------------------------------------------------------------
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}

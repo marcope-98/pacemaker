@@ -3,19 +3,35 @@
 \input{lib/includes.tex}
 \input{lib/commands.tex}
 
+% -----------------------------------------------------------------------
+% Header / footer
+% -----------------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textbf{pacemaker} -- Software Requirements Specification}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% -----------------------------------------------------------------------
+% Section formatting
+% -----------------------------------------------------------------------
+\titleformat{\section}{\large\bfseries\color{reqblue}}{}{0em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries}{}{0em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{}{0em}{}
+
 \begin{document}
 
-  \include{chapters/000-TitlePage}
-  \include{chapters/000-Introduction}
+  \include{chapters/REQ/000-TitlePage}
+  \include{chapters/REQ/000-Introduction}
   
-  \include{chapters/001-REQ}
-  \include{chapters/002-REQ}
-  \include{chapters/003-REQ}
-  \include{chapters/004-REQ}
-  \include{chapters/005-REQ}
-  \include{chapters/006-REQ}
-  \include{chapters/007-REQ}
-  \include{chapters/008-REQ}
-  \include{chapters/009-REQ}
+  \include{chapters/REQ/001-REQ}
+  \include{chapters/REQ/002-REQ}
+  \include{chapters/REQ/003-REQ}
+  \include{chapters/REQ/004-REQ}
+  \include{chapters/REQ/005-REQ}
+  \include{chapters/REQ/006-REQ}
+  \include{chapters/REQ/007-REQ}
+  \include{chapters/REQ/008-REQ}
+  \include{chapters/REQ/009-REQ}
 
 \end{document}
