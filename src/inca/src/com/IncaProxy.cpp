@@ -11,7 +11,7 @@ inca::com::IncaProxy::IncaProxy(inca::detail::unique_com_ptr<::IDispatch> idispa
 
 inca::com::IncaProxy::~IncaProxy()
 {
-  this->p_subject->DisconnectFromTool();
+  if (this->p_subject) this->p_subject->DisconnectFromTool();
 }
 
 auto inca::com::IncaProxy::GetOpenedExperiment() -> inca::detail::unique_com_ptr<::IDispatch>
