@@ -1,0 +1,32 @@
+% ===================================================================
+\section{TC-005 -- \texttt{IncaExperimentViewProxy}}
+% ===================================================================
+\label{sec:tc005}
+
+Requirement reference: REQ-005.
+
+% -------------------------------------------------------------------
+\subsection{TC-005-A: OpenViewForExperimentDataItem forwards raw pointer}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-005-2
+
+\medskip
+\given{a mock \texttt{IncaExperimentView\_Dispatch} that records the \texttt{IDispatch*} argument passed to \texttt{OpenViewForExperimentDataItem}; and a separate mock data-item \texttt{IDispatch}.}
+\when{\texttt{proxy.OpenViewForExperimentDataItem(std::move(dataitem))} is called.}
+\then{the mock records the exact same raw pointer that the \texttt{unique\_com\_ptr} was holding.}
+
+\bigskip
+\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
+\midrule
+1 & Create mock data-item; note its raw address \texttt{addr}. & \texttt{addr} captured. \\
+2 & Wrap in \texttt{unique\_com\_ptr<IDispatch> dataitem}. & Wrapper alive. \\
+3 & Call \texttt{proxy.OpenViewForExperimentDataItem(std::move(dataitem))}. & View mock records the call. \\
+4 & Assert the pointer captured by the view mock equals \texttt{addr}. & Passes. \\
+\bottomrule
+\end{tabular}
+\end{tcbox}

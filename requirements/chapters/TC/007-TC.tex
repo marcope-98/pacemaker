@@ -1,0 +1,55 @@
+% ===================================================================
+\section{TC-007 -- \texttt{CalibrationScalarDataProxy}}
+% ===================================================================
+\label{sec:tc007}
+
+Requirement reference: REQ-007.
+
+% -------------------------------------------------------------------
+\subsection{TC-007-A: SetImplValue forwards the double argument}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-007-2
+
+\medskip
+\given{a mock \texttt{CalibrationScalarData\_Dispatch} that records the value passed to \texttt{SetImplValue}.}
+\when{\texttt{proxy.SetImplValue(3.14)} is called.}
+\then{the mock records the value \texttt{3.14} and was called exactly once.}
+
+\bigskip
+\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
+\midrule
+1 & Construct proxy with mock; call counter = 0. & Ready. \\
+2 & Call \texttt{proxy.SetImplValue(3.14)}. & Mock call counter = 1; recorded value = 3.14. \\
+3 & Assert recorded value == 3.14 (within floating-point equality). & Passes. \\
+\bottomrule
+\end{tabular}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-007-B: ResetValueToRP delegates to COM}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-007-3
+
+\medskip
+\given{a mock recording calls to \texttt{ResetValueToRP}.}
+\when{\texttt{proxy.ResetValueToRP()} is called.}
+\then{the mock records exactly one call.}
+
+\bigskip
+\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
+\midrule
+1 & Construct proxy; reset counter = 0. & Ready. \\
+2 & Call \texttt{proxy.ResetValueToRP()}. & Reset counter = 1. \\
+\bottomrule
+\end{tabular}
+\end{tcbox}

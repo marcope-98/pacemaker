@@ -1,0 +1,37 @@
+\documentclass[11pt,a4paper]{article}
+
+\input{lib/includes.tex}
+\input{lib/commands.tex}
+
+% -----------------------------------------------------------------------
+% Header / footer
+% -----------------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textbf{pacemaker} -- Test Specification}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% -----------------------------------------------------------------------
+% Section formatting
+% -----------------------------------------------------------------------
+\titleformat{\section}{\large\bfseries\color{testred}}{}{0em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries\color{steelblue}}{}{0em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{}{0em}{}
+
+\begin{document}
+
+  \include{chapters/TC/000-TitlePage}
+  \include{chapters/TC/000-Introduction}
+
+  \include{chapters/TC/001-TC}
+  \include{chapters/TC/002-TC}
+  \include{chapters/TC/003-TC}
+  \include{chapters/TC/004-TC}
+  \include{chapters/TC/005-TC}
+  \include{chapters/TC/006-TC}
+  \include{chapters/TC/007-TC}
+  \include{chapters/TC/008-TC}
+  \include{chapters/TC/009-TC}
+
+\end{document}

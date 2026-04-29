@@ -1,0 +1,56 @@
+% ===================================================================
+\section{TC-002 -- \texttt{COMProxy<T>}}
+% ===================================================================
+\label{sec:tc002}
+
+Requirement reference: REQ-002.
+
+% -------------------------------------------------------------------
+\subsection{TC-002-A: Copy is deleted, move is available}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]} (compile-time check)\\
+\tcfield{Requirement:} AC-002-1, AC-002-2
+
+\medskip
+\given{a concrete class \texttt{ConcreteProxy} that derives from \texttt{COMProxy<MockCOM>} and exposes the base constructor.}
+\when{copy and move constructibility are queried at compile time.}
+\then{\texttt{std::is\_copy\_constructible\_v<ConcreteProxy>} is \texttt{false} and \texttt{std::is\_move\_constructible\_v<ConcreteProxy>} is \texttt{true}.}
+
+\bigskip
+\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
+\midrule
+1 & Define \texttt{ConcreteProxy} deriving from \texttt{COMProxy<MockCOM>} in test code. & Compiles without error. \\
+2 & Assert \texttt{!std::is\_copy\_constructible\_v<ConcreteProxy>}. & Static assertion holds. \\
+3 & Assert \texttt{std::is\_move\_constructible\_v<ConcreteProxy>}. & Static assertion holds. \\
+\bottomrule
+\end{tabular}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-002-B: Constructor takes ownership via move}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-002-3, AC-002-4
+
+\medskip
+\given{a mock COM object wrapped in a \texttt{unique\_com\_ptr}.}
+\when{the pointer is passed to a \texttt{COMProxy}-derived constructor.}
+\then{the proxy's protected \texttt{p\_subject} holds the pointer and \texttt{Release()} has not yet been called.}
+
+\bigskip
+\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
+\midrule
+1 & Create mock with counter = 0; wrap in \texttt{unique\_com\_ptr}. & Counter = 0. \\
+2 & Construct \texttt{ConcreteProxy} from the pointer (moves it in). & Proxy alive; counter = 0. \\
+3 & Destroy proxy. & Counter = 1 (exactly one \texttt{Release()}). \\
+\bottomrule
+\end{tabular}
+\end{tcbox}

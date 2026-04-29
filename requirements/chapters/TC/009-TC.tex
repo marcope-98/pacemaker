@@ -1,0 +1,111 @@
+% ===================================================================
+\section{TC-009 -- \texttt{Session}}
+% ===================================================================
+\label{sec:tc009}
+
+Requirement reference: REQ-009.
+
+\textit{Tests TC-009-A through TC-009-C require a Windows host with INCA installed
+(\texttt{[integration]}). TC-009-D is a compile-time check (\texttt{[unit]}).}
+
+% -------------------------------------------------------------------
+\subsection{TC-009-A: Session::connect() succeeds with INCA running}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[integration]}\\
+\tcfield{Requirement:} AC-009-1, AC-009-3, AC-009-5, AC-009-6
+
+\medskip
+\given{INCA is installed, running, has an experiment open with at least one device online, and COM has been initialised via \texttt{CoInitializeEx}.}
+\when{\texttt{Session::connect()} is called.}
+\then{a valid \texttt{Session} is returned, and \texttt{session.experiment()} returns a reference to the owned \texttt{Experiment}.}
+
+\bigskip
+\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
+\midrule
+1 & Initialise COM (\texttt{CoInitializeEx}). & \texttt{S\_OK} or \texttt{S\_FALSE}. \\
+2 & Call \texttt{Session::connect()}. & No exception; \texttt{Session} object returned. \\
+3 & Call \texttt{session.experiment()}. & Returns reference without crash. \\
+4 & Destroy \texttt{Session}. & \texttt{DisconnectFromTool()} called on INCA; no crash. \\
+\bottomrule
+\end{tabular}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-009-B: connect() throws when INCA is not installed}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[integration]}\\
+\tcfield{Requirement:} AC-009-2
+
+\medskip
+\given{INCA is \emph{not} installed on the test host (or the CLSID is unregistered).}
+\when{\texttt{Session::connect()} is called.}
+\then{\texttt{std::runtime\_error} is thrown with a message containing the word \texttt{"INCA"}.}
+
+\bigskip
+\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
+\midrule
+1 & Ensure INCA \texttt{CLSID} is not registered (or run on a machine without INCA). & Environment verified. \\
+2 & Call \texttt{Session::connect()} inside try/catch. & \texttt{std::runtime\_error} caught. \\
+3 & Assert message contains \texttt{"INCA"}. & Passes. \\
+\bottomrule
+\end{tabular}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-009-C: connect() throws when no device is online}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[integration]}\\
+\tcfield{Requirement:} AC-009-4
+
+\medskip
+\given{INCA is running, an experiment is open, but \emph{no} device is configured or online.}
+\when{\texttt{Session::connect()} is called.}
+\then{\texttt{std::runtime\_error} is thrown with a message indicating no device is available.}
+
+\bigskip
+\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
+\midrule
+1 & Configure INCA experiment with no online device. & Environment ready. \\
+2 & Call \texttt{Session::connect()}. & \texttt{std::runtime\_error} thrown. \\
+3 & Assert message mentions device not available. & Passes. \\
+\bottomrule
+\end{tabular}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-009-D: Session is non-copyable and non-movable}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]} (compile-time check)\\
+\tcfield{Requirement:} AC-009-7
+
+\medskip
+\given{the \texttt{Session} type definition.}
+\when{copy and move traits are evaluated at compile time.}
+\then{all four of copy-constructible, copy-assignable, move-constructible, and move-assignable are \texttt{false}.}
+
+\bigskip
+\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
+\midrule
+1 & Assert \texttt{!std::is\_copy\_constructible\_v<inca::Session>}. & Holds. \\
+2 & Assert \texttt{!std::is\_copy\_assignable\_v<inca::Session>}. & Holds. \\
+3 & Assert \texttt{!std::is\_move\_constructible\_v<inca::Session>}. & Holds. \\
+4 & Assert \texttt{!std::is\_move\_assignable\_v<inca::Session>}. & Holds. \\
+\bottomrule
+\end{tabular}
+\end{tcbox}

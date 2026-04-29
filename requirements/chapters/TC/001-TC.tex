@@ -1,0 +1,105 @@
+% ===================================================================
+\section{TC-001 -- \texttt{unique\_com\_ptr}}
+% ===================================================================
+\label{sec:tc001}
+
+Requirement reference: REQ-001.
+
+% -------------------------------------------------------------------
+\subsection{TC-001-A: Release is called on destruction}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-001-1
+
+\medskip
+\given{a mock COM object whose \texttt{Release()} method increments a call counter.}
+\when{a \texttt{unique\_com\_ptr} owning that object goes out of scope.}
+\then{\texttt{Release()} has been called exactly once and the counter equals 1.}
+
+\bigskip
+\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
+\midrule
+1 & Create a mock COM object with a release counter initialised to 0. & Object is alive; counter = 0. \\
+2 & Wrap it in \texttt{unique\_com\_ptr<MockCOM>}. & Wrapper holds the pointer; counter still 0. \\
+3 & Let the wrapper go out of scope (end of block). & Destructor fires; \texttt{Release()} is called. \\
+4 & Assert counter == 1. & Test passes. \\
+\bottomrule
+\end{tabular}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-001-B: No Release on null pointer}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-001-2
+
+\medskip
+\given{a default-constructed (null) \texttt{unique\_com\_ptr<MockCOM>}.}
+\when{the wrapper is destroyed.}
+\then{no crash occurs and the deleter does not dereference the null pointer.}
+
+\bigskip
+\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
+\midrule
+1 & Default-construct \texttt{unique\_com\_ptr<MockCOM> p\{nullptr\}}. & \texttt{p.get() == nullptr}. \\
+2 & Destroy \texttt{p}. & No crash, no undefined behaviour. \\
+\bottomrule
+\end{tabular}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-001-C: Move transfers ownership without extra Release}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-001-3
+
+\medskip
+\given{a \texttt{unique\_com\_ptr} owning a mock COM object (release counter = 0).}
+\when{the pointer is moved into a second \texttt{unique\_com\_ptr} and both go out of scope.}
+\then{\texttt{Release()} is called exactly once and the moved-from wrapper is null.}
+
+\bigskip
+\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
+\midrule
+1 & Wrap mock in \texttt{unique\_com\_ptr a}. & \texttt{a.get() != nullptr}; counter = 0. \\
+2 & Move-construct \texttt{unique\_com\_ptr b\{std::move(a)\}}. & \texttt{a.get() == nullptr}; \texttt{b.get() != nullptr}; counter = 0. \\
+3 & Destroy \texttt{b}. & \texttt{Release()} called once; counter = 1. \\
+4 & Destroy \texttt{a} (now null). & No additional \texttt{Release()}. \\
+\bottomrule
+\end{tabular}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-001-D: Copy construction is deleted}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]} (compile-time check)\\
+\tcfield{Requirement:} AC-001-4
+
+\medskip
+\given{a \texttt{unique\_com\_ptr<T>} type.}
+\when{a copy-construction expression is compiled.}
+\then{the compilation fails with a deleted-function error.}
+
+\bigskip
+\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
+\midrule
+1 & Write \texttt{static\_assert(!std::is\_copy\_constructible\_v<unique\_com\_ptr<MockCOM>>)}. & Assertion holds; test file compiles successfully. \\
+\bottomrule
+\end{tabular}
+\end{tcbox}

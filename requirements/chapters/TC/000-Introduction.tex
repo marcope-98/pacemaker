@@ -1,0 +1,19 @@
+% ===================================================================
+\section{Introduction}
+% ===================================================================
+
+This document contains test cases for the \textbf{pacemaker} library. Each section maps
+one-to-one to a requirement section in the Requirements Specification document. Test
+cases are expressed in Given-When-Then (GWT) notation and supplemented with explicit
+step tables for automation engineers.
+
+\medskip
+\noindent\textbf{Test strategy:}
+\begin{itemize}
+  \item Because the library wraps a Windows-only COM server (INCA), all integration tests
+        require a Windows host with INCA installed.
+  \item Unit tests for classes that do not make live COM calls (e.g.\ \texttt{unique\_com\_ptr},
+        \texttt{COMProxy}) shall use mock COM objects implemented as in-process test doubles.
+  \item Tests that cannot run without INCA shall be tagged \texttt{[integration]}.
+  \item Tests runnable with mocks shall be tagged \texttt{[unit]}.
+\end{itemize}

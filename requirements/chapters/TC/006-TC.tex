@@ -1,0 +1,55 @@
+% ===================================================================
+\section{TC-006 -- \texttt{ExperimentDeviceProxy}}
+% ===================================================================
+\label{sec:tc006}
+
+Requirement reference: REQ-006.
+
+% -------------------------------------------------------------------
+\subsection{TC-006-A: GetName returns correct wide string}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-006-2
+
+\medskip
+\given{a mock \texttt{ExperimentDevice\_Dispatch} whose \texttt{GetName()} returns a \texttt{\_bstr\_t} with value \texttt{L"ECU1"}.}
+\when{\texttt{proxy.GetName()} is called.}
+\then{the returned \texttt{std::wstring} equals \texttt{L"ECU1"}.}
+
+\bigskip
+\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
+\midrule
+1 & Configure mock \texttt{GetName()} to return \texttt{\_bstr\_t(L"ECU1")}. & Mock ready. \\
+2 & Call \texttt{proxy.GetName()}. & Returns \texttt{std::wstring}. \\
+3 & Assert result \texttt{== L"ECU1"}. & Passes. \\
+\bottomrule
+\end{tabular}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-006-B: get() returns non-owning raw pointer}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-006-3
+
+\medskip
+\given{a fully constructed \texttt{ExperimentDeviceProxy}.}
+\when{\texttt{proxy.get()} is called.}
+\then{the returned pointer equals the internal \texttt{p\_subject.get()} and the release counter is unaffected.}
+
+\bigskip
+\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
+\midrule
+1 & Construct proxy from a mock; capture mock address \texttt{addr}. & Proxy alive; counter = 0. \\
+2 & Call \texttt{proxy.get()}. & Returns a pointer equal to \texttt{addr}; counter = 0. \\
+\bottomrule
+\end{tabular}
+\end{tcbox}
