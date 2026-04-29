@@ -22,6 +22,7 @@ auto inca::Experiment::stop_recording(const std::string &filename) -> void
   std::this_thread::sleep_for(this->k_flush_delay);
   this->m_exp.StopRecordingAndSave();
   this->m_exp.StopMeasurement();
+  this->reset();
 }
 
 auto inca::Experiment::add_param(const std::string &name) -> void
