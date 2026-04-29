@@ -13,4 +13,4 @@ target_compile_options(
   $<$<CXX_COMPILER_ID:MSVC>: /W2 /O2>
 )
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
-target_link_libraries(${PROJECT_NAME} PUBLIC inca::inca)
+target_link_libraries(${PROJECT_NAME} PUBLIC pacemaker::inca)

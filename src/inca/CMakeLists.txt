@@ -38,4 +38,4 @@ target_compile_options(
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
-add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+add_library(pacemaker::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
