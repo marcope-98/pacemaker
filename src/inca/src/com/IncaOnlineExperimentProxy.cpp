@@ -40,9 +40,13 @@ auto inca::com::IncaOnlineExperimentProxy::GetAllDevices() -> std::vector<inca::
     if (device.vt != VT_DISPATCH)
       throw std::runtime_error("GetAllDevices: device element is not VT_DISPATCH");
 
+#if 1
+    auto idispatch = (IDispatch *)(device);
+#else
     ::IDispatch *idispatch = V_DISPATCH(&device);
     idispatch->AddRef();
-    out.emplace_back(idispatch);
+#endif
+    out.emplace_back(std::move(idispatch));
   }
   return out;
 }
@@ -58,8 +62,8 @@ auto inca::com::IncaOnlineExperimentProxy::StopRecordingAndSave() -> void
 }
 
 auto inca::com::IncaOnlineExperimentProxy::GetCalibrationValueInDevice(
-    const std::string &name,
-    ::IDispatch *const device) -> inca::detail::unique_com_ptr<::IDispatch>
+    const std::string                 &name,
+    ::ExperimentDevice_Dispatch *const device) -> inca::detail::unique_com_ptr<::IDispatch>
 {
   ::IDispatch *raw = this->p_subject->GetCalibrationValueInDevice(name.c_str(), device).Detach();
   if (raw == nullptr)
