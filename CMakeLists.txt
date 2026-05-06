@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 
-project(pacemaker VERSION 0.0.1 LANGUAGES C CXX)
+project(
+  pacemaker 
+  DESCRIPTION "COM automation for people with deadlines and a hatred of GUIs"
+  LANGUAGES CXX
+  VERSION 0.0.1
+)
 set(CMAKE_BUILD_TYPE Release)
 
 add_subdirectory(src/inca)
