@@ -17,7 +17,7 @@ documentation.
 Components
 ^^^^^^^^^^
 
-.. versionadded:: 3.2
+.. versionadded:: 3.3
 
 Components can be optionally specified using a standard CMake syntax:
 
@@ -65,6 +65,9 @@ Supported components are:
 
 ``HTLATEX``
   Finds htlatex compiler.
+
+``LATEXMK``
+  Finds latexmk compiler
 
 Result Variables
 ^^^^^^^^^^^^^^^^
@@ -136,6 +139,11 @@ The following cache variables may also be set:
   .. versionadded:: 3.2
 
   The path to the htlatex compiler.
+
+``LATEXMK_COMPILER``
+  .. versionadded:: 3.3
+
+  The path to the latexmk compiler
 
 Examples
 ^^^^^^^^
@@ -374,6 +382,17 @@ else()
   set(LATEX_HTLATEX_FOUND FALSE)
 endif()
 
+# find latexmk
+find_program(LATEXMK_COMPILER
+  NAMES latexmk
+  PATHS ${MIKTEX_BINARY_PATH}
+        /usr/bin
+)
+if (LATEXMK_COMPILER)
+  set(LATEX_LATEXMK_FOUND TRUE)
+else()
+  set(LATEX_LATEXMK_FOUND FALSE)
+endif()
 
 mark_as_advanced(
   LATEX_COMPILER
@@ -390,6 +409,7 @@ mark_as_advanced(
   PDFTOPS_CONVERTER
   LATEX2HTML_CONVERTER
   HTLATEX_COMPILER
+  LATEXMK_COMPILER
 )
 
 include(FindPackageHandleStandardArgs)
