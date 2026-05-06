@@ -39,9 +39,9 @@ if(${DOXYGEN_FOUND})
     # Main page
     ${CMAKE_CURRENT_SOURCE_DIR}/index.html.md
     # Source file documentation
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/inca/include/inca 
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/inca/include/inca/com 
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/inca/include/inca/detail
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src/inca/include/pacemaker/inca 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src/inca/include/pacemaker/inca/com 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src/inca/include/pacemaker/inca/detail
     ALL
   )
 endif()
