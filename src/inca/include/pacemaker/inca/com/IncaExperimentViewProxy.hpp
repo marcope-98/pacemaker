@@ -1,13 +1,13 @@
-#ifndef INCA_COM_INCAEXPERIMENTVIEWPROXY_HPP_
-#define INCA_COM_INCAEXPERIMENTVIEWPROXY_HPP_
+#ifndef PACEMAKER_INCA_COM_INCAEXPERIMENTVIEWPROXY_HPP_
+#define PACEMAKER_INCA_COM_INCAEXPERIMENTVIEWPROXY_HPP_
 
-#include "inca/detail/COMProxy.hpp"
-#include "inca/detail/unique_com_ptr.hpp"
+#include "pacemaker/inca/detail/COMProxy.hpp"
+#include "pacemaker/inca/detail/unique_com_ptr.hpp"
 
 struct IncaExperimentView_Dispatch;
 struct IDispatch;
 
-namespace inca::com
+namespace pacemaker::inca::com
 {
   /**
    * @brief Proxy for the INCA experiment-view COM object.
@@ -22,10 +22,10 @@ namespace inca::com
    *
    * The class is move-only.
    *
-   * @see inca::com::IncaOnlineExperimentProxy::GetCalibrationValueInDevice()
-   * @see inca::detail::COMProxy
+   * @see pacemaker::inca::com::IncaOnlineExperimentProxy::GetCalibrationValueInDevice()
+   * @see pacemaker::inca::detail::COMProxy
    */
-  class IncaExperimentViewProxy : private inca::detail::COMProxy<::IncaExperimentView_Dispatch>
+  class IncaExperimentViewProxy : private pacemaker::inca::detail::COMProxy<::IncaExperimentView_Dispatch>
   {
   public:
     /**
@@ -38,7 +38,7 @@ namespace inca::com
      * @throws std::invalid_argument if @p idispatch is null.
      * @throws std::runtime_error    if `QueryInterface` fails to obtain `IncaExperimentView_Dispatch`
      */
-    explicit IncaExperimentViewProxy(inca::detail::unique_com_ptr<::IDispatch> idispatch);
+    explicit IncaExperimentViewProxy(pacemaker::inca::detail::unique_com_ptr<::IDispatch> idispatch);
     /// @brief Move constructor transfers ownership of the COM object.
     IncaExperimentViewProxy(IncaExperimentViewProxy &&) = default;
     /// @brief Move assignment transfers ownership of the COM object.
@@ -61,8 +61,8 @@ namespace inca::com
      *                 whose view should be opened. Obtain this from
      *                 IncaOnlineExperimentProxy::GetCalibrationValueInDevice()
      */
-    auto OpenViewForExperimentDataItem(inca::detail::unique_com_ptr<::IDispatch> dataitem) -> void;
+    auto OpenViewForExperimentDataItem(pacemaker::inca::detail::unique_com_ptr<::IDispatch> dataitem) -> void;
   };
-} // namespace inca::com
+} // namespace pacemaker::inca::com
 
-#endif // INCA_COM_INCAEXPERIMENTVIEWPROXY_HPP_
+#endif // PACEMAKER_INCA_COM_INCAEXPERIMENTVIEWPROXY_HPP_

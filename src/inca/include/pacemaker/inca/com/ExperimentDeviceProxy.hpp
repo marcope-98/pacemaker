@@ -1,15 +1,15 @@
-#ifndef INCA_COM_EXPERIMENTDEVICEPROXY_HPP_
-#define INCA_COM_EXPERIMENTDEVICEPROXY_HPP_
+#ifndef PACEMAKER_INCA_COM_EXPERIMENTDEVICEPROXY_HPP_
+#define PACEMAKER_INCA_COM_EXPERIMENTDEVICEPROXY_HPP_
 
 #include <string>
 
-#include "inca/detail/COMProxy.hpp"
-#include "inca/detail/unique_com_ptr.hpp"
+#include "pacemaker/inca/detail/COMProxy.hpp"
+#include "pacemaker/inca/detail/unique_com_ptr.hpp"
 
 struct IDispatch;
 struct ExperimentDevice_Dispatch;
 
-namespace inca::com
+namespace pacemaker::inca::com
 {
   /**
    * @brief Proxy for an INCA experiment device COM object.
@@ -26,11 +26,11 @@ namespace inca::com
    *
    * The class is move-only.
    *
-   * @see inca::com::IncaOnlineExperimentProxy::GetAllDevices()
-   * @see inca::com::IncaOnlineExperimentProxy::GetCalibrationValueInDevice()
-   * @see inca::detail::COMProxy
+   * @see pacemaker::inca::com::IncaOnlineExperimentProxy::GetAllDevices()
+   * @see pacemaker::inca::com::IncaOnlineExperimentProxy::GetCalibrationValueInDevice()
+   * @see pacemaker::inca::detail::COMProxy
    */
-  class ExperimentDeviceProxy : private inca::detail::COMProxy<::ExperimentDevice_Dispatch>
+  class ExperimentDeviceProxy : private pacemaker::inca::detail::COMProxy<::ExperimentDevice_Dispatch>
   {
   public:
     /**
@@ -42,7 +42,7 @@ namespace inca::com
      * @throws std::invalid_argument if @p idispatch is null
      * @throws std::runtime_error    if `QueryInterface` fails to obtain `ExperimentDevice_Dispatch`.
      */
-    explicit ExperimentDeviceProxy(inca::detail::unique_com_ptr<::IDispatch> idispatch);
+    explicit ExperimentDeviceProxy(pacemaker::inca::detail::unique_com_ptr<::IDispatch> idispatch);
     /// @brief Move contructor transfers ownership of the COM object.
     ExperimentDeviceProxy(ExperimentDeviceProxy &&) = default;
     /// @brief Move assignment transfers ownership of the COM object.
@@ -74,6 +74,6 @@ namespace inca::com
      */
     [[nodiscard]] auto GetName() -> std::wstring;
   };
-} // namespace inca::com
+} // namespace pacemaker::inca::com
 
-#endif // INCA_COM_EXPERIMENTDEVICEPROXY_HPP_
+#endif // PACEMAKER_INCA_COM_EXPERIMENTDEVICEPROXY_HPP_

@@ -1,17 +1,17 @@
-#ifndef INCA_DETAIL_UTILS_HPP_
-#define INCA_DETAIL_UTILS_HPP_
+#ifndef PACEMAKER_INCA_DETAIL_UTILS_HPP_
+#define PACEMAKER_INCA_DETAIL_UTILS_HPP_
 
 #include <stdexcept>
 #include <typeinfo>
 
 #include <comdef.h>
 
-#include "inca/detail/unique_com_ptr.hpp"
+#include "pacemaker/inca/detail/unique_com_ptr.hpp"
 
-namespace inca::detail
+namespace pacemaker::inca::detail
 {
   template<class T>
-  [[nodiscard]] auto query_interface(inca::detail::unique_com_ptr<::IDispatch> src) -> inca::detail::unique_com_ptr<T>
+  [[nodiscard]] auto query_interface(pacemaker::inca::detail::unique_com_ptr<::IDispatch> src) -> pacemaker::inca::detail::unique_com_ptr<T>
   {
     if (src == nullptr)
       throw std::invalid_argument("Attempt on calling QueryInterface on nullptr");
@@ -23,8 +23,8 @@ namespace inca::detail
       throw std::runtime_error(
           std::string("QueryInterface failed for ") + typeid(T).name());
 
-    return inca::detail::unique_com_ptr<T>(out);
+    return pacemaker::inca::detail::unique_com_ptr<T>(out);
   }
 } // namespace inca
 
-#endif // INCA_DETAIL_UTILS_HPP_
+#endif // PACEMAKER_INCA_DETAIL_UTILS_HPP_

@@ -1,9 +1,6 @@
-cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
-
-project(inca VERSION 0.0.1 LANGUAGES C CXX)
 
 add_library(
-  ${PROJECT_NAME}
+  pacemaker_inca
   STATIC 
   src/com/IncaProxy.cpp
   src/com/IncaOnlineExperimentProxy.cpp
@@ -15,13 +12,13 @@ add_library(
 )
 
 target_precompile_headers(
-  ${PROJECT_NAME}
+  pacemaker_inca
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/detail/incacom.hpp
 )
 
 target_include_directories(
-  ${PROJECT_NAME}
+  pacemaker_inca
   PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
@@ -30,12 +27,12 @@ target_include_directories(
 )
 
 target_compile_options(
-  ${PROJECT_NAME}
+  pacemaker_inca
   PRIVATE
   $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>: -Wall -O2>
   $<$<CXX_COMPILER_ID:MSVC>: /W2 /O2 /DINCACOM_TLB="${INCACOM_TLB}">
 )
 
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+target_compile_features(pacemaker_inca PUBLIC cxx_std_17)
 
-add_library(pacemaker::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+add_library(pacemaker::inca ALIAS pacemaker_inca)

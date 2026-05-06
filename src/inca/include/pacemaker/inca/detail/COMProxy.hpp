@@ -1,9 +1,9 @@
-#ifndef INCA_DETAIL_COMPROXY_HPP_
-#define INCA_DETAIL_COMPROXY_HPP_
+#ifndef PACEMAKER_INCA_DETAIL_COMPROXY_HPP_
+#define PACEMAKER_INCA_DETAIL_COMPROXY_HPP_
 
-#include "inca/detail/unique_com_ptr.hpp"
+#include "pacemaker/inca/detail/unique_com_ptr.hpp"
 
-namespace inca::detail
+namespace pacemaker::inca::detail
 {
   /**
    * @brief Non-copyable CRTP base class for COM dispatch proxy objects.
@@ -18,17 +18,17 @@ namespace inca::detail
    *
    * ### Typical usage
    * @code
-   * class MyProxy : private inca::detail::COMProxy<MyDispatch_Dispatch>
+   * class MyProxy : private pacemaker::inca::detail::COMProxy<MyDispatch_Dispatch>
    * {
    * public:
-   *   explicit MyProxy(inca::detail::unique_com_ptr<IDispatch> idispatch);
+   *   explicit MyProxy(pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch);
    *   void DoSomething() { this->p_subject->DoSomething(); }
    * };
    * @endcode
    *
    * @tparam T the concrete COM dispatch type managed by this proxy.
    *
-   * @see inca::detail::unique_com_ptr
+   * @see pacemaker::inca::detail::unique_com_ptr
    */
   template<class T>
   class COMProxy
@@ -41,7 +41,7 @@ namespace inca::detail
      *                internal `p_subject` member; the callers' pointer is
      *                left null after construction.
      */
-    explicit COMProxy(inca::detail::unique_com_ptr<T> subject) noexcept
+    explicit COMProxy(pacemaker::inca::detail::unique_com_ptr<T> subject) noexcept
         : p_subject{std::move(subject)}
     {
     }
@@ -57,8 +57,8 @@ namespace inca::detail
      * interface. Its lifetime is tied to the proxy: the COM object is
      * released when `p_subject` is destroyed.
      */
-    inca::detail::unique_com_ptr<T> p_subject{nullptr};
+    pacemaker::inca::detail::unique_com_ptr<T> p_subject{nullptr};
   };
-} // namespace inca::detail
+} // namespace pacemaker::inca::detail
 
-#endif // INCA_DETAIL_COMPROXY_HPP_
+#endif // PACEMAKER_INCA_DETAIL_COMPROXY_HPP_

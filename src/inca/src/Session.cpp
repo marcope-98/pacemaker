@@ -1,4 +1,4 @@
-#include "inca/Session.hpp"
+#include "pacemaker/inca/Session.hpp"
 
 #include <stdexcept>
 
@@ -8,17 +8,17 @@
 #include <objbase.h>
 // clang-format on
 
-#include "inca/com/ExperimentDeviceProxy.hpp"
-#include "inca/com/IncaExperimentViewProxy.hpp"
-#include "inca/com/IncaOnlineExperimentProxy.hpp"
-#include "inca/com/IncaProxy.hpp"
-#include "inca/detail/unique_com_ptr.hpp"
+#include "pacemaker/inca/com/ExperimentDeviceProxy.hpp"
+#include "pacemaker/inca/com/IncaExperimentViewProxy.hpp"
+#include "pacemaker/inca/com/IncaOnlineExperimentProxy.hpp"
+#include "pacemaker/inca/com/IncaProxy.hpp"
+#include "pacemaker/inca/detail/unique_com_ptr.hpp"
 
 #include "detail/incacom.hpp"
 
 namespace
 {
-  [[nodiscard]] auto create_inca_idispatch() -> inca::detail::unique_com_ptr<::IDispatch>
+  [[nodiscard]] auto create_inca_idispatch() -> pacemaker::inca::detail::unique_com_ptr<::IDispatch>
   {
     ::IDispatch *raw{nullptr};
     HRESULT      hr = CoCreateInstance(CLSID_Inca,
@@ -29,24 +29,24 @@ namespace
     if (FAILED(hr))
       throw std::runtime_error("CoCreateInstance failed: Verify that INCA is installed.");
 
-    return inca::detail::unique_com_ptr<::IDispatch>{raw};
+    return pacemaker::inca::detail::unique_com_ptr<::IDispatch>{raw};
   }
 } // namespace
 
-auto inca::Session::connect() -> Session
+auto pacemaker::inca::Session::connect() -> Session
 {
-  inca::com::IncaProxy                 inca{create_inca_idispatch()};
-  inca::com::IncaOnlineExperimentProxy exp{inca.GetOpenedExperiment()};
-  inca::com::IncaExperimentViewProxy   expview{inca.GetOpenedExperimentView()};
+  pacemaker::inca::com::IncaProxy                 inca{create_inca_idispatch()};
+  pacemaker::inca::com::IncaOnlineExperimentProxy exp{inca.GetOpenedExperiment()};
+  pacemaker::inca::com::IncaExperimentViewProxy   expview{inca.GetOpenedExperimentView()};
 
   auto devices = exp.GetAllDevices();
   if (devices.empty())
     throw std::runtime_error(
         "The open INCA experiment has no devices. "
         "Verify that a device is configured and online.");
-  inca::com::ExperimentDeviceProxy device{std::move(devices[0])};
+  pacemaker::inca::com::ExperimentDeviceProxy device{std::move(devices[0])};
 
-  inca::Experiment experiment{
+  pacemaker::inca::Experiment experiment{
       std::move(exp),
       std::move(expview),
       std::move(device)};
@@ -54,10 +54,10 @@ auto inca::Session::connect() -> Session
   return Session{std::move(inca), std::move(experiment)};
 }
 
-inca::Session::Session(inca::com::IncaProxy inca, inca::Experiment experiment)
+pacemaker::inca::Session::Session(pacemaker::inca::com::IncaProxy inca, pacemaker::inca::Experiment experiment)
     : m_inca{std::move(inca)},
       m_experiment{std::move(experiment)}
 {
 }
 
-inca::Session::~Session() {}
+pacemaker::inca::Session::~Session() {}

@@ -1,10 +1,10 @@
-#ifndef INCA_SESSION_HPP_
-#define INCA_SESSION_HPP_
+#ifndef PACEMAKER_INCA_SESSION_HPP_
+#define PACEMAKER_INCA_SESSION_HPP_
 
-#include "inca/Experiment.hpp"
-#include "inca/com/IncaProxy.hpp"
+#include "pacemaker/inca/Experiment.hpp"
+#include "pacemaker/inca/com/IncaProxy.hpp"
 
-namespace inca
+namespace pacemaker::inca
 {
   /**
    * @brief Top-level session object that owns the connection to a running INCA instance.
@@ -17,7 +17,7 @@ namespace inca
    * ### Typical usage
    * @code
    * CoInitialize(NULL);
-   * auto session = inca::Session::connect();
+   * auto session = pacemaker::inca::Session::connect();
    * auto &exp    = session.experiment();
    *
    * exp.add_param("Engine_TorqueRequest");
@@ -38,8 +38,8 @@ namespace inca
    *
    * @note Platform: Windows only. INCA must be installed and runnign.
    *
-   * @see inca::Experiment
-   * @see inca::com::IncaProxy
+   * @see pacemaker::inca::Experiment
+   * @see pacemaker::inca::com::IncaProxy
    */
   class Session
   {
@@ -97,11 +97,11 @@ namespace inca
      * @param inca       Initialised proxy for the top-level INCA COM object.
      * @param experiment Fully constructed experiment, ready for use
      */
-    Session(inca::com::IncaProxy inca, inca::Experiment experiment);
+    Session(pacemaker::inca::com::IncaProxy inca, pacemaker::inca::Experiment experiment);
 
-    inca::com::IncaProxy m_inca;
-    inca::Experiment     m_experiment;
+    pacemaker::inca::com::IncaProxy m_inca;
+    pacemaker::inca::Experiment     m_experiment;
   };
 } // namespace inca
 
-#endif // INCA_SESSION_HPP_
+#endif // PACEMAKER_INCA_SESSION_HPP_

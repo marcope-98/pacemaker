@@ -1,9 +1,9 @@
-#ifndef INCA_DETAIL_UNIQUE_COM_PTR_HPP_
-#define INCA_DETAIL_UNIQUE_COM_PTR_HPP_
+#ifndef PACEMAKER_INCA_DETAIL_UNIQUE_COM_PTR_HPP_
+#define PACEMAKER_INCA_DETAIL_UNIQUE_COM_PTR_HPP_
 
 #include <memory>
 
-namespace inca::detail
+namespace pacemaker::inca::detail
 {
   /**
    * @brief Custom deleter for COM objects.
@@ -43,7 +43,7 @@ namespace inca::detail
    *
    * ### Typical usage
    * @code
-   * inca::detail::unique_com_ptr<IDispatch> p{rawPtr};
+   * pacemaker::inca::detail::unique_com_ptr<IDispatch> p{rawPtr};
    * // rawPtr->Release() is called when p is destroyed.
    * @endcode
    *
@@ -54,6 +54,6 @@ namespace inca::detail
   template<class T>
   using unique_com_ptr = std::unique_ptr<T, ComObjDeleter<T>>;
 
-}; // namespace inca::detail
+}; // namespace pacemaker::inca::detail
 
-#endif // INCA_DETAIL_UNIQUE_COM_PTR_HPP_
+#endif // PACEMAKER_INCA_DETAIL_UNIQUE_COM_PTR_HPP_

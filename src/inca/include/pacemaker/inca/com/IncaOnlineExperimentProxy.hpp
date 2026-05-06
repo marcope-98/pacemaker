@@ -1,17 +1,17 @@
-#ifndef INCA_COM_INCAONLINEEXPERIMENTPROXY_HPP_
-#define INCA_COM_INCAONLINEEXPERIMENTPROXY_HPP_
+#ifndef PACEMAKER_INCA_COM_INCAONLINEEXPERIMENTPROXY_HPP_
+#define PACEMAKER_INCA_COM_INCAONLINEEXPERIMENTPROXY_HPP_
 
 #include <string>
 #include <vector>
 
-#include "inca/detail/COMProxy.hpp"
-#include "inca/detail/unique_com_ptr.hpp"
+#include "pacemaker/inca/detail/COMProxy.hpp"
+#include "pacemaker/inca/detail/unique_com_ptr.hpp"
 
 struct IncaOnlineExperiment_Dispatch;
 struct IDispatch;
 struct ExperimentDevice_Dispatch;
 
-namespace inca::com
+namespace pacemaker::inca::com
 {
   /**
    * @brief Proxy for the INCA online experiment COM object.
@@ -27,11 +27,11 @@ namespace inca::com
    * The class is move-only. All SAFEARRAY and BSTR marshalling is handled
    * internally so that callers work exclusively with standard C++ types.
    *
-   * @see inca::com::ExperimentDeviceProxy
-   * @see inca::com::CalibrationScalarDataProxy
-   * @see inca::detail::COMProxy
+   * @see pacemaker::inca::com::ExperimentDeviceProxy
+   * @see pacemaker::inca::com::CalibrationScalarDataProxy
+   * @see pacemaker::inca::detail::COMProxy
    */
-  class IncaOnlineExperimentProxy : private inca::detail::COMProxy<::IncaOnlineExperiment_Dispatch>
+  class IncaOnlineExperimentProxy : private pacemaker::inca::detail::COMProxy<::IncaOnlineExperiment_Dispatch>
   {
   public:
     /**
@@ -44,7 +44,7 @@ namespace inca::com
      * @throws std::invalid_argument if @p idispatch is null.
      * @throws std::runtime_error    if `QueryInterface` fails to obtain `IncaOnlineExperiment_Dispatch`.
      */
-    explicit IncaOnlineExperimentProxy(inca::detail::unique_com_ptr<::IDispatch> idispatch);
+    explicit IncaOnlineExperimentProxy(pacemaker::inca::detail::unique_com_ptr<::IDispatch> idispatch);
     /// @brief Move constructor transfers ownership of the COM object.
     IncaOnlineExperimentProxy(IncaOnlineExperimentProxy &&) = default;
     /// @brief Move assignment transfers ownership of the COM object.
@@ -67,7 +67,7 @@ namespace inca::com
      *         `VT_ARRAY | VT_VARIANT`, if `SafeArrayGetElement` fails, or
      *         if any element is not of type `VT_DISPATCH`.
      */
-    [[nodiscard]] auto GetAllDevices() -> std::vector<inca::detail::unique_com_ptr<::IDispatch>>;
+    [[nodiscard]] auto GetAllDevices() -> std::vector<pacemaker::inca::detail::unique_com_ptr<::IDispatch>>;
 
     /**
      * @brief Stops the active measurement session.
@@ -94,7 +94,7 @@ namespace inca::com
      * afterwards to fully stop the session.
      *
      * @note A short flush delay should be observed before calling this method to ensure all
-     *       buffered measurement samples have been written. `inca::Experiment::stop_recording()`
+     *       buffered measurement samples have been written. `pacemaker::inca::Experiment::stop_recording()`
      *       handles this automatically.
      */
     auto StopRecordingAndSave() -> void;
@@ -114,8 +114,8 @@ namespace inca::com
      * @throws std::runtime_error if the parameter is not found on the device
      *         (the underlying COM call returns a nullptr).
      */
-    auto GetCalibrationValueInDevice(const std::string &name, ::ExperimentDevice_Dispatch *const device) -> inca::detail::unique_com_ptr<::IDispatch>;
+    auto GetCalibrationValueInDevice(const std::string &name, ::ExperimentDevice_Dispatch *const device) -> pacemaker::inca::detail::unique_com_ptr<::IDispatch>;
   };
 
-} // namespace inca::com
-#endif // INCA_COM_INCAONLINEEXPERIMENTPROXY_HPP_
+} // namespace pacemaker::inca::com
+#endif // PACEMAKER_INCA_COM_INCAONLINEEXPERIMENTPROXY_HPP_

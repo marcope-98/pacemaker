@@ -1,13 +1,13 @@
-#ifndef INCA_COM_INCAPROXY_HPP_
-#define INCA_COM_INCAPROXY_HPP_
+#ifndef PACEMAKER_INCA_COM_INCAPROXY_HPP_
+#define PACEMAKER_INCA_COM_INCAPROXY_HPP_
 
-#include "inca/detail/COMProxy.hpp"
-#include "inca/detail/unique_com_ptr.hpp"
+#include "pacemaker/inca/detail/COMProxy.hpp"
+#include "pacemaker/inca/detail/unique_com_ptr.hpp"
 
 struct Inca_Dispatch;
 struct IDispatch;
 
-namespace inca::com
+namespace pacemaker::inca::com
 {
   /**
    * @brief Proxy for the top-level INCA COM automation object.
@@ -27,16 +27,16 @@ namespace inca::com
    *       constructed. Obtain the required `IDispatch` pointer via
    *       `CoCreateIntance(CLSID_Inca, ...)` before constructing.
    *
-   * @see inca::Session::connect()
-   * @see inca::detail::COMProxy
+   * @see pacemaker::inca::Session::connect()
+   * @see pacemaker::inca::detail::COMProxy
    */
-  class IncaProxy : private inca::detail::COMProxy<::Inca_Dispatch>
+  class IncaProxy : private pacemaker::inca::detail::COMProxy<::Inca_Dispatch>
   {
   public:
     /**
      * @brief Constructs the proxy by narrowing a generic `IDispatch` to `Inca_Dispatch`.
      *
-     * Calls `QueryInterface` internally via `inca::detail::query_interface`.
+     * Calls `QueryInterface` internally via `pacemaker::inca::detail::query_interface`.
      *
      * @param idispatch Owning pointer to a generic `IDispatch` obtained from
      *                  `CoCreateInstance`. Ownership is transferred to the proxy.
@@ -44,7 +44,7 @@ namespace inca::com
      * @throws std::invalid_argument if @p idispatch is nullptr.
      * @throws std::runtime_error    if `QueryInterface` fails to obtain `Inca_Dispatch`.
      */
-    IncaProxy(inca::detail::unique_com_ptr<::IDispatch> idispatch);
+    IncaProxy(pacemaker::inca::detail::unique_com_ptr<::IDispatch> idispatch);
     /// @brief Move constructor transfers ownership of the COM connection.
     IncaProxy(IncaProxy &&) = default;
     /// @brief Move assignment transfers ownership of the COM connection.
@@ -68,7 +68,7 @@ namespace inca::com
      *
      * @throws std::runtime_error if the underlying COM call fails or returns a nullptr.
      */
-    [[nodiscard]] auto GetOpenedExperiment() -> inca::detail::unique_com_ptr<::IDispatch>;
+    [[nodiscard]] auto GetOpenedExperiment() -> pacemaker::inca::detail::unique_com_ptr<::IDispatch>;
 
     /**
      * @brief Returns the COM object representing the currently open experiment view.
@@ -80,7 +80,7 @@ namespace inca::com
      *
      * @throws std::runtime_error if the underlying COM call fails or returns a nullptr.
      */
-    [[nodiscard]] auto GetOpenedExperimentView() -> inca::detail::unique_com_ptr<::IDispatch>;
+    [[nodiscard]] auto GetOpenedExperimentView() -> pacemaker::inca::detail::unique_com_ptr<::IDispatch>;
   };
-} // namespace inca::com
-#endif // INCA_COM_INCAPROXY_HPP_
+} // namespace pacemaker::inca::com
+#endif // PACEMAKER_INCA_COM_INCAPROXY_HPP_

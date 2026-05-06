@@ -1,17 +1,17 @@
-#ifndef INCA_EXPERIMENT_HPP_
-#define INCA_EXPERIMENT_HPP_
+#ifndef PACEMAKER_INCA_EXPERIMENT_HPP_
+#define PACEMAKER_INCA_EXPERIMENT_HPP_
 
 #include <chrono>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-#include "inca/com/CalibrationScalarDataProxy.hpp"
-#include "inca/com/ExperimentDeviceProxy.hpp"
-#include "inca/com/IncaExperimentViewProxy.hpp"
-#include "inca/com/IncaOnlineExperimentProxy.hpp"
+#include "pacemaker/inca/com/CalibrationScalarDataProxy.hpp"
+#include "pacemaker/inca/com/ExperimentDeviceProxy.hpp"
+#include "pacemaker/inca/com/IncaExperimentViewProxy.hpp"
+#include "pacemaker/inca/com/IncaOnlineExperimentProxy.hpp"
 
-namespace inca
+namespace pacemaker::inca
 {
   /**
    * @brief High-level manager for a single INCA measurement experiment run.
@@ -34,9 +34,9 @@ namespace inca
    * The class is move-constrcutible but not copyable, reflecting the unique
    * ownership of the underlying COM resources.
    *
-   * @see inca::Session::connect()
-   * @see inca::com::IncaOnlineExperimentProxy
-   * @see inca::com::CalibrationScalarDataProxy
+   * @see pacemaker::inca::Session::connect()
+   * @see pacemaker::inca::com::IncaOnlineExperimentProxy
+   * @see pacemaker::inca::com::CalibrationScalarDataProxy
    */
   class Experiment
   {
@@ -52,9 +52,9 @@ namespace inca
      * @param expview Proxy for the INCA experiment-view COM object.
      * @param device  Proxy for the primary ECU device to use during the run.
      */
-    Experiment(inca::com::IncaOnlineExperimentProxy exp,
-               inca::com::IncaExperimentViewProxy   expview,
-               inca::com::ExperimentDeviceProxy     device);
+    Experiment(pacemaker::inca::com::IncaOnlineExperimentProxy exp,
+               pacemaker::inca::com::IncaExperimentViewProxy   expview,
+               pacemaker::inca::com::ExperimentDeviceProxy     device);
 
     /// @brief Move constructor transfers ownership of all COM proxies.
     Experiment(Experiment &&) = default;
@@ -138,12 +138,12 @@ namespace inca
     auto reset() -> void;
 
   private:
-    inca::com::IncaOnlineExperimentProxy m_exp;
-    inca::com::IncaExperimentViewProxy   m_expview;
-    inca::com::ExperimentDeviceProxy     m_device;
+    pacemaker::inca::com::IncaOnlineExperimentProxy m_exp;
+    pacemaker::inca::com::IncaExperimentViewProxy   m_expview;
+    pacemaker::inca::com::ExperimentDeviceProxy     m_device;
 
     std::unordered_map<std::string, std::size_t>       m_map;
-    std::vector<inca::com::CalibrationScalarDataProxy> m_values;
+    std::vector<pacemaker::inca::com::CalibrationScalarDataProxy> m_values;
 
     /**
      * @brief Delay applied before stopping a recording to allow INCA to flush buffered measuremetn data.
@@ -155,4 +155,4 @@ namespace inca
   };
 } // namespace inca
 
-#endif // INCA_EXPERIMENT_HPP_
+#endif // PACEMAKER_INCA_EXPERIMENT_HPP_
