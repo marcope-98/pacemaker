@@ -29,12 +29,15 @@ set(DOXYGEN_CALLER_GRAPH            YES)
 set(DOXYGEN_DOT_GRAPH_MAX_NODES     200)
 set(DOXYGEN_MAX_DOT_GRAPH_DEPTH     1)
 set(DOXYGEN_DOT_MULTI_TARGETS       YES)
+set(DOXYGEN_USE_MDFILE_AS_MAINPAGE  ${CMAKE_CURRENT_SOURCE_DIR}/index.html.md)
 
 find_package(Doxygen REQUIRED dot)
 
 if(${DOXYGEN_FOUND})
   doxygen_add_docs(
-    doxygen-docs 
+    doc 
+    # Main page
+    ${CMAKE_CURRENT_SOURCE_DIR}/index.html.md
     # Source file documentation
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/inca/include/inca 
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/inca/include/inca/com 

@@ -14,3 +14,7 @@ target_compile_options(
 )
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 target_link_libraries(${PROJECT_NAME} PUBLIC pacemaker::inca)
+
+if(${PACEMAKER_BUILD_DOC})
+  add_subdirectory(doc)
+endif()
