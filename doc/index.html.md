@@ -2,7 +2,8 @@
 ## About pacemaker
 ## pacemaker Directory Structure
 
-## Building Source Code
+## Building Instructions
+### Building Source Code
 The project is based on CMake. 
 
 To start, clone the repository
@@ -24,10 +25,38 @@ Finally compile the code
 ```console
 $ cmake.exe --build build
 ```
-## Building and Running tests
-## Building and Running examples
-## Generating Requirements Documents
-## Generating Source Documentation
+### Building and Running tests
+### Building and Running examples
+### Generating Requirements Documents
+The Software Requirements Specification (SRS) and Test Specification (TS) documents are written using LaTeX and are built using latexmk perl script from the MiKTeX Tex distribution.
+
+> [!NOTE]
+> For the MiKTeX installation instructions please visit the link [MiKTeX Download](https://miktex.org/download).
+
+> [!NOTE]
+> For an easy to install perl environment for MS Windows please visit the link [Strawberry perl](https://strawberryperl.com/)
+
+Once the dependencies are in place, and latexmk is installed via the MiKTeX package manager the SRS and TS documents can be generated via CMake.
+
+In case of a portable version of MiKTeX you can supply the path via the `MIKTEX_BINARY_PATH` CMake variable.
+
+Finally, enable building the documents by setting the variable `PACEMAKER_BUILD_REQUIREMENTS` to `ON`.
+
+```console
+$ mkdir build
+$ cmake.exe -B build ^
+            -S . ^
+            -DINCACOM_TLB="..." ^
+            -DMIKTEX_BINARY_PATH="..." ^
+            -DPACEMAKER_BUILD_REQUIREMENTS=ON
+``` 
+
+Then build the `requirements` target
+```console
+$ cmake.exe --build build --target requirements
+```
+
+### Generating Source Documentation
 The source documentation is generated automatically with Doxygen and Graphviz. Therefore a valid installation of both tool must be available.
 
 If you have a portable version of these tools consider using the flags `DOXYGEN_EXECUTABLE` and/or `DOXYGEN_DOT_EXECUTABLE`.
