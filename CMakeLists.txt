@@ -6,6 +6,8 @@ project(
   LANGUAGES CXX
   VERSION 0.0.1
 )
+
+list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_BUILD_TYPE Release)
 
 add_subdirectory(src/inca)
@@ -19,6 +21,10 @@ target_compile_options(
 )
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 target_link_libraries(${PROJECT_NAME} PUBLIC pacemaker::inca)
+
+if(${PACEMAKER_BUILD_REQUIREMENTS})
+  add_subdirectory(requirements)
+endif()
 
 if(${PACEMAKER_BUILD_DOC})
   add_subdirectory(doc)
