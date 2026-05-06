@@ -8,22 +8,22 @@ The project is based on CMake.
 
 To start, clone the repository
 ```console
-$ git clone https://github.com/marcope-98/pacemaker.git
-$ cd pacemaker
+git clone https://github.com/marcope-98/pacemaker.git
+cd pacemaker
 ```
 > [!NOTE]
 > Make sure an MSVC compiler is available on your system. For a portable alternative consider [PortableBuildTools by Data-Oriented-House](https://github.com/Data-Oriented-House/PortableBuildTools).
 
 Create the build directory and run cmake by specifying the location of the `incacom.tlb` file available in your ETAS INCA installation folder.
 ```console
-$ mkdir build
-$ cmake.exe -B build ^
-            -S . ^
-            -DINCACOM_TLB="..."
+mkdir build
+cmake.exe -B build ^
+          -S . ^
+          -DINCACOM_TLB="..."
 ```
 Finally compile the code
 ```console
-$ cmake.exe --build build
+cmake.exe --build build --target pacemaker
 ```
 ### Building and Running tests
 ### Building and Running examples
@@ -32,8 +32,7 @@ The Software Requirements Specification (SRS) and Test Specification (TS) docume
 
 > [!NOTE]
 > For the MiKTeX installation instructions please visit the link [MiKTeX Download](https://miktex.org/download).
-
-> [!NOTE]
+>
 > For an easy to install perl environment for MS Windows please visit the link [Strawberry perl](https://strawberryperl.com/)
 
 Once the dependencies are in place, and latexmk is installed via the MiKTeX package manager the SRS and TS documents can be generated via CMake.
@@ -43,17 +42,17 @@ In case of a portable version of MiKTeX you can supply the path via the `MIKTEX_
 Finally, enable building the documents by setting the variable `PACEMAKER_BUILD_REQUIREMENTS` to `ON`.
 
 ```console
-$ mkdir build
-$ cmake.exe -B build ^
-            -S . ^
-            -DINCACOM_TLB="..." ^
-            -DMIKTEX_BINARY_PATH="..." ^
-            -DPACEMAKER_BUILD_REQUIREMENTS=ON
+mkdir build
+cmake.exe -B build ^
+          -S . ^
+          -DINCACOM_TLB="..." ^
+          -DMIKTEX_BINARY_PATH="..." ^
+          -DPACEMAKER_BUILD_REQUIREMENTS=ON
 ``` 
 
 Then build the `requirements` target
 ```console
-$ cmake.exe --build build --target requirements
+cmake.exe --build build --target requirements
 ```
 
 ### Generating Source Documentation
@@ -63,18 +62,18 @@ If you have a portable version of these tools consider using the flags `DOXYGEN_
 
 Finally, enable building source code documentation by setting the variable `PACEMAKER_BUILD_DOC` to `ON`
 ```console
-$ mkdir build
-$ cmake.exe -B build ^
-            -S . ^
-            -DINCACOM_TLB="..." ^
-            -DDOXYGEN_EXECUTABLE="..." ^
-            -DDOXYGEN_DOT_EXECUTABLE="..." ^
-            -DPACEMAKER_BUILD_DOC=ON
+mkdir build
+cmake.exe -B build ^
+          -S . ^
+          -DINCACOM_TLB="..." ^
+          -DDOXYGEN_EXECUTABLE="..." ^
+          -DDOXYGEN_DOT_EXECUTABLE="..." ^
+          -DPACEMAKER_BUILD_DOC=ON
 ```
 
 And finally build the `doc` target
 ```console
-$ cmake.exe --build build --target doc
+cmake.exe --build build --target doc
 ```
 ## AI Policy
 
