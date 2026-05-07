@@ -14,7 +14,7 @@
 #include "pacemaker/inca/com/IncaProxy.hpp"
 #include "pacemaker/inca/detail/unique_com_ptr.hpp"
 
-#include "detail/incacom.hpp"
+#include "pacemaker/inca/detail/incacom.hpp"
 
 namespace
 {

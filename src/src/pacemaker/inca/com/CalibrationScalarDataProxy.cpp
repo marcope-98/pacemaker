@@ -1,7 +1,7 @@
 #include "pacemaker/inca/com/CalibrationScalarDataProxy.hpp"
 
-#include "detail/incacom.hpp"
-#include "detail/utils.hpp"
+#include "pacemaker/inca/detail/incacom.hpp"
+#include "pacemaker/inca/detail/utils.hpp"
 
 pacemaker::inca::com::CalibrationScalarDataProxy::~CalibrationScalarDataProxy() {}
 

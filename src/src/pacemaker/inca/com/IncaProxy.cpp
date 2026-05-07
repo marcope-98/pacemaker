@@ -1,7 +1,7 @@
 #include "pacemaker/inca/com/IncaProxy.hpp"
 
-#include "detail/incacom.hpp"
-#include "detail/utils.hpp"
+#include "pacemaker/inca/detail/incacom.hpp"
+#include "pacemaker/inca/detail/utils.hpp"
 
 pacemaker::inca::com::IncaProxy::IncaProxy(pacemaker::inca::detail::unique_com_ptr<::IDispatch> idispatch)
     : COMProxy{pacemaker::inca::detail::query_interface<::Inca_Dispatch>(std::move(idispatch))}
