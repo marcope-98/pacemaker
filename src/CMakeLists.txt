@@ -1,29 +1,44 @@
 
-add_library(
+add_library(pacemaker_inca)
+add_library(pacemaker::inca ALIAS pacemaker_inca)
+
+target_sources(
   pacemaker_inca
-  STATIC
-  src/pacemaker/inca/com/IncaProxy.cpp
-  src/pacemaker/inca/com/IncaOnlineExperimentProxy.cpp
-  src/pacemaker/inca/com/IncaExperimentViewProxy.cpp
-  src/pacemaker/inca/com/ExperimentDeviceProxy.cpp
-  src/pacemaker/inca/com/CalibrationScalarDataProxy.cpp
-  src/pacemaker/inca/Session.cpp
-  src/pacemaker/inca/Experiment.cpp
+  PUBLIC
+    FILE_SET  HEADERS
+    TYPE      HEADERS
+    BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/pacemaker/inca/Experiment.hpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/pacemaker/inca/Session.hpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/pacemaker/inca/com/CalibrationScalarDataProxy.hpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/pacemaker/inca/com/ExperimentDeviceProxy.hpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/pacemaker/inca/com/IncaExperimentViewProxy.hpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/pacemaker/inca/com/IncaOnlineExperimentProxy.hpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/pacemaker/inca/com/IncaProxy.hpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/pacemaker/inca/detail/COMProxy.hpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/pacemaker/inca/detail/unique_com_ptr.hpp
+  PRIVATE
+    FILE_SET  private_headers
+    TYPE      HEADERS
+    BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    FILES 
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/pacemaker/inca/detail/incacom.hpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/pacemaker/inca/detail/utils.hpp
+  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pacemaker/inca/Experiment.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pacemaker/inca/Session.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pacemaker/inca/com/CalibrationScalarDataProxy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pacemaker/inca/com/ExperimentDeviceProxy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pacemaker/inca/com/IncaExperimentViewProxy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pacemaker/inca/com/IncaOnlineExperimentProxy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pacemaker/inca/com/IncaProxy.cpp
 )
 
 target_precompile_headers(
   pacemaker_inca
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/pacemaker/inca/detail/incacom.hpp
-)
-
-target_include_directories(
-  pacemaker_inca
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-  PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 target_compile_options(
@@ -35,4 +50,8 @@ target_compile_options(
 
 target_compile_features(pacemaker_inca PUBLIC cxx_std_17)
 
-add_library(pacemaker::inca ALIAS pacemaker_inca)
+set_target_properties(
+  pacemaker_inca 
+  PROPERTIES 
+    VERIFY_INTERFACE_HEADER_SETS ON
+)
