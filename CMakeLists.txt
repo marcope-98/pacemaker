@@ -18,7 +18,7 @@ if(PACEMAKER_BUILD_REQUIREMENTS)
 endif()
 
 if(PACEMAKER_BUILD_DOCS)
-  add_subdirectory(doc)
+  add_subdirectory(docs)
 endif()
 
 if(PACEMAKER_BUILD_EXAMPLES)
@@ -27,5 +27,5 @@ endif()
 
 if(PACEMAKER_BUILD_TESTS)
   enable_testing()
-  add_subdirectory(test)
+  add_subdirectory(tests)
 endif()

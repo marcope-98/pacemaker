@@ -35,7 +35,7 @@ find_package(Doxygen REQUIRED dot)
 
 if(${DOXYGEN_FOUND})
   doxygen_add_docs(
-    doc 
+    docs
     # Main page
     ${CMAKE_CURRENT_SOURCE_DIR}/index.html.md
     # Source file documentation
