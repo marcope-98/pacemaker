@@ -8,14 +8,24 @@ project(
 )
 
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-set(CMAKE_BUILD_TYPE Release)
+
+include(CMakeOptions.cmake)
 
 add_subdirectory(src)
 
-if(${PACEMAKER_BUILD_REQUIREMENTS})
+if(PACEMAKER_BUILD_REQUIREMENTS)
   add_subdirectory(requirements)
 endif()
 
-if(${PACEMAKER_BUILD_DOC})
+if(PACEMAKER_BUILD_DOCS)
   add_subdirectory(doc)
+endif()
+
+if(PACEMAKER_BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif()
+
+if(PACEMAKER_BUILD_TESTS)
+  enable_testing()
+  add_subdirectory(test)
 endif()
