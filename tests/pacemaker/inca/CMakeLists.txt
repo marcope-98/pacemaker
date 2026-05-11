@@ -3,6 +3,7 @@ target_sources(
   pacemaker.inca.tests
   PRIVATE
     TC-001.cpp
+    TC-002.cpp
 )
 
 target_link_libraries(
