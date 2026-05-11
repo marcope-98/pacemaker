@@ -10,3 +10,5 @@ FetchContent_Declare(
 )
 set(INSTALL_GTEST OFF CACHE INTERNAL "")
 FetchContent_MakeAvailable(googletest)
+
+add_subdirectory(pacemaker/inca)
