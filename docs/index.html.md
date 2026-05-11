@@ -16,14 +16,13 @@ cd pacemaker
 
 Create the build directory and run cmake by specifying the location of the `incacom.tlb` file available in your ETAS INCA installation folder.
 ```console
-mkdir build
-cmake.exe -B build ^
-          -S . ^
-          -DINCACOM_TLB="..."
+cmake -B build ^
+      -S . ^
+      -DINCACOM_TLB="..."
 ```
 Finally compile the code
 ```console
-cmake.exe --build build --target pacemaker
+cmake --build build --target pacemaker
 ```
 ### Building and Running tests
 ### Building and Running examples
@@ -42,17 +41,16 @@ In case of a portable version of MiKTeX you can supply the path via the `MIKTEX_
 Finally, enable building the documents by setting the variable `PACEMAKER_BUILD_REQUIREMENTS` to `ON`.
 
 ```console
-mkdir build
-cmake.exe -B build ^
-          -S . ^
-          -DINCACOM_TLB="..." ^
-          -DMIKTEX_BINARY_PATH="..." ^
-          -DPACEMAKER_BUILD_REQUIREMENTS=ON
+cmake -B build ^
+      -S . ^
+      -DINCACOM_TLB="..." ^
+      -DMIKTEX_BINARY_PATH="..." ^
+      -DPACEMAKER_BUILD_REQUIREMENTS=ON
 ``` 
 
 Then build the `requirements` target
 ```console
-cmake.exe --build build --target requirements
+cmake --build build --target requirements
 ```
 
 ### Generating Source Documentation
@@ -60,20 +58,19 @@ The source documentation is generated automatically with Doxygen and Graphviz. T
 
 If you have a portable version of these tools consider using the flags `DOXYGEN_EXECUTABLE` and/or `DOXYGEN_DOT_EXECUTABLE`.
 
-Finally, enable building source code documentation by setting the variable `PACEMAKER_BUILD_DOC` to `ON`
+Finally, enable building source code documentation by setting the variable `PACEMAKER_BUILD_DOCS` to `ON`
 ```console
-mkdir build
-cmake.exe -B build ^
-          -S . ^
-          -DINCACOM_TLB="..." ^
-          -DDOXYGEN_EXECUTABLE="..." ^
-          -DDOXYGEN_DOT_EXECUTABLE="..." ^
-          -DPACEMAKER_BUILD_DOC=ON
+cmake -B build ^
+      -S . ^
+      -DINCACOM_TLB="..." ^
+      -DDOXYGEN_EXECUTABLE="..." ^
+      -DDOXYGEN_DOT_EXECUTABLE="..." ^
+      -DPACEMAKER_BUILD_DOCS=ON
 ```
 
-And finally build the `doc` target
+And finally build the `docs` target
 ```console
-cmake.exe --build build --target doc
+cmake --build build --target docs
 ```
 ## AI Policy
 
