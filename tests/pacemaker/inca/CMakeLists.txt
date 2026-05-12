@@ -4,6 +4,7 @@ target_sources(
   PRIVATE
     TC-001.cpp
     TC-002.cpp
+    TC-003.cpp
 )
 
 target_link_libraries(
@@ -11,6 +12,7 @@ target_link_libraries(
   PRIVATE 
     pacemaker::inca 
     GTest::gtest GTest::gtest_main
+    GTest::gmock GTest::gmock_main
 )
 
 include(GoogleTest)
