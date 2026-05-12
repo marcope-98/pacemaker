@@ -7,6 +7,7 @@ target_sources(
     TC-003.cpp
     TC-004.cpp
     TC-005.cpp
+    TC-006.cpp
 )
 
 target_link_libraries(
