@@ -1,77 +1,119 @@
 # pacemaker Documentation
-## About pacemaker
+`pacemaker` is a lightweight C++ wrapper around the ETAS INCA COM API. It lets you programmatically register the calibration parameters, set their values in real time, and control measurement recordings, without touching INCA's GUI.
+
 ## pacemaker Directory Structure
+```console
+pacemaker
+├───.github
+│   └───ISSUE_TEMPLATE
+├───cmake
+├───docs
+├───examples
+├───media
+│   └───readme
+├───requirements
+│   ├───chapters
+│   │   ├───REQ
+│   │   └───TC
+│   └───lib
+├───src
+│   ├───include
+│   │   └───pacemaker
+│   │       └───inca
+│   │           ├───com
+│   │           └───detail
+│   └───src
+│       └───pacemaker
+│           └───inca
+│               ├───com
+│               └───detail
+└───tests
+    └───pacemaker
+        └───inca
+```
+## Getting started
 
-## Building Instructions
-### Building Source Code
-The project is based on CMake. 
-
-To start, clone the repository
+To start, clone the repository and move into the root directory
 ```console
 git clone https://github.com/marcope-98/pacemaker.git
 cd pacemaker
 ```
-> [!NOTE]
-> Make sure an MSVC compiler is available on your system. For a portable alternative consider [PortableBuildTools by Data-Oriented-House](https://github.com/Data-Oriented-House/PortableBuildTools).
 
-Create the build directory and run cmake by specifying the location of the `incacom.tlb` file available in your ETAS INCA installation folder.
+### Building Source Code
+
+> [!NOTE]
+> An MSVC compiler must be avaible on your system. For a portable alternative, see [PortableBuildTools by Data-Oriented-House](https://github.com/Data-Oriented-House/PortableBuildTools).
+
+Configure and build with the path to `incacom.tlb` from your ETAS INCA installation folder:
+
 ```console
-cmake -B build ^
-      -S . ^
-      -DINCACOM_TLB="..."
-```
-Finally compile the code
-```console
+cmake -B build -S . ^
+      -DINCACOM_TLB="<path/to/incacom.tlb>" ^
+      -DCMAKE_BUILD_TYPE="<Release|Debug|RelWithDebInfo|MinSizeRel>"
+
 cmake --build build --target pacemaker
 ```
-### Building and Running tests
-### Building and Running examples
+
+### Building and Running Unit Tests
+
+Build the `tests` target and then run the test suite via CTest:
+```console 
+cmake -B build -S . ^
+      -DINCACOM_TLB="<path/to/incacom.tlb> ^
+      -DPACEMAKER_BUILD_TESTS=ON
+
+cmake --build build --target tests
+ctest --test-dir build --output-on-failure
+```
+
+The CMake option `PACEMAKER_BUILD_TESTS` is `ON` by default in case the project is the top level project. 
+
+To run a specific test by name or pattern, use the `-R` flag
+```console
+ctest --test-dir build --output-on-failure -R <test-name>
+```
+
+> [!TIP]
+> Add `-j <N>` to run up to `N` tests in parallel, or `--rerun-failed` to only re-execute tests that failed in the previous run
+
 ### Generating Requirements Documents
-The Software Requirements Specification (SRS) and Test Specification (TS) documents are written using LaTeX and are built using latexmk perl script from the MiKTeX Tex distribution.
+The Software Requirements Specification (SRS) and Test Specification (TS) documents are written in LaTeX and built using `latexmk` perl script via MiKTeX.
 
-> [!NOTE]
-> For the MiKTeX installation instructions please visit the link [MiKTeX Download](https://miktex.org/download).
->
-> For an easy to install perl environment for MS Windows please visit the link [Strawberry perl](https://strawberryperl.com/)
-
-Once the dependencies are in place, and latexmk is installed via the MiKTeX package manager the SRS and TS documents can be generated via CMake.
-
-In case of a portable version of MiKTeX you can supply the path via the `MIKTEX_BINARY_PATH` CMake variable.
-
-Finally, enable building the documents by setting the variable `PACEMAKER_BUILD_REQUIREMENTS` to `ON`.
+**Dependencies**:
+ - [MiKTeX](https://miktex.org/download): LaTeX distribution (install `latexmk` via its package manager)
+ - [Strawberry perl](https://strawberryperl.com/): Perl runtime for Windows
 
 ```console
-cmake -B build ^
-      -S . ^
-      -DINCACOM_TLB="..." ^
-      -DMIKTEX_BINARY_PATH="..." ^
+cmake -B build -S . ^
+      -DINCACOM_TLB="<path/to/incacom.tlb>" ^
+      -DMIKTEX_BINARY_PATH="<path/tp/miktex/bin>" ^
       -DPACEMAKER_BUILD_REQUIREMENTS=ON
-``` 
 
-Then build the `requirements` target
-```console
 cmake --build build --target requirements
 ```
 
+`MIKTEX_BINARY_PATH` is only required for portable MiKTeX installations.
+
+The CMake option `PACEMAKER_BUILD_REQUIREMENTS` is `ON` by default in case the project is the top level project. 
+
 ### Generating Source Documentation
-The source documentation is generated automatically with Doxygen and Graphviz. Therefore a valid installation of both tool must be available.
+API documentation is generated with [Doxygen](https://www.doxygen.nl/) and [Graphviz](https://graphviz.org/).
 
-If you have a portable version of these tools consider using the flags `DOXYGEN_EXECUTABLE` and/or `DOXYGEN_DOT_EXECUTABLE`.
-
-Finally, enable building source code documentation by setting the variable `PACEMAKER_BUILD_DOCS` to `ON`
 ```console
-cmake -B build ^
-      -S . ^
-      -DINCACOM_TLB="..." ^
-      -DDOXYGEN_EXECUTABLE="..." ^
-      -DDOXYGEN_DOT_EXECUTABLE="..." ^
+cmake -B build -S . ^
+      -DINCACOM_TLB="<path/to/incacom.tlb>" ^
+      -DDOXYGEN_EXECUTABLE="<path/to/doxygen>" ^
+      -DDOXYGEN_DOT_EXECUTABLE="<path/to/dot>" ^
       -DPACEMAKER_BUILD_DOCS=ON
-```
 
-And finally build the `docs` target
-```console
 cmake --build build --target docs
 ```
+
+> [!NOTE]
+> `DOXYGEN_EXECUTABLE` and `DOXYGEN_DOT_EXECUTABLE` are only required for portable installations
+
+The CMake option `PACEMAKER_BUILD_REQUIREMENTS` is `ON` by default in case the project is the top level project. 
+
 ## AI Policy
 
 The pacemaker project welcomes contributions from everyone, and we have a few guidelines regarding AI usage to ensure high code quality, clear communication, and a healthy open-source ecosystem:
