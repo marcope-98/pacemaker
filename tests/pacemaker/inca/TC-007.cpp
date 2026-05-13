@@ -31,7 +31,7 @@ namespace
     template<class CB>
     void Delegate_SetImplValue(CB SetImplValue)
     {
-      constexpr DISPID SetImplValue_dispid{0x60020009};
+      constexpr DISPID SetImplValue_dispid{0x60020015};
       ON_CALL(*this, Invoke(SetImplValue_dispid, _, _, _, _, _, _, _)).WillByDefault(SetImplValue);
     }
     double actual{};
@@ -45,7 +45,7 @@ TEST(TC007, A)
   MockCalibrationScalarDataProxy_Dispatch mock;
   auto                                    SetImplValue = [&mock, expected](DISPID, const IID &, LCID, WORD, DISPPARAMS *dispparams, VARIANT *, EXCEPINFO *, UINT *)
   {
-    EXPECT_EQ(*dispparams->rgvarg[0].pdblVal, expected);
+    EXPECT_EQ(dispparams->rgvarg[0].dblVal, expected);
     return S_OK;
   };
   mock.Delegate();
@@ -53,6 +53,9 @@ TEST(TC007, A)
 
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
   pacemaker::inca::com::CalibrationScalarDataProxy   calib(std::move(idispatch));
+
+  constexpr DISPID SetImplValue_dispid{0x60020015};
+  EXPECT_CALL(mock, Invoke(SetImplValue_dispid, _, _, _, _, _, _, _)).Times(1);
 
   calib.SetImplValue(expected);
 }
