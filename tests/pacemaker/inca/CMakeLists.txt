@@ -23,3 +23,5 @@ target_link_libraries(
 
 include(GoogleTest)
 gtest_discover_tests(pacemaker.inca.tests)
+
+add_dependencies(tests pacemaker.inca.tests)
