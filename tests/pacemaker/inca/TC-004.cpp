@@ -143,15 +143,15 @@ TEST(TC004, D)
   MockIncaOnlineExperiment_Dispatch mock;
   mock.Delegate();
 
-  pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
-  pacemaker::inca::com::IncaOnlineExperimentProxy    exp(std::move(idispatch));
-
   constexpr DISPID StartRecording_dispid{0x600200a1};
   EXPECT_CALL(mock, Invoke(StartRecording_dispid, _, _, _, _, _, _, _));
   constexpr DISPID StopRecordingAndSave_dispid{0x600200a4};
   EXPECT_CALL(mock, Invoke(StopRecordingAndSave_dispid, _, _, _, _, _, _, _));
   constexpr DISPID StopMeasurement_dispid{0x60020074};
   EXPECT_CALL(mock, Invoke(StopMeasurement_dispid, _, _, _, _, _, _, _));
+
+  pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
+  pacemaker::inca::com::IncaOnlineExperimentProxy    exp(std::move(idispatch));
 
   exp.StartRecording();
   exp.StopRecordingAndSave();

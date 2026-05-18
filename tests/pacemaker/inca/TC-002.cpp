@@ -37,7 +37,8 @@ TEST(TC002, B)
 {
   counter = 0;
   {
-    pacemaker::inca::detail::unique_com_ptr<MockCOM> mock_unique_ptr{new MockCOM};
+    MockCOM mock;
+    pacemaker::inca::detail::unique_com_ptr<MockCOM> mock_unique_ptr{&mock};
     EXPECT_EQ(counter, 0);
     auto concrete_proxy = ConcreteProxy{std::move(mock_unique_ptr)};
     EXPECT_EQ(counter, 0);

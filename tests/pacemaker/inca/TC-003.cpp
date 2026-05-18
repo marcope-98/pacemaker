@@ -60,20 +60,14 @@ namespace
 
 TEST(TC003, A)
 {
-  bool exception_raised{false};
-  try
-  {
-    MockInca_Dispatch mock;
-    mock.Delegate();
-    pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
-    pacemaker::inca::com::IncaProxy(std::move(idispatch));
-  }
-  catch (...)
-  {
-    exception_raised = true;
-    throw;
-  }
-  ASSERT_FALSE(exception_raised);
+  EXPECT_NO_THROW(
+    {
+      MockInca_Dispatch mock;
+      mock.Delegate();
+      pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
+      pacemaker::inca::com::IncaProxy(std::move(idispatch));
+    }
+  );
 }
 
 TEST(TC003, B)
@@ -96,19 +90,14 @@ TEST(TC003, C)
   mock.Delegate();
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch(&mock);
   pacemaker::inca::com::IncaProxy                    inca_proxy(std::move(idispatch));
-  bool                                               exception_raised{false};
   pacemaker::inca::detail::unique_com_ptr<IDispatch> exp;
-  try
-  {
-    exp = inca_proxy.GetOpenedExperiment();
-  }
-  catch (...)
-  {
-    exception_raised = true;
-    throw;
-  }
+  
+  EXPECT_NO_THROW(
+    {
+      exp = inca_proxy.GetOpenedExperiment();
+    }
+  );
   EXPECT_NE(exp.get(), nullptr);
-  EXPECT_FALSE(exception_raised);
 }
 
 TEST(TC003, D)
@@ -117,17 +106,12 @@ TEST(TC003, D)
   mock.Delegate();
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch(&mock);
   pacemaker::inca::com::IncaProxy                    inca_proxy(std::move(idispatch));
-  bool                                               exception_raised{false};
   pacemaker::inca::detail::unique_com_ptr<IDispatch> expview;
-  try
-  {
-    expview = inca_proxy.GetOpenedExperimentView();
-  }
-  catch (...)
-  {
-    exception_raised = true;
-    throw;
-  }
+
+  EXPECT_NO_THROW(
+    {
+      expview = inca_proxy.GetOpenedExperimentView();
+    }
+  );
   EXPECT_NE(expview.get(), nullptr);
-  EXPECT_FALSE(exception_raised);
 }

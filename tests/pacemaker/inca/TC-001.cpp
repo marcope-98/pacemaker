@@ -17,7 +17,8 @@ TEST(TC001, A)
 {
   counter = 0;
   {
-    pacemaker::inca::detail::unique_com_ptr<MockCOM> ptr{new MockCOM};
+    MockCOM mock;
+    pacemaker::inca::detail::unique_com_ptr<MockCOM> ptr{&mock};
     EXPECT_EQ(counter, 0);
   }
   EXPECT_EQ(counter, 1);
@@ -38,7 +39,8 @@ TEST(TC001, C)
 {
   counter = 0;
   {
-    pacemaker::inca::detail::unique_com_ptr<MockCOM> ptr_moved_from{new MockCOM};
+    MockCOM mock;
+    pacemaker::inca::detail::unique_com_ptr<MockCOM> ptr_moved_from{&mock};
     EXPECT_NE(ptr_moved_from.get(), nullptr);
     {
       pacemaker::inca::detail::unique_com_ptr<MockCOM> ptr_moved_to{std::move(ptr_moved_from)};
