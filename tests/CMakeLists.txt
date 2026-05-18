@@ -11,6 +11,11 @@ FetchContent_Declare(
 set(INSTALL_GTEST OFF CACHE INTERNAL "")
 FetchContent_MakeAvailable(googletest)
 
-add_custom_target(tests ALL)
+set(PACEMAKER_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
+add_custom_target(tests ALL)
+add_compile_options(/EHsc /W4 /D_DEBUG /MDd)
+add_compile_definitions(_CRTDBG_MAP_ALLOC)
+
+add_subdirectory(pacemaker/fixture)
 add_subdirectory(pacemaker/inca)

@@ -2,8 +2,12 @@
 
 #include <gtest/gtest.h>
 
+#include "pacemaker/fixture/LeakTestFixture.hpp"
+
 #include "pacemaker/inca/detail/COMProxy.hpp"
 #include "pacemaker/inca/detail/unique_com_ptr.hpp"
+
+PACEMAKER_FIXTURE_INIT(TC002)
 
 namespace
 {
@@ -25,7 +29,7 @@ namespace
 
 } // namespace
 
-TEST(TC002, A)
+TEST_F(TC002, A)
 {
   EXPECT_FALSE(std::is_copy_constructible_v<ConcreteProxy>);
   EXPECT_TRUE(std::is_move_constructible_v<ConcreteProxy>);
@@ -33,11 +37,11 @@ TEST(TC002, A)
   EXPECT_TRUE(std::is_move_assignable_v<ConcreteProxy>);
 }
 
-TEST(TC002, B)
+TEST_F(TC002, B)
 {
   counter = 0;
   {
-    MockCOM mock;
+    MockCOM                                          mock;
     pacemaker::inca::detail::unique_com_ptr<MockCOM> mock_unique_ptr{&mock};
     EXPECT_EQ(counter, 0);
     auto concrete_proxy = ConcreteProxy{std::move(mock_unique_ptr)};

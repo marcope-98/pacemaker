@@ -3,11 +3,15 @@
 
 #include <comdef.h>
 
+#include "pacemaker/fixture/LeakTestFixture.hpp"
+
 #include "pacemaker/inca/com/IncaProxy.hpp"
 #include "pacemaker/inca/detail/unique_com_ptr.hpp"
 
 using ::testing::_;
 using ::testing::Return;
+
+PACEMAKER_FIXTURE_INIT(TC003)
 
 namespace
 {
@@ -58,19 +62,18 @@ namespace
   };
 } // namespace
 
-TEST(TC003, A)
+TEST_F(TC003, A)
 {
   EXPECT_NO_THROW(
-    {
-      MockInca_Dispatch mock;
-      mock.Delegate();
-      pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
-      pacemaker::inca::com::IncaProxy(std::move(idispatch));
-    }
-  );
+      {
+        MockInca_Dispatch mock;
+        mock.Delegate();
+        pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
+        pacemaker::inca::com::IncaProxy(std::move(idispatch));
+      });
 }
 
-TEST(TC003, B)
+TEST_F(TC003, B)
 {
   counter = 0;
   {
@@ -84,7 +87,7 @@ TEST(TC003, B)
   EXPECT_EQ(counter, 1);
 }
 
-TEST(TC003, C)
+TEST_F(TC003, C)
 {
   MockInca_Dispatch mock;
   mock.Delegate();
@@ -93,14 +96,13 @@ TEST(TC003, C)
   pacemaker::inca::detail::unique_com_ptr<IDispatch> exp;
   
   EXPECT_NO_THROW(
-    {
-      exp = inca_proxy.GetOpenedExperiment();
-    }
-  );
+      {
+        exp = inca_proxy.GetOpenedExperiment();
+      });
   EXPECT_NE(exp.get(), nullptr);
 }
 
-TEST(TC003, D)
+TEST_F(TC003, D)
 {
   MockInca_Dispatch mock;
   mock.Delegate();
@@ -109,9 +111,8 @@ TEST(TC003, D)
   pacemaker::inca::detail::unique_com_ptr<IDispatch> expview;
 
   EXPECT_NO_THROW(
-    {
-      expview = inca_proxy.GetOpenedExperimentView();
-    }
-  );
+      {
+        expview = inca_proxy.GetOpenedExperimentView();
+      });
   EXPECT_NE(expview.get(), nullptr);
 }

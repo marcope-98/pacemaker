@@ -3,10 +3,14 @@
 
 #include <comdef.h>
 
+#include "pacemaker/fixture/LeakTestFixture.hpp"
+
 #include "pacemaker/inca/com/IncaOnlineExperimentProxy.hpp"
 
 using ::testing::_;
 using ::testing::Return;
+
+PACEMAKER_FIXTURE_INIT(TC004)
 
 namespace
 {
@@ -44,7 +48,7 @@ namespace
   };
 } // namespace
 
-TEST(TC004, A)
+TEST_F(TC004, A)
 {
   MockIncaOnlineExperiment_Dispatch mock;
   auto                              GetAllDevices = [&mock](DISPID, const IID &, LCID, WORD, DISPPARAMS *, VARIANT *variant, EXCEPINFO *, UINT *)
@@ -88,7 +92,7 @@ TEST(TC004, A)
   EXPECT_NE(devices[1], nullptr);
 }
 
-TEST(TC004, B)
+TEST_F(TC004, B)
 {
   MockIncaOnlineExperiment_Dispatch mock;
   auto                              GetAllDevices = [&mock](DISPID, const IID &, LCID, WORD, DISPPARAMS *, VARIANT *variant, EXCEPINFO *, UINT *)
@@ -106,7 +110,7 @@ TEST(TC004, B)
   EXPECT_THROW(auto devices = exp.GetAllDevices(), std::runtime_error);
 }
 
-TEST(TC004, C)
+TEST_F(TC004, C)
 {
   MockIncaOnlineExperiment_Dispatch mock;
   auto                              GetCalibrationValueInDevice = [&mock](DISPID, const IID &, LCID, WORD, DISPPARAMS *, VARIANT *variant, EXCEPINFO *, UINT *)
@@ -138,7 +142,7 @@ TEST(TC004, C)
       std::runtime_error);
 }
 
-TEST(TC004, D)
+TEST_F(TC004, D)
 {
   MockIncaOnlineExperiment_Dispatch mock;
   mock.Delegate();

@@ -3,10 +3,14 @@
 
 #include <comdef.h>
 
+#include "pacemaker/fixture/LeakTestFixture.hpp"
+
 #include "pacemaker/inca/com/ExperimentDeviceProxy.hpp"
 
 using ::testing::_;
 using ::testing::Return;
+
+PACEMAKER_FIXTURE_INIT(TC006)
 
 namespace
 {
@@ -37,33 +41,33 @@ namespace
   };
 } // namespace
 
-TEST(TC006, A)
+TEST_F(TC006, A)
 {
   MockExperimentDevice_Dispatch mock;
   auto                          GetName = [&mock](DISPID, const IID &, LCID, WORD, DISPPARAMS *, VARIANT *variant, EXCEPINFO *, UINT *)
   {
     VariantInit(variant);
-    variant->bstrVal = SysAllocString(L"ECU1");;
-    variant->vt      = VT_BSTR;
+    variant->bstrVal = SysAllocString(L"ECU1");
+    variant->vt = VT_BSTR;
     return S_OK;
   };
   mock.Delegate();
   mock.Delegate_GetName(GetName);
 
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
-  pacemaker::inca::com::ExperimentDeviceProxy device(std::move(idispatch));
+  pacemaker::inca::com::ExperimentDeviceProxy        device(std::move(idispatch));
 
   std::wstring name = device.GetName();
   EXPECT_EQ(name, std::wstring(L"ECU1"));
 }
 
-TEST(TC006, B)
+TEST_F(TC006, B)
 {
   MockExperimentDevice_Dispatch mock;
   mock.Delegate();
 
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
-  pacemaker::inca::com::ExperimentDeviceProxy device(std::move(idispatch));
+  pacemaker::inca::com::ExperimentDeviceProxy        device(std::move(idispatch));
 
-  EXPECT_EQ((void*)(device.get()), (void*)(&mock));
+  EXPECT_EQ((void *)(device.get()), (void *)(&mock));
 }

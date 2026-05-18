@@ -5,6 +5,8 @@
 
 #include <comdef.h>
 
+#include "pacemaker/fixture/LeakTestFixture.hpp"
+
 #include "pacemaker/inca/Experiment.hpp"
 
 // clang-format off
@@ -16,6 +18,8 @@ struct ExperimentDevice_Dispatch : public IDispatch { };
 using ::testing::_;
 using ::testing::InSequence;
 using ::testing::Return;
+
+PACEMAKER_FIXTURE_INIT(TC008)
 
 namespace
 {
@@ -53,40 +57,40 @@ namespace
   };
 } // namespace
 
-TEST(TC008, A)
+TEST_F(TC008, A)
 {
-MockProxy_Dispatch mock;
+  MockProxy_Dispatch mock;
 
-auto GetCalibrationValueInDevice = [&mock](DISPID, const IID &, LCID, WORD, DISPPARAMS *, VARIANT *variant, EXCEPINFO *, UINT *)
-{
-  VariantInit(variant);
-  variant->pdispVal = &mock;
-  variant->vt       = VT_DISPATCH;
-  return S_OK;
-};
-mock.Delegate();
-mock.Delegate_GetCalibrationValueInDevice(GetCalibrationValueInDevice);
+  auto GetCalibrationValueInDevice = [&mock](DISPID, const IID &, LCID, WORD, DISPPARAMS *, VARIANT *variant, EXCEPINFO *, UINT *)
+  {
+    VariantInit(variant);
+    variant->pdispVal = &mock;
+    variant->vt       = VT_DISPATCH;
+    return S_OK;
+  };
+  mock.Delegate();
+  mock.Delegate_GetCalibrationValueInDevice(GetCalibrationValueInDevice);
 
 
-pacemaker::inca::detail::unique_com_ptr<IDispatch> exp_idispatch{&mock};
-pacemaker::inca::com::IncaOnlineExperimentProxy    exp(std::move(exp_idispatch));
+  pacemaker::inca::detail::unique_com_ptr<IDispatch> exp_idispatch{&mock};
+  pacemaker::inca::com::IncaOnlineExperimentProxy    exp(std::move(exp_idispatch));
 
-pacemaker::inca::detail::unique_com_ptr<IDispatch> expview_idispatch{&mock};
-pacemaker::inca::com::IncaExperimentViewProxy      expview{std::move(expview_idispatch)};
+  pacemaker::inca::detail::unique_com_ptr<IDispatch> expview_idispatch{&mock};
+  pacemaker::inca::com::IncaExperimentViewProxy      expview{std::move(expview_idispatch)};
 
-pacemaker::inca::detail::unique_com_ptr<IDispatch> device_idispatch{&mock};
-pacemaker::inca::com::ExperimentDeviceProxy        device{std::move(device_idispatch)};
+  pacemaker::inca::detail::unique_com_ptr<IDispatch> device_idispatch{&mock};
+  pacemaker::inca::com::ExperimentDeviceProxy        device{std::move(device_idispatch)};
 
-pacemaker::inca::Experiment experiment(std::move(exp), std::move(expview), std::move(device));
+  pacemaker::inca::Experiment experiment(std::move(exp), std::move(expview), std::move(device));
 
-constexpr DISPID GetCalibrationValueInDevice_dispid{0x60020090};
-EXPECT_CALL(mock, Invoke(GetCalibrationValueInDevice_dispid, _, _, _, _, _, _, _)).Times(1);
+  constexpr DISPID GetCalibrationValueInDevice_dispid{0x60020090};
+  EXPECT_CALL(mock, Invoke(GetCalibrationValueInDevice_dispid, _, _, _, _, _, _, _)).Times(1);
 
-experiment.add_param("speed");
-experiment.add_param("speed");
+  experiment.add_param("speed");
+  experiment.add_param("speed");
 }
 
-TEST(TC008, B)
+TEST_F(TC008, B)
 {
   MockProxy_Dispatch mock;
   mock.Delegate();
@@ -117,7 +121,7 @@ TEST(TC008, B)
       std::out_of_range);
 }
 
-TEST(TC008, C)
+TEST_F(TC008, C)
 {
   MockProxy_Dispatch mock;
   double             expected{50.0};
@@ -152,12 +156,12 @@ TEST(TC008, C)
   pacemaker::inca::com::ExperimentDeviceProxy        device{std::move(device_idispatch)};
 
   pacemaker::inca::Experiment experiment(std::move(exp), std::move(expview), std::move(device));
-  
+
   experiment.add_param("torque");
   experiment.set_param("torque", expected);
 }
 
-TEST(TC008, D)
+TEST_F(TC008, D)
 {
   MockProxy_Dispatch mock;
   auto               GetCalibrationValueInDevice = [&mock](DISPID, const IID &, LCID, WORD, DISPPARAMS *, VARIANT *variant, EXCEPINFO *, UINT *)
@@ -191,13 +195,13 @@ TEST(TC008, D)
   EXPECT_THROW(experiment.set_param("a", 0.0), std::out_of_range);
 }
 
-TEST(TC008, E)
+TEST_F(TC008, E)
 {
   MockProxy_Dispatch mock;
   mock.Delegate();
 
 
-  InSequence seq;
+  InSequence       seq;
   constexpr DISPID StopRecordingAndSave_dispid{0x600200a4};
   constexpr DISPID StopMeasurement_dispid{0x60020074};
   EXPECT_CALL(mock, Invoke(StopRecordingAndSave_dispid, _, _, _, _, _, _, _)).Times(1);
@@ -214,7 +218,6 @@ TEST(TC008, E)
 
   pacemaker::inca::Experiment experiment(std::move(exp), std::move(expview), std::move(device));
 
-
   auto begin = std::chrono::steady_clock::now();
   experiment.stop_recording("");
   auto end     = std::chrono::steady_clock::now();
@@ -222,7 +225,7 @@ TEST(TC008, E)
   EXPECT_GE(elapsed, 40);
 }
 
-TEST(TC008, F)
+TEST_F(TC008, F)
 {
   MockProxy_Dispatch mock;
   mock.Delegate();

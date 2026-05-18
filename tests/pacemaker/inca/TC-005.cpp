@@ -3,10 +3,14 @@
 
 #include <comdef.h>
 
+#include "pacemaker/fixture/LeakTestFixture.hpp"
+
 #include "pacemaker/inca/com/IncaExperimentViewProxy.hpp"
 
 using ::testing::_;
 using ::testing::Return;
+
+PACEMAKER_FIXTURE_INIT(TC005)
 
 namespace
 {
@@ -51,7 +55,7 @@ namespace
   };
 } // namespace
 
-TEST(TC005, A)
+TEST_F(TC005, A)
 {
   MockIncaExperimentView_Dispatch mock;
   auto                            OpenViewForExperimentDataItem = [&mock](DISPID, const IID &, LCID, WORD, DISPPARAMS *dispparams, VARIANT *, EXCEPINFO *, UINT *)
@@ -62,10 +66,10 @@ TEST(TC005, A)
   mock.Delegate();
   mock.Delegate_OpenViewForExperimentDataItem(OpenViewForExperimentDataItem);
 
+  MockDataItem dataitem;
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
   pacemaker::inca::com::IncaExperimentViewProxy      expview(std::move(idispatch));
 
-  MockDataItem                                       dataitem;
   pacemaker::inca::detail::unique_com_ptr<IDispatch> dataitem_ptr{&dataitem};
 
   expview.OpenViewForExperimentDataItem(std::move(dataitem_ptr));

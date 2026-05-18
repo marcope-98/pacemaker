@@ -2,7 +2,11 @@
 
 #include <gtest/gtest.h>
 
+#include "pacemaker/fixture/LeakTestFixture.hpp"
+
 #include "pacemaker/inca/detail/unique_com_ptr.hpp"
+
+PACEMAKER_FIXTURE_INIT(TC001)
 
 namespace
 {
@@ -13,18 +17,18 @@ namespace
   };
 } // namespace
 
-TEST(TC001, A)
+TEST_F(TC001, A)
 {
   counter = 0;
   {
-    MockCOM mock;
+    MockCOM                                          mock;
     pacemaker::inca::detail::unique_com_ptr<MockCOM> ptr{&mock};
     EXPECT_EQ(counter, 0);
   }
   EXPECT_EQ(counter, 1);
 }
 
-TEST(TC001, B)
+TEST_F(TC001, B)
 {
   counter = 0;
   {
@@ -35,7 +39,7 @@ TEST(TC001, B)
   EXPECT_EQ(counter, 0);
 }
 
-TEST(TC001, C)
+TEST_F(TC001, C)
 {
   counter = 0;
   {
@@ -53,7 +57,7 @@ TEST(TC001, C)
   EXPECT_EQ(counter, 1);
 }
 
-TEST(TC001, D)
+TEST_F(TC001, D)
 {
   EXPECT_FALSE(std::is_copy_constructible_v<pacemaker::inca::detail::unique_com_ptr<MockCOM>>);
   EXPECT_FALSE(std::is_copy_assignable_v<pacemaker::inca::detail::unique_com_ptr<MockCOM>>);

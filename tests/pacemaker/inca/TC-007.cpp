@@ -3,10 +3,14 @@
 
 #include <comdef.h>
 
+#include "pacemaker/fixture/LeakTestFixture.hpp"
+
 #include "pacemaker/inca/com/CalibrationScalarDataProxy.hpp"
 
 using ::testing::_;
 using ::testing::Return;
+
+PACEMAKER_FIXTURE_INIT(TC007)
 
 namespace
 {
@@ -38,7 +42,7 @@ namespace
   };
 } // namespace
 
-TEST(TC007, A)
+TEST_F(TC007, A)
 {
   double expected{5.0};
 
@@ -51,25 +55,25 @@ TEST(TC007, A)
   mock.Delegate();
   mock.Delegate_SetImplValue(SetImplValue);
 
-  pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
-  pacemaker::inca::com::CalibrationScalarDataProxy   calib(std::move(idispatch));
-
   constexpr DISPID SetImplValue_dispid{0x60020015};
   EXPECT_CALL(mock, Invoke(SetImplValue_dispid, _, _, _, _, _, _, _)).Times(1);
+
+  pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
+  pacemaker::inca::com::CalibrationScalarDataProxy   calib(std::move(idispatch));
 
   calib.SetImplValue(expected);
 }
 
-TEST(TC007, B)
+TEST_F(TC007, B)
 {
   MockCalibrationScalarDataProxy_Dispatch mock;
   mock.Delegate();
 
+  constexpr DISPID ResetValueToRP_dispid{0x60020028};
+  EXPECT_CALL(mock, Invoke(ResetValueToRP_dispid, _, _, _, _, _, _, _)).Times(1);
+
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
   pacemaker::inca::com::CalibrationScalarDataProxy   calib(std::move(idispatch));
-
-  constexpr DISPID ResetValueToRP_dispid{0x60020028};
-  EXPECT_CALL(mock, Invoke(ResetValueToRP_dispid, _, _, _, _, _, _, _));
 
   calib.ResetValueToRP();
 }
