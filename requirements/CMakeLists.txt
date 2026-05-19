@@ -1,9 +1,15 @@
 find_package(LATEX REQUIRED COMPONENTS LATEXMK)
 
 if (${LATEX_FOUND})
-  add_custom_target(requirements ALL)
+  add_custom_target(
+    requirements ALL
+    DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/pacemaker_SRS.pdf
+      ${CMAKE_CURRENT_BINARY_DIR}/pacemaker_TS.pdf
+  )
   add_custom_command(
-    TARGET requirements POST_BUILD
+    OUTPUT  
+      ${CMAKE_CURRENT_BINARY_DIR}/pacemaker_SRS.pdf
     COMMAND
       ${LATEXMK_COMPILER} 
       ARGS
@@ -14,9 +20,13 @@ if (${LATEX_FOUND})
         -interaction=nonstopmode 
         -outdir=${CMAKE_CURRENT_BINARY_DIR} 
         ${CMAKE_CURRENT_SOURCE_DIR}/pacemaker_SRS.tex
+    DEPENDS 
+      ${CMAKE_CURRENT_SOURCE_DIR}/pacemaker_SRS.tex
   )
+
   add_custom_command(
-    TARGET requirements POST_BUILD
+    OUTPUT 
+      ${CMAKE_CURRENT_BINARY_DIR}/pacemaker_TS.pdf
     COMMAND
       ${LATEXMK_COMPILER}
       ARGS 
@@ -27,5 +37,7 @@ if (${LATEX_FOUND})
         -interaction=nonstopmode 
         -outdir=${CMAKE_CURRENT_BINARY_DIR} 
         ${CMAKE_CURRENT_SOURCE_DIR}/pacemaker_TS.tex
+    DEPENDS 
+      ${CMAKE_CURRENT_SOURCE_DIR}/pacemaker_TS.tex
   )
 endif()
