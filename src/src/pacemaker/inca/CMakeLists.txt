@@ -41,13 +41,7 @@ target_precompile_headers(
   ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/incacom.hpp
 )
 
-target_compile_options(
-  pacemaker.inca
-  PRIVATE
-  $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>: -Wall -O2>
-  $<$<CXX_COMPILER_ID:MSVC>: /W2 /O2 /DINCACOM_TLB="${INCACOM_TLB}">
-)
-
+target_compile_definitions(pacemaker.inca PRIVATE INCACOM_TLB="${INCACOM_TLB}")
 target_compile_features(pacemaker.inca PUBLIC cxx_std_17)
 
 set_target_properties(
