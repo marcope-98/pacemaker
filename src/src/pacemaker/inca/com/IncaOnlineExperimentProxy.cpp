@@ -40,12 +40,7 @@ auto pacemaker::inca::com::IncaOnlineExperimentProxy::GetAllDevices() -> std::ve
     if (device.vt != VT_DISPATCH)
       throw std::runtime_error("GetAllDevices: device element is not VT_DISPATCH");
 
-#if 1
     auto idispatch = (IDispatch *)(device);
-#else
-    ::IDispatch *idispatch = V_DISPATCH(&device);
-    idispatch->AddRef();
-#endif
     out.emplace_back(std::move(idispatch));
   }
   return out;
