@@ -30,22 +30,23 @@ cd pacemaker
 > [!NOTE]
 > An MSVC compiler must be avaible on your system. For a portable alternative, see [PortableBuildTools by Data-Oriented-House](https://github.com/Data-Oriented-House/PortableBuildTools).
 
-Configure and build with the path to `incacom.tlb` from your ETAS INCA installation folder:
-
 ```console
 cmake -B build -S . ^
-      -DINCACOM_TLB="<path/to/incacom.tlb>" ^
+      -DETAS_INCACOM_TLB="<path/to/incacom.tlb>" ^
       -DCMAKE_BUILD_TYPE="<Release|Debug|RelWithDebInfo|MinSizeRel>"
 
 cmake --build build --target pacemaker
 ```
+
+You can supply a `incacom.tlb` file via `ETAS_INCACOM_TLB` CMake variable, by specifying its absolute path. Otherwise a find module will take care of finding its location in regedit.
+
+Due to backward compatibility issues, only ETAS INCA 7.4 and later installations are supported.
 
 ## Building and Running Unit Tests
 
 Build the `tests` target and then run the test suite via CTest:
 ```console 
 cmake -B build -S . ^
-      -DINCACOM_TLB="<path/to/incacom.tlb> ^
       -DPACEMAKER_BUILD_TESTS=ON
 
 cmake --build build --target tests
@@ -71,7 +72,6 @@ The Software Requirements Specification (SRS) and Test Specification (TS) docume
 
 ```console
 cmake -B build -S . ^
-      -DINCACOM_TLB="<path/to/incacom.tlb>" ^
       -DMIKTEX_BINARY_PATH="<path/tp/miktex/bin>" ^
       -DPACEMAKER_BUILD_REQUIREMENTS=ON
 
@@ -87,7 +87,6 @@ API documentation is generated with [Doxygen](https://www.doxygen.nl/) and [Grap
 
 ```console
 cmake -B build -S . ^
-      -DINCACOM_TLB="<path/to/incacom.tlb>" ^
       -DDOXYGEN_EXECUTABLE="<path/to/doxygen>" ^
       -DDOXYGEN_DOT_EXECUTABLE="<path/to/dot>" ^
       -DPACEMAKER_BUILD_DOCS=ON
