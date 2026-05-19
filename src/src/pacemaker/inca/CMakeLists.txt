@@ -1,3 +1,4 @@
+find_package(INCA REQUIRED)
 
 add_library(pacemaker.inca)
 add_library(pacemaker::inca ALIAS pacemaker.inca)
@@ -41,7 +42,7 @@ target_precompile_headers(
   ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/incacom.hpp
 )
 
-target_compile_definitions(pacemaker.inca PRIVATE INCACOM_TLB="${INCACOM_TLB}")
+target_compile_definitions(pacemaker.inca PRIVATE ETAS_INCACOM_TLB="${ETAS_INCACOM_TLB}")
 target_compile_features(pacemaker.inca PUBLIC cxx_std_17)
 
 set_target_properties(
