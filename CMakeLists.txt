@@ -4,7 +4,7 @@ project(
   pacemaker 
   DESCRIPTION "COM automation for people with deadlines and a hatred of GUIs"
   LANGUAGES CXX
-  VERSION 0.0.1
+  VERSION 1.0.1
 )
 
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
