@@ -27,7 +27,6 @@ namespace
 
     void Delegate()
     {
-      ON_CALL(*this, Release()).WillByDefault(Return(0));
       ON_CALL(*this, QueryInterface(_, _)).WillByDefault([this](const IID &, void **out)
                                                          { *out = reinterpret_cast<void*>(this); return S_OK; });
     }
@@ -54,6 +53,12 @@ TEST_F(TC006, A)
   mock.Delegate();
   mock.Delegate_GetName(GetName);
 
+  EXPECT_CALL(mock, AddRef()).Times(1);
+  EXPECT_CALL(mock, Release()).Times(2);
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(1);
+  EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(1);
+
+  mock.AddRef();
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
   pacemaker::inca::com::ExperimentDeviceProxy        device(std::move(idispatch));
 
@@ -66,6 +71,11 @@ TEST_F(TC006, B)
   MockExperimentDevice_Dispatch mock;
   mock.Delegate();
 
+  EXPECT_CALL(mock, AddRef()).Times(1);
+  EXPECT_CALL(mock, Release()).Times(2);
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(1);
+
+  mock.AddRef();
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
   pacemaker::inca::com::ExperimentDeviceProxy        device(std::move(idispatch));
 

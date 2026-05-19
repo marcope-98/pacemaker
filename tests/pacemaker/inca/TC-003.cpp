@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include <comdef.h>
+#include <propvarutil.h>
 
 #include "pacemaker/fixture/LeakTestFixture.hpp"
 
@@ -30,7 +31,6 @@ namespace
 
     void Delegate()
     {
-      ON_CALL(*this, Release()).WillByDefault(Return(0));
       ON_CALL(*this, QueryInterface(_, _)).WillByDefault([this](const IID &, void **out)
                                                          {*out = reinterpret_cast<void*>(this); return S_OK; });
       // clang-format off
@@ -41,9 +41,7 @@ namespace
       // clang-format off
       constexpr DISPID GetOnlineExperiment_dispid{0x6002002f};
       auto             GetOnlineExperiment = [this](DISPID, const IID &, LCID, WORD, DISPPARAMS *, VARIANT *variant, EXCEPINFO *, UINT *) {
-        VariantInit(variant);
-        variant->pdispVal = this;
-        variant->vt = VT_DISPATCH;
+        InitVariantFromDispatch(this, variant);
         return S_OK;
       };
       ON_CALL(*this, Invoke(GetOnlineExperiment_dispid, _, _, _, _, _, _, _)).WillByDefault(GetOnlineExperiment);
@@ -51,9 +49,7 @@ namespace
       // clang-format off
       constexpr DISPID GetOnlineExperimentView_dispid{0x60020030};
       auto             GetOnlineExperimentView = [this](DISPID, const IID &, LCID, WORD, DISPPARAMS *, VARIANT *variant, EXCEPINFO *, UINT *){ 
-        VariantInit(variant);
-        variant->pdispVal = this;
-        variant->vt = VT_DISPATCH;
+        InitVariantFromDispatch(this, variant);
         return S_OK; 
       }; 
       ON_CALL(*this, Invoke(GetOnlineExperimentView_dispid, _, _, _, _, _, _, _)).WillByDefault(GetOnlineExperimentView);
@@ -64,10 +60,17 @@ namespace
 
 TEST_F(TC003, A)
 {
+  MockInca_Dispatch mock;
+  mock.Delegate();
+
+  EXPECT_CALL(mock, Release()).Times(2);                      // IncaProxy destructor + inca::detail::query_interface
+  EXPECT_CALL(mock, AddRef()).Times(1);                       // Needed to make AddRef + QueryInterface == Release constraint
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(1);           // IncaProxy constructor
+  EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(1); // DisconnectFromTool
+
   EXPECT_NO_THROW(
       {
-        MockInca_Dispatch mock;
-        mock.Delegate();
+        mock.AddRef();
         pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
         pacemaker::inca::com::IncaProxy(std::move(idispatch));
       });
@@ -79,6 +82,13 @@ TEST_F(TC003, B)
   {
     MockInca_Dispatch mock;
     mock.Delegate();
+
+    EXPECT_CALL(mock, Release()).Times(2);                      // IncaProxy destructor + inca::detail::query_interface
+    EXPECT_CALL(mock, AddRef()).Times(1);                       // Needed to make AddRef + QueryInterface == Release constraint
+    EXPECT_CALL(mock, QueryInterface(_, _)).Times(1);           // IncaProxy constructor
+    EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(1); // DisconnectFromTool
+
+    mock.AddRef();
     pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
     pacemaker::inca::com::IncaProxy                    inca_proxy{std::move(idispatch)};
 
@@ -91,10 +101,17 @@ TEST_F(TC003, C)
 {
   MockInca_Dispatch mock;
   mock.Delegate();
+
+  EXPECT_CALL(mock, AddRef()).Times(2);                       // IncaProxy destructor + inca::detail::query_interface + exp destructor
+  EXPECT_CALL(mock, Release()).Times(3);                      // IncaProxy destructor + inca::detail::query_interface + exp destructor
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(1);           // IncaProxy constructor
+  EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(2); // DisconnectFromTool + GetOpenedExperiment
+
+  mock.AddRef();
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch(&mock);
   pacemaker::inca::com::IncaProxy                    inca_proxy(std::move(idispatch));
   pacemaker::inca::detail::unique_com_ptr<IDispatch> exp;
-  
+
   EXPECT_NO_THROW(
       {
         exp = inca_proxy.GetOpenedExperiment();
@@ -106,6 +123,13 @@ TEST_F(TC003, D)
 {
   MockInca_Dispatch mock;
   mock.Delegate();
+
+  EXPECT_CALL(mock, AddRef()).Times(2);                       // IncaProxy destructor + inca::detail::query_interface + expview destructor
+  EXPECT_CALL(mock, Release()).Times(3);                      // IncaProxy destructor + inca::detail::query_interface + expview destructor
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(1);           // IncaProxy constructor
+  EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(2); // DisconnectFromTool + GetOpenedExperimentView
+
+  mock.AddRef();
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch(&mock);
   pacemaker::inca::com::IncaProxy                    inca_proxy(std::move(idispatch));
   pacemaker::inca::detail::unique_com_ptr<IDispatch> expview;

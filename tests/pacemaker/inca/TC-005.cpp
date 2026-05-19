@@ -27,7 +27,6 @@ namespace
 
     void Delegate()
     {
-      ON_CALL(*this, Release()).WillByDefault(Return(0));
       ON_CALL(*this, QueryInterface(_, _)).WillByDefault([this](const IID &, void **out)
                                                          { *out = reinterpret_cast<void*>(this); return S_OK; });
     }
@@ -40,18 +39,6 @@ namespace
     }
 
     IDispatch *address{nullptr};
-  };
-
-  class MockDataItem : public IDispatch
-  {
-  public:
-    MOCK_METHOD(ULONG, AddRef, (), (override));
-    MOCK_METHOD(ULONG, Release, (), (override));
-    MOCK_METHOD(HRESULT, GetTypeInfo, (UINT, LCID, ITypeInfo **), (override));
-    MOCK_METHOD(HRESULT, GetTypeInfoCount, (UINT *), (override));
-    MOCK_METHOD(HRESULT, GetIDsOfNames, (const IID &, LPOLESTR *, UINT, LCID, DISPID *), (override));
-    MOCK_METHOD(HRESULT, Invoke, (DISPID, const IID &, LCID, WORD, DISPPARAMS *, VARIANT *, EXCEPINFO *, UINT *), (override));
-    MOCK_METHOD(HRESULT, QueryInterface, (const IID &, void **), (override));
   };
 } // namespace
 
@@ -66,13 +53,19 @@ TEST_F(TC005, A)
   mock.Delegate();
   mock.Delegate_OpenViewForExperimentDataItem(OpenViewForExperimentDataItem);
 
-  MockDataItem dataitem;
+  EXPECT_CALL(mock, AddRef()).Times(3);
+  EXPECT_CALL(mock, Release()).Times(4);
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(1);
+  EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(1);
+
+  mock.AddRef();
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
   pacemaker::inca::com::IncaExperimentViewProxy      expview(std::move(idispatch));
 
-  pacemaker::inca::detail::unique_com_ptr<IDispatch> dataitem_ptr{&dataitem};
+  mock.AddRef();
+  pacemaker::inca::detail::unique_com_ptr<IDispatch> dataitem_ptr{&mock};
 
   expview.OpenViewForExperimentDataItem(std::move(dataitem_ptr));
 
-  EXPECT_EQ(mock.address, &dataitem);
+  EXPECT_EQ(mock.address, &mock);
 }

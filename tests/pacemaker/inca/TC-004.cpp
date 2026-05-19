@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include <comdef.h>
+#include <propvarutil.h>
 
 #include "pacemaker/fixture/LeakTestFixture.hpp"
 
@@ -41,7 +42,6 @@ namespace
 
     void Delegate()
     {
-      ON_CALL(*this, Release()).WillByDefault(Return(0));
       ON_CALL(*this, QueryInterface(_, _)).WillByDefault([this](const IID &, void **out)
                                                          { *out = reinterpret_cast<void*>(this); return S_OK; });
     }
@@ -60,20 +60,16 @@ TEST_F(TC004, A)
     Bound.cElements = 2;
     SAFEARRAY *out  = SafeArrayCreate(VT_VARIANT, 1, &Bound);
 
-    VARIANT elem0;
-    VariantInit(&elem0);
-    elem0.pdispVal = &mock;
-    elem0.vt       = VT_DISPATCH;
+    VARIANT elem;
+    VariantInit(&elem);
+    elem.pdispVal = &mock;
+    elem.vt       = VT_DISPATCH;
 
-    VARIANT elem1;
-    VariantInit(&elem1);
-    elem1.pdispVal = &mock;
-    elem1.vt       = VT_DISPATCH;
-
-    LONG index = 0;
-    SafeArrayPutElement(out, &index, (void *)(&elem0));
+    LONG index;
+    index = 0;
+    SafeArrayPutElement(out, &index, (void *)(&elem)); // Calls AddRef
     index = 1;
-    SafeArrayPutElement(out, &index, (void *)(&elem1));
+    SafeArrayPutElement(out, &index, (void *)(&elem)); // Calls AddRef
 
     variant->parray = out;
     variant->vt     = (VT_ARRAY | VT_VARIANT);
@@ -82,14 +78,46 @@ TEST_F(TC004, A)
   mock.Delegate();
   mock.Delegate_GetAllDevices(GetAllDevices);
 
-  pacemaker::inca::detail::unique_com_ptr<IDispatch>              idispatch{&mock};
-  pacemaker::inca::com::IncaOnlineExperimentProxy                 exp(std::move(idispatch));
-  std::vector<pacemaker::inca::detail::unique_com_ptr<IDispatch>> devices;
+  /**
+   * AddRef call summary:
+   * 2 * SafeArrayPutElement
+   * 2 * SafeArrayGetElement
+   * 2 * _variant_t::operator IDispatch*
+   * 1 * Implicit call in QueryInterface
+   * 1 * explicit call to AddRef (see below code)
+   *
+   * https://learn.microsoft.com/en-us/windows/win32/api/oleauto/nf-oleauto-safearrayputelement
+   * If the data element is a VT_DISPATCH or VT_UNKNOWN, AddRef is called to increment the object's reference count.
+   *
+   * https://learn.microsoft.com/en-us/cpp/cpp/variant-t-extractors?view=msvc-170
+   * operator IDispatch*( ) Extracts a dispinterface pointer from an encapsulated VARIANT. AddRef is called on the resulting pointer, so it is up to you to call Release to free it.
+   *
+   * https://learn.microsoft.com/en-us/windows/win32/api/oleauto/nf-oleauto-safearraygetelement
+   * If the data element is a string, object, or variant, the function copies the element in the correct way
+   *
+   * Release call summary:
+   * 1 * Destructor of IncaOnlineExperimentProxy
+   * 1 * Implicitly called inside QueryInterface (destructor of unique_com_ptr input argument)
+   * 2 * Destructor of devices
+   * 2 * Destructor of _variant_t in IncaOnlineExperimentProxy::GetAllDevices
+   * 2 * Destructor of SAFEARRAY  in IncaOnlineExperimentProxy::GetAllDevices (to be precise the destructor of _variant_t containing the SAFEARRAY)
+   */
+  EXPECT_CALL(mock, AddRef()).Times(7);                       // One per device
+  EXPECT_CALL(mock, Release()).Times(8);                      // IncaOnlineExperimentProxy destructor + QueryInterface + 6 AddRefs
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(1);           // IncaOnlineExperimentProxy constructor
+  EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(1); // GetAllDevices
 
-  EXPECT_NO_THROW(devices = exp.GetAllDevices());
-  EXPECT_EQ(devices.size(), 2);
-  EXPECT_NE(devices[0], nullptr);
-  EXPECT_NE(devices[1], nullptr);
+  mock.AddRef();
+  pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
+  pacemaker::inca::com::IncaOnlineExperimentProxy    exp(std::move(idispatch));
+
+  EXPECT_NO_THROW(
+      {
+        std::vector<pacemaker::inca::detail::unique_com_ptr<IDispatch>> devices = exp.GetAllDevices();
+        EXPECT_EQ(devices.size(), 2);
+        EXPECT_NE(devices[0], nullptr);
+        EXPECT_NE(devices[1], nullptr);
+      });
 }
 
 TEST_F(TC004, B)
@@ -105,6 +133,12 @@ TEST_F(TC004, B)
   mock.Delegate();
   mock.Delegate_GetAllDevices(GetAllDevices);
 
+  EXPECT_CALL(mock, AddRef()).Times(1);
+  EXPECT_CALL(mock, Release()).Times(2);
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(1);
+  EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(1);
+
+  mock.AddRef();
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
   pacemaker::inca::com::IncaOnlineExperimentProxy    exp(std::move(idispatch));
   EXPECT_THROW(auto devices = exp.GetAllDevices(), std::runtime_error);
@@ -123,6 +157,12 @@ TEST_F(TC004, C)
   mock.Delegate();
   mock.Delegate_GetCalibrationValueInDevice(GetCalibrationValueInDevice);
 
+  EXPECT_CALL(mock, AddRef()).Times(1);
+  EXPECT_CALL(mock, Release()).Times(2);
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(1);
+  EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(1);
+
+  mock.AddRef();
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
   pacemaker::inca::com::IncaOnlineExperimentProxy    exp(std::move(idispatch));
 
@@ -147,6 +187,9 @@ TEST_F(TC004, D)
   MockIncaOnlineExperiment_Dispatch mock;
   mock.Delegate();
 
+  EXPECT_CALL(mock, AddRef()).Times(1);
+  EXPECT_CALL(mock, Release()).Times(2);
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(1);
   constexpr DISPID StartRecording_dispid{0x600200a1};
   EXPECT_CALL(mock, Invoke(StartRecording_dispid, _, _, _, _, _, _, _));
   constexpr DISPID StopRecordingAndSave_dispid{0x600200a4};
@@ -154,6 +197,7 @@ TEST_F(TC004, D)
   constexpr DISPID StopMeasurement_dispid{0x60020074};
   EXPECT_CALL(mock, Invoke(StopMeasurement_dispid, _, _, _, _, _, _, _));
 
+  mock.AddRef();
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
   pacemaker::inca::com::IncaOnlineExperimentProxy    exp(std::move(idispatch));
 
