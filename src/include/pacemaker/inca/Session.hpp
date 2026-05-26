@@ -1,49 +1,66 @@
 #ifndef PACEMAKER_INCA_SESSION_HPP_
 #define PACEMAKER_INCA_SESSION_HPP_
 
-#include "pacemaker/inca/Experiment.hpp"
-#include "pacemaker/inca/com/IncaProxy.hpp"
+#include <chrono>
+#include <memory>
+#include <string>
 
 namespace pacemaker::inca
 {
   /**
    * @brief Top-level session object that owns the connection to a running INCA instance.
    *
-   * `Session` is the single entry point for the pacemaker library. It establishes a COM
-   * connection to a locally running INCA process, validates that an experiment is open and
-   * at least one device is online, and constructs the `Experiment` object through which the
-   * measurement run is controlled.
+   * `Session` is the single entry point for the pacemaker library. It establishes a COM connection to a locally
+   * running INCA process, validates that an experiment is open and at least one device is online and exposes the
+   * complete measurement workflow, parameter management, recording lifecycle, and teardown, through a single, opaque
+   * object.
    *
    * ### Typical usage
    * @code
    * CoInitialize(NULL);
    * auto session = pacemaker::inca::Session::connect();
-   * auto &exp    = session.experiment();
    *
-   * exp.add_param("Engine_TorqueRequest");
-   * exp.start_recording();
-   * exp.set_param("Engine_TorqueRequest", 120.0);
-   * exp.stop_recording("run_001.mf4");
+   * session.add_param("Engine_TorqueRequest");
+   * session.start_recording();
+   * session.set_param("Engine_TorqueRequest", 120.0);
+   * session.stop_recording("run_001.mf4");
    *
+   * // Session destructor calls DisconnectFromTool() automatically
    * CoUninitialize();
    * @endcode
    *
    * ### Lifetime and thread safety
-   * The session is non-copyable and non-movable. Exactly one `Session` should exist
-   * per INCA automation connection. COM must be initialised on the calling thread
-   * before `connect()` is invoked.
+   * The session is non-copyable and non-movable. Exactly one `Session` should exist per INCA automation connection.
+   * COM must be initialised on the calling thread before `connect()` is invoked.
    *
-   * On destruction, `IncaProxy`'s destructor calls `DisconnectFromTool()` so INCA
-   * is cleanly notified of the disconnection.
+   * On destruction, `Session`'s destructors calls `DisconnectFromTool()` on the INCA COMM object, ensuring INCA is cleanly
+   * notified of the disconnection.
    *
-   * @note Platform: Windows only. INCA must be installed and runnign.
-   *
-   * @see pacemaker::inca::Experiment
-   * @see pacemaker::inca::com::IncaProxy
+   * @note Platform: Windows only. INCA must be installed and running.
    */
   class Session
   {
   public:
+    /**
+     * @brief Factory function that connects to a running INCA instance and returns an initialised `Session`.
+     *
+     * The function allows to specify a custom way to
+     *
+     * @tparam F Functor returning the argument to initialize the underlying IncaProxy member variable
+     *
+     * @return A fully constructed `Session` ready for use.
+     *
+     * @throws std::runtime_error if `CoCreateInstance` fails (INCA not installed or not running).
+     * @throws std::runtime_error if the open experiment has no devices configured or online.
+     *
+     * @pre COM must be initialised on the calling thread (e.g.\ `CoInitialize` oir `CoInitializeEx`)
+     */
+    template<typename F>
+    [[nodiscard]] static auto connect(const F &factory) -> Session
+    {
+      return Session{factory};
+    }
+
     /**
      * @brief Factory function that connects to a running INCA instance and returns an initialised `Session`.
      *
@@ -58,50 +75,109 @@ namespace pacemaker::inca
      * @throws std::runtime_error if `CoCreateInstance` fails (INCA not installed or not running).
      * @throws std::runtime_error if the open experiment has no devices configured or online.
      *
-     * @pre COM must be initialised on the calling thread (e.g. `CoInitializeEx`)
+     * @pre COM must be initialised on the calling thread (e.g.\ `CoInitialize` oir `CoInitializeEx`)
      */
     [[nodiscard]] static auto connect() -> Session;
 
     /// @brief Copying is deleted; the COM connection must not be duplicated.
     Session(const Session &) = delete;
-    /// @brief Copying assignment is deleted; the COM connection must not be duplicated.
-    Session &operator=(const Session &) = delete;
     /// @brief Move construction is deleted; the session has a unique identity.
     Session(Session &&) = delete;
+    /// @brief Copying assignment is deleted; the COM connection must not be duplicated.
+    Session &operator=(const Session &) = delete;
     /// @brief Move assignment is deleted; the session has a unique identity.
     Session &operator=(Session &&) = delete;
 
     /**
      * @brief Destructor; triggers disconnection from INCA via `IncaProxy`.
      *
-     * The `IncaProxy` member is destroyed first (in reverse declaration order), which calls
-     * `DisconnectFromTool()` on the INCA COM object. The destructor is explicitly defined (rather than
-     * defaulted in the header) to ensure this sequencing is correct across translation units.
+     * `DisconnectFromTool()` is called on the `Incaproxy` object, so INCA is notified of the disconnection.
+     * Then the Proxies are destroyed in reverse order.
      */
     ~Session();
 
     /**
-     * @brief Returns a reference to the owned `Experiment`.
+     * @brief Registers a calibration parameter for use during the experiment.
      *
-     * The reference is valid for the lifetime of the `Session`. Use it to register parameters,
-     * control recordings, and update calibration values.
+     * Looks up the named calibration scalar on the primary device via
+     * `IncaOnlineExperiment_DispatchWrapper::GetCalibrationValueInDevice()` and stores the resulting
+     * `CalibrationScalarDataProxy` in the internal parameter table. The parameter can then be updated during
+     * the run via `set_param()`.
      *
-     * @return Non-const reference to the session's `Experiment` object.
+     * Calling `add_param()` a second time with the same @p naem is a no-op; the parameter is not re-fetched from INCA.
+     *
+     * @param name Name of the calibration parameter as it appears in INCA.
+     *
+     * @throws std::runtime_error if the parameter cannot be found in the primary device.
      */
-    [[nodiscard]] auto experiment() noexcept -> Experiment & { return this->m_experiment; }
+    auto add_param(const std::string &name) -> void;
+
+    /**
+     * @brief Sets a registered calibration parameter to the given value.
+     *
+     * Looks up @p name in the internal parameter table and calls `SetImplValue(value)` vis `operator->` on the
+     * stored `CalibrationScalarDataProxy`. The change takes effect immediately in the running INCA measurement session.
+     *
+     * @param name  Name of the calibration parameter previously registered via `add_param()`.
+     * @param value New value to write to the parameter's implementation page.
+     *
+     * @throws std::out_of_range if @p name was not registered via `add_param()`. The exception message includes
+     *         the parameter name and a hint to call `add_param()` first.
+     */
+    auto set_param(const std::string &name, double value) -> void;
+
+    /**
+     * @brief Resets all registered parameters to their reference-page values and clears the internal parameter table.
+     *
+     * Iterates over all stored `CalibrationScalarDataProxy` objects and calls `ResetValueToRP()` via `operator->`
+     * on each. After this call the session is in the same state as immediately after `connect(...)`, no parameters are
+     * registered and INCA's calibration values are restored to their reference-page baseline.
+     *
+     * This method is called automatically by `stop_recording()` at the end of each run, but may also be called explicitly if
+     * an early reset is needed.
+     */
+    auto reset() -> void;
+
+    /**
+     * @brief Starts a new measurement recording in INCA.
+     *
+     * Delegates to `StartRecording()` on the internal `IncaOnlineExperimentProxy` via `operator->`. The recording captures
+     * all online measurement signals configured in the open INCA experiment from this point forward.
+     *
+     * Register all calibration parameters via `add_param()` before calling `start_recording()`.
+     */
+    auto start_recording() -> void;
+
+    /**
+     * @brief Stops the recording, saves the measurement data, and resets all registered parameters.
+     *
+     * The method performs the following steps in order:
+     * 1. Sleeps for `k_flush_delay` (40 ms) to allow INCA to flush any buffered measurement samples.
+     * 2. Stops the INCA recording and saves the recording
+     * 3. Stop measurement
+     * 4. Resets all registered calibration parameters to their reference-page values
+     *
+     * @param filename Output recording filename or filepath passed to INCA. Currently forwarded but not yet consumed
+     *                 by the underlying COM call; reserved for future use.
+     */
+    auto stop_recording(const std::string &filename) -> void;
 
   private:
+    struct Impl;
+    std::unique_ptr<Impl> pimpl;
+
+    template<typename F>
+    explicit Session(const F &factory) : pimpl{std::make_unique<Impl>(factory)}
+    {
+    }
+
     /**
-     * @brief Private constructor used exclusively by `connect()`.
+     * @brief Minimum delay before stopping a recording to allow INCA to flush buffered measurement data.
      *
-     * @param inca       Initialised proxy for the top-level INCA COM object.
-     * @param experiment Fully constructed experiment, ready for use
+     * Set to 40 ms, which is sufficient for INCA's internal sample-buffer write cycle under normal operating
+     * conditions. Applied at the start of `stop_recording()` via `std::this_thread::sleep_for`.
      */
-    Session(pacemaker::inca::com::IncaProxy inca, pacemaker::inca::Experiment experiment);
-
-    pacemaker::inca::com::IncaProxy m_inca;
-    pacemaker::inca::Experiment     m_experiment;
+    static constexpr std::chrono::milliseconds k_flush_delay{40};
   };
-} // namespace inca
-
+} // namespace pacemaker::inca
 #endif // PACEMAKER_INCA_SESSION_HPP_

@@ -1,5 +1,45 @@
 find_package(INCA REQUIRED)
 
+add_library(pacemaker.inca.internal INTERFACE)
+add_library(pacemaker::inca::internal ALIAS pacemaker.inca.internal)
+
+target_sources(
+  pacemaker.inca.internal
+  INTERFACE
+    FILE_SET  HEADERS
+    TYPE      HEADERS
+    BASE_DIRS "${PACEMAKER_SOURCE_DIR}/src"
+    FILES
+      ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/com/CalibrationScalarDataProxy.hpp
+      ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/com/ExperimentDeviceProxy.hpp
+      ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/com/IncaExperimentViewProxy.hpp
+      ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/com/IncaOnlineExperimentProxy.hpp
+      ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/com/IncaProxy.hpp
+      ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/incacom.hpp
+      ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/utils.hpp
+      ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/COMProxy.hpp
+      ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/DispatchWrapper.hpp
+      ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/unique_com_ptr.hpp
+)
+
+target_precompile_headers(
+  pacemaker.inca.internal
+  INTERFACE
+  ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/incacom.hpp
+)
+
+target_compile_definitions(pacemaker.inca.internal INTERFACE ETAS_INCACOM_TLB="${ETAS_INCACOM_TLB}")
+target_compile_features(pacemaker.inca.internal INTERFACE cxx_std_17)
+
+set_target_properties(
+  pacemaker.inca.internal 
+  PROPERTIES 
+    VERIFY_INTERFACE_HEADER_SETS ON
+    VERIFY_PRIVATE_HEADER_SETS   ON
+)
+
+# ============================================
+
 add_library(pacemaker.inca)
 add_library(pacemaker::inca ALIAS pacemaker.inca)
 
@@ -43,6 +83,7 @@ set_target_properties(
   pacemaker.inca 
   PROPERTIES 
     VERIFY_INTERFACE_HEADER_SETS ON
+    VERIFY_PRIVATE_HEADER_SETS   ON
     EXPORT_NAME                  inca
 )
 
