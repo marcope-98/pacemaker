@@ -1,5 +1,5 @@
 set(DOXYGEN_OUTPUT_DIRECTORY        ${CMAKE_CURRENT_BINARY_DIR})
-set(DOXYGEN_STRIP_FROM_PATH         ${CMAKE_CURRENT_SOURCE_DIR}/../src/include)
+set(DOXYGEN_FULL_PATH_NAMES         OFF)
 set(DOXYGEN_LOOKUP_CACHE_SIZE       3)
 set(DOXYGEN_EXTRACT_ALL             YES)
 set(DOXYGEN_EXTRACT_STATIC          YES)
@@ -40,8 +40,8 @@ if(${DOXYGEN_FOUND})
     ${CMAKE_CURRENT_SOURCE_DIR}/index.html.md
     # Source file documentation
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/include/pacemaker/inca 
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/include/pacemaker/inca/com 
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/include/pacemaker/inca/detail
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src/src/pacemaker/inca/com 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src/src/pacemaker/inca/detail
     ALL
   )
 endif()
