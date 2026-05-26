@@ -10,7 +10,6 @@ target_sources(
     TYPE      HEADERS
     BASE_DIRS "${PACEMAKER_SOURCE_DIR}/include"
     FILES
-      ${PACEMAKER_SOURCE_DIR}/include/pacemaker/inca/Experiment.hpp
       ${PACEMAKER_SOURCE_DIR}/include/pacemaker/inca/Session.hpp
       ${PACEMAKER_SOURCE_DIR}/include/pacemaker/inca/com/CalibrationScalarDataProxy.hpp
       ${PACEMAKER_SOURCE_DIR}/include/pacemaker/inca/com/ExperimentDeviceProxy.hpp
@@ -27,7 +26,6 @@ target_sources(
       ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/incacom.hpp
       ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/utils.hpp
   PRIVATE
-    ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/Experiment.cpp
     ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/Session.cpp
     ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/com/CalibrationScalarDataProxy.cpp
     ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/com/ExperimentDeviceProxy.cpp
