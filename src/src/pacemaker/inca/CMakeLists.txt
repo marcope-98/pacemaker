@@ -24,6 +24,7 @@ target_sources(
     FILES 
       ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/incacom.hpp
       ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/utils.hpp
+      ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/DispatchWrapper.hpp
       ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/unique_com_ptr.hpp
   PRIVATE
     ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/Session.cpp
