@@ -114,17 +114,3 @@ Requirement reference: REQ-002.
 \when{Constucting a \texttt{COMProxy<MockCOM>} object with the \texttt{unique\_com\_ptr<IDispatch>}}
 \then{QueryInterface is called and an exception is thrown}
 \end{tcbox}
-
-% -------------------------------------------------------------------
-\subsection{TC-002-H: Invalid template argument}
-% -------------------------------------------------------------------
-
-\begin{tcbox}
-\tcfield{Tags:} \texttt{[unit]}\\
-\tcfield{Requirement:} AC-002-12
-
-\medskip
-\given{}
-\when{Constucting a \texttt{COMProxy<IDispatch>} object}
-\then{A compiler error or an exception is raised.}
-\end{tcbox}

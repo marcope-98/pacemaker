@@ -89,14 +89,3 @@ Requirement reference: REQ-001.
 \when{checking if it is an alias of \texttt{unique\_ptr}.}
 \then{the result is true.}
 \end{tcbox}
-% 
-% template<typename T>
-% struct is_unique_ptr : std::false_type {};
-% 
-% template<typename T, typename Deleter>
-% struct is_unique_ptr<std::unique_ptr<T, Deleter>> : std::true_type {};
-% 
-% template <typename T>
-% constexpr bool is_unique_ptr_v = is_unique_ptr<T>::value; 
-% 
-% 
