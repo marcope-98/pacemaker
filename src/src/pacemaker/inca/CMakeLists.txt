@@ -11,7 +11,6 @@ target_sources(
     BASE_DIRS "${PACEMAKER_SOURCE_DIR}/include"
     FILES
       ${PACEMAKER_SOURCE_DIR}/include/pacemaker/inca/Session.hpp
-      ${PACEMAKER_SOURCE_DIR}/include/pacemaker/inca/com/CalibrationScalarDataProxy.hpp
       ${PACEMAKER_SOURCE_DIR}/include/pacemaker/inca/com/ExperimentDeviceProxy.hpp
       ${PACEMAKER_SOURCE_DIR}/include/pacemaker/inca/com/IncaExperimentViewProxy.hpp
       ${PACEMAKER_SOURCE_DIR}/include/pacemaker/inca/com/IncaOnlineExperimentProxy.hpp
@@ -21,6 +20,7 @@ target_sources(
     TYPE      HEADERS
     BASE_DIRS "${PACEMAKER_SOURCE_DIR}/src"
     FILES 
+      ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/com/CalibrationScalarDataProxy.hpp
       ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/incacom.hpp
       ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/utils.hpp
       ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/COMProxy.hpp
@@ -28,7 +28,6 @@ target_sources(
       ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/unique_com_ptr.hpp
   PRIVATE
     ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/Session.cpp
-    ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/com/CalibrationScalarDataProxy.cpp
     ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/com/ExperimentDeviceProxy.cpp
     ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/com/IncaExperimentViewProxy.cpp
     ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/com/IncaOnlineExperimentProxy.cpp
