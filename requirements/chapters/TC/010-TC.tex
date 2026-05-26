@@ -1,0 +1,49 @@
+% ===================================================================
+\section{TC-010 -- \texttt{DispatchWrapper}}
+% ===================================================================
+\label{sec:tc010}
+
+Requirement reference: REQ-010.
+
+% -------------------------------------------------------------------
+\subsection{TC-010-A: DispatchWrapper inherits all public methods}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-010-1
+
+\medskip
+\given{a mock \texttt{XDispatch} class with a public method \texttt{func}}
+\andgiven{an object of type \texttt{DispatchWrapper<XDispatch>}}
+\when{Calling method \texttt{func} from the \texttt{DispatchWrapper<XDispatch>} object}
+\then{The \texttt{XDispatch::func} gets called}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-010-B: DispatchWrapper exposes underlying type}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-010-2
+
+\medskip
+\given{\texttt{DispatchWrapper<double>}}
+\when{comparing types \texttt{DispatchWrapper<double>::type} and \texttt{double}}
+\then{the two constructs have the same type}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-010-C: Classes inheriting from DispatchWrapper shall access underlying type information}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-010-2
+
+\medskip
+\given{an empty class \texttt{MockDispatchWrapper} inheriting publicly from \texttt{DispatchWrapper<int>}}
+\when{comparing types \texttt{MockDispatchWrapper::type} and \texttt{int}}
+\then{the two constructs have the same type}
+\end{tcbox}

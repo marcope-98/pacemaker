@@ -5,9 +5,6 @@
 
 Requirement reference: REQ-009.
 
-\textit{Tests TC-009-A through TC-009-C require a Windows host with INCA installed
-(\texttt{[integration]}). TC-009-D is a compile-time check (\texttt{[unit]}).}
-
 % -------------------------------------------------------------------
 \subsection{TC-009-A: Session::connect() succeeds with INCA running}
 % -------------------------------------------------------------------
@@ -19,19 +16,7 @@ Requirement reference: REQ-009.
 \medskip
 \given{INCA is installed, running, has an experiment open with at least one device online, and COM has been initialised via \texttt{CoInitializeEx}.}
 \when{\texttt{Session::connect()} is called.}
-\then{a valid \texttt{Session} is returned, and \texttt{session.experiment()} returns a reference to the owned \texttt{Experiment}.}
-
-\bigskip
-\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
-\toprule
-\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
-\midrule
-1 & Initialise COM (\texttt{CoInitializeEx}). & \texttt{S\_OK} or \texttt{S\_FALSE}. \\
-2 & Call \texttt{Session::connect()}. & No exception; \texttt{Session} object returned. \\
-3 & Call \texttt{session.experiment()}. & Returns reference without crash. \\
-4 & Destroy \texttt{Session}. & \texttt{DisconnectFromTool()} called on INCA; no crash. \\
-\bottomrule
-\end{tabular}
+\then{a valid \texttt{Session} is returned.}
 \end{tcbox}
 
 % -------------------------------------------------------------------
@@ -46,17 +31,6 @@ Requirement reference: REQ-009.
 \given{INCA is \emph{not} installed on the test host (or the CLSID is unregistered).}
 \when{\texttt{Session::connect()} is called.}
 \then{\texttt{std::runtime\_error} is thrown with a message containing the word \texttt{"INCA"}.}
-
-\bigskip
-\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
-\toprule
-\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
-\midrule
-1 & Ensure INCA \texttt{CLSID} is not registered (or run on a machine without INCA). & Environment verified. \\
-2 & Call \texttt{Session::connect()} inside try/catch. & \texttt{std::runtime\_error} caught. \\
-3 & Assert message contains \texttt{"INCA"}. & Passes. \\
-\bottomrule
-\end{tabular}
 \end{tcbox}
 
 % -------------------------------------------------------------------
@@ -64,24 +38,13 @@ Requirement reference: REQ-009.
 % -------------------------------------------------------------------
 
 \begin{tcbox}
-\tcfield{Tags:} \texttt{[integration]}\\
+\tcfield{Tags:} \texttt{[unit]}\\
 \tcfield{Requirement:} AC-009-4
 
 \medskip
 \given{INCA is running, an experiment is open, but \emph{no} device is configured or online.}
 \when{\texttt{Session::connect()} is called.}
 \then{\texttt{std::runtime\_error} is thrown with a message indicating no device is available.}
-
-\bigskip
-\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
-\toprule
-\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
-\midrule
-1 & Configure INCA experiment with no online device. & Environment ready. \\
-2 & Call \texttt{Session::connect()}. & \texttt{std::runtime\_error} thrown. \\
-3 & Assert message mentions device not available. & Passes. \\
-\bottomrule
-\end{tabular}
 \end{tcbox}
 
 % -------------------------------------------------------------------
@@ -95,17 +58,136 @@ Requirement reference: REQ-009.
 \medskip
 \given{the \texttt{Session} type definition.}
 \when{copy and move traits are evaluated at compile time.}
-\then{all four of copy-constructible, copy-assignable, move-constructible, and move-assignable are \texttt{false}.}
+\then{\texttt{std::is\_copy\_constructible\_v<Session>} is \texttt{false}}
+\andthen{\texttt{std::is\_copy\_assignable\_v<Session>} is \texttt{false}}
+\andthen{\texttt{std::is\_move\_constructible\_v<Session>} is \texttt{true}}
+\andthen{\texttt{std::is\_move\_assignable\_v<Session>} is \texttt{true}.}
+\end{tcbox}
 
-\bigskip
-\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
-\toprule
-\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
-\midrule
-1 & Assert \texttt{!std::is\_copy\_constructible\_v<inca::Session>}. & Holds. \\
-2 & Assert \texttt{!std::is\_copy\_assignable\_v<inca::Session>}. & Holds. \\
-3 & Assert \texttt{!std::is\_move\_constructible\_v<inca::Session>}. & Holds. \\
-4 & Assert \texttt{!std::is\_move\_assignable\_v<inca::Session>}. & Holds. \\
-\bottomrule
-\end{tabular}
+% -------------------------------------------------------------------
+\subsection{TC-009-E: DisconnectFromTool gets called when Session object goes out of scope}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-009-8
+
+\medskip
+\given{a \texttt{Session} object.}
+\when{the object goes out of scope}
+\then{\texttt{DisconnectFromTool} gets called}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-009-F: add\_param is idempotent}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-009-9, AC-009-10
+
+\medskip
+\given{a \texttt{Session} constructed with mock proxies.}
+\andgiven{a mock that returns a distinct \texttt{IDispatch} object each time \texttt{GetCalibrationValueInDevice} is called.}
+\when{\texttt{add\_param("speed")} is called twice.}
+\then{\texttt{GetCalibrationValueInDevice} is called exactly once (the second call is no-op).}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-009-G: set\_param updates registered parameter}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-009-11
+
+\medskip
+\given{a \texttt{Session} with \texttt{"torque"} added via \texttt{add\_param}.}
+\when{\texttt{set\_param("torque"), 50.0} is called.}
+\then{the underlying mock proxy's \texttt{SetImplValue} is called with \texttt{50.0}}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-009-H: set\_param throws for unknown parameter}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-009-12
+
+\medskip
+\given{a \texttt{Session} with no previous calls to \texttt{add\_param}.}
+\when{\texttt{set\_param("torque", 50.0)} is called.}
+\then{\texttt{std::out\_of\_range} is thrown with a message containing \texttt{"torque"}.}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-009-I: reset calls ResetValueToRP on all proxies and clears state}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-009-13
+
+\medskip
+\given{a \texttt{Session} with two parameters \texttt{"a"} and \texttt{"b"} registered via \texttt{add\_param}.}
+\when{\texttt{reset()} is called.}
+\then{\texttt{ResetValueToRP()} is called on both proxies.}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-009-J: stop\_recording sleeps at leas 40\,ms before delegating}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-009-14
+
+\medskip
+\given{a \texttt{Session} backed by mocks, and a high-resolution timer.}
+\when{\texttt{stop\_recording("")} is called.}
+\then{the elapsed wall-clock time from entry to the first COM call is at least 40\,ms}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-009-K: stop\_recording function call order}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-009-14
+
+\medskip
+\given{a \texttt{Session} backed by mocks.}
+\when{\texttt{stop\_recording("")} is called.}
+\then{\texttt{StopRecordingAndSave()} is called before \texttt{StopMeasurement()}.}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-009-L: start\_recording delegates to COM}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-009-15
+
+\medskip
+\given{a \texttt{Session} backed by mocks.}
+\when{\texttt{start\_recording()} is called.}
+\then{\texttt{StartRecording()} on the underlying mock is called exactly once.}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-009-M: Session initialization via lambda}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-009-16
+
+\medskip
+\given{a \texttt{Session} backed by mocks.}
+\andgiven{a lambda \texttt{auto lambda = [](){...}} throwing an exception.}
+\when{calling \texttt{Session::connect(lambda)}.}
+\then{The exception is thrown and no COM API is called.}
 \end{tcbox}

@@ -5,59 +5,9 @@
 
 Requirement reference: REQ-003.
 
-\textit{Note: tests in this section require either a running INCA instance
-(\texttt{[integration]}) or a mock COM server (\texttt{[unit]}).}
 
 % -------------------------------------------------------------------
-\subsection{TC-003-A: Construction narrows IDispatch successfully}
-% -------------------------------------------------------------------
-
-\begin{tcbox}
-\tcfield{Tags:} \texttt{[unit]}\\
-\tcfield{Requirement:} AC-003-1
-
-\medskip
-\given{a mock \texttt{IDispatch} that implements the \texttt{Inca\_Dispatch} interface UUID.}
-\when{\texttt{IncaProxy} is constructed with that pointer.}
-\then{no exception is thrown and the proxy is valid.}
-
-\bigskip
-\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
-\toprule
-\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
-\midrule
-1 & Create mock implementing \texttt{Inca\_Dispatch} UUID. & Mock ready. \\
-2 & Construct \texttt{IncaProxy proxy\{std::move(idispatch)\}}. & No exception; proxy alive. \\
-\bottomrule
-\end{tabular}
-\end{tcbox}
-
-% -------------------------------------------------------------------
-\subsection{TC-003-B: Destructor calls DisconnectFromTool}
-% -------------------------------------------------------------------
-
-\begin{tcbox}
-\tcfield{Tags:} \texttt{[unit]}\\
-\tcfield{Requirement:} AC-003-2
-
-\medskip
-\given{a mock \texttt{Inca\_Dispatch} that records calls to \texttt{DisconnectFromTool}.}
-\when{the owning \texttt{IncaProxy} is destroyed.}
-\then{\texttt{DisconnectFromTool()} has been called exactly once.}
-
-\bigskip
-\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
-\toprule
-\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
-\midrule
-1 & Create mock; wrap in \texttt{IncaProxy}. & Call counter = 0. \\
-2 & Destroy \texttt{IncaProxy} (end of scope). & \texttt{DisconnectFromTool()} counter = 1. \\
-\bottomrule
-\end{tabular}
-\end{tcbox}
-
-% -------------------------------------------------------------------
-\subsection{TC-003-C: GetOpenedExperiment returns valid IDispatch}
+\subsection{TC-003-A: GetOpenedExperiment returns valid IncaOnlineExperimentProxy}
 % -------------------------------------------------------------------
 
 \begin{tcbox}
@@ -65,23 +15,13 @@ Requirement reference: REQ-003.
 \tcfield{Requirement:} AC-003-3
 
 \medskip
-\given{a mock \texttt{Inca\_Dispatch} whose \texttt{GetOpenedExperiment()} returns a non-null \texttt{IDispatch*}.}
-\when{\texttt{proxy.GetOpenedExperiment()} is called.}
-\then{the returned \texttt{unique\_com\_ptr<IDispatch>} is non-null.}
-
-\bigskip
-\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
-\toprule
-\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
-\midrule
-1 & Configure mock to return a valid experiment \texttt{IDispatch*}. & Mock ready. \\
-2 & Call \texttt{proxy.GetOpenedExperiment()}. & Returns non-null pointer; no exception. \\
-\bottomrule
-\end{tabular}
+\given{a mock class \texttt{MockCOM} whose \texttt{GetOpenedExperiment()} returns a non-null \texttt{IDispatch*}.}
+\when{\texttt{proxy->GetOpenedExperiment()} is called.}
+\then{no exceptions are thrown and the returned \texttt{IncaOnlineExperimentProxy} is non-null.}
 \end{tcbox}
 
 % -------------------------------------------------------------------
-\subsection{TC-003-D: GetOpenedExperimentView returns valid IDispatch}
+\subsection{TC-003-B: GetOpenedExperimentView returns valid IncaExperimentViewProxy}
 % -------------------------------------------------------------------
 
 \begin{tcbox}
@@ -90,16 +30,20 @@ Requirement reference: REQ-003.
 
 \medskip
 \given{a mock \texttt{Inca\_Dispatch} whose \texttt{GetOpenedExperimentView()} returns a non-null \texttt{IDispatch*}.}
-\when{\texttt{proxy.GetOpenedExperimentView()} is called.}
-\then{the returned \texttt{unique\_com\_ptr<IDispatch>} is non-null.}
+\when{\texttt{proxy->GetOpenedExperimentView()} is called.}
+\then{No exceptions are thrown and the returned \texttt{IncaExperimentViewProxy} is non-null.}
+\end{tcbox}
 
-\bigskip
-\begin{tabular}{@{}L{0.5cm}L{5cm}L{7cm}@{}}
-\toprule
-\textbf{\#} & \textbf{Step} & \textbf{Expected result} \\
-\midrule
-1 & Configure mock to return a valid view \texttt{IDispatch*}. & Mock ready. \\
-2 & Call \texttt{proxy.GetOpenedExperimentView()}. & Returns non-null pointer; no exception. \\
-\bottomrule
-\end{tabular}
+% -------------------------------------------------------------------
+\subsection{TC-003-C: IncaProxy is an alias of COMProxy}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-003-5
+
+\medskip
+\given{}
+\when{checking if it \texttt{IncaProxy} an alias of \texttt{COMProxy<...>}.}
+\then{the result is true.}
 \end{tcbox}
