@@ -3,32 +3,16 @@
 % ===================================================================
 \label{sec:experiment}
 
-\reqfield{Title:} High-level experiment workflow manager \status{implemented}
+\reqfield{Title:} High-level experiment workflow manager \statusobs
 
-\medskip
-\reqfield{Intent:}
-The user needs a single, coherent object to manage the full lifecycle of an INCA
-measurement run: start and stop recording, register named calibration parameters, update
-their values during the run, and reset all parameters to their reference-page values
-when the experiment concludes. The object shall enforce correct usage order and provide
-clear error messages when the API is misused.
+\changenote{The \texttt{Experiment} class has been removed in revision 2. All functionality previously provided by \texttt{Experiment} (\texttt{add\_param}, \texttt{set\_param}, \texttt{reset}, \texttt{start\_recording}, \texttt{stop\_recording}) has been absorbed into \texttt{Session} (see REQ-009).}
 
 \medskip
 \reqfield{Acceptance criteria:}
-\reqdef{\textbf{AC-008-1}}{\texttt{start\_recording()} shall delegate to \texttt{IncaOnlineExperimentProxy::StartRecording()}.}
-\reqdef{\textbf{AC-008-2}}{\texttt{stop\_recording(filename)} shall: wait at least 40\,ms (flush delay), call \texttt{StopRecordingAndSave()}, call \texttt{StopMeasurement()}, and then call \texttt{reset()}.}
-\reqdef{\textbf{AC-008-3}}{\texttt{add\_param(name)} shall retrieve the calibration scalar object from INCA and store it internally. Calling \texttt{add\_param} a second time with the same name shall be a no-op.}
-\reqdef{\textbf{AC-008-4}}{\texttt{set\_param(name, value)} shall set the calibration value. If \texttt{name} was not previously registered via \texttt{add\_param}, it shall throw \texttt{std::out\_of\_range} with a descriptive message.}
-\reqdef{\textbf{AC-008-5}}{\texttt{reset()} shall call \texttt{ResetValueToRP()} on every registered proxy, then clear the internal map and vector.}
-\reqdef{\textbf{AC-008-6}}{The class shall be move-constructible; copy shall be deleted.}
-\reqdef{\textbf{AC-008-7}}{The flush delay constant \texttt{k\_flush\_delay} shall be 40\,ms.}
-
-\medskip
-\reqfield{Non-functional constraints:}
-\begin{itemize}[leftmargin=*]
-  \item The 40\,ms flush delay is required to ensure INCA has time to write all buffered measurement data before the recording is stopped.
-\end{itemize}
-
-\medskip
-\reqfield{Testing:}
-See test document, section \textit{TC-008}.
+\acobs{\textbf{AC-008-1}}{\texttt{start\_recording()} shall delegate to \texttt{IncaOnlineExperimentProxy::StartRecording()}.}
+\acobs{\textbf{AC-008-2}}{\texttt{stop\_recording(filename)} shall: wait at least 40\,ms (flush delay), call \texttt{StopRecordingAndSave()}, call \texttt{StopMeasurement()}, and then call \texttt{reset()}.}
+\acobs{\textbf{AC-008-3}}{\texttt{add\_param(name)} shall retrieve the calibration scalar object from INCA and store it internally. Calling \texttt{add\_param} a second time with the same name shall be a no-op.}
+\acobs{\textbf{AC-008-4}}{\texttt{set\_param(name, value)} shall set the calibration value. If \texttt{name} was not previously registered via \texttt{add\_param}, it shall throw \texttt{std::out\_of\_range} with a descriptive message.}
+\acobs{\textbf{AC-008-5}}{\texttt{reset()} shall call \texttt{ResetValueToRP()} on every registered proxy, then clear the internal map and vector.}
+\acobs{\textbf{AC-008-6}}{The class shall be move-constructible; copy shall be deleted.}
+\acobs{\textbf{AC-008-7}}{The flush delay constant \texttt{k\_flush\_delay} shall be 40\,ms.}

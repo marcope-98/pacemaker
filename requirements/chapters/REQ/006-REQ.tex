@@ -3,20 +3,23 @@
 % ===================================================================
 \label{sec:experimentdeviceproxy}
 
-\reqfield{Title:} Proxy for an INCA experiment device COM object \status{implemented}
+\reqfield{Title:} Proxy for an INCA experiment device COM object \statusupd
+
+\changenote{\\
+There is no explicit \texttt{get()} method; the raw pointer is accessed via the inherited \texttt{unique\_ptr::get()}. AC-006-3 updated accordingly.}
 
 \medskip
 \reqfield{Intent:}
 The user needs to identify a connected ECU device by name and pass its raw COM pointer to
-other INCA methods that require an \texttt{ExperimentDevice\_Dispatch*} argument, all
-without managing COM reference counts manually.
+other INCA methods, without managing COM reference counts manually.
 
 \medskip
 \reqfield{Acceptance criteria:}
-\reqdef{\textbf{AC-006-1}}{The constructor shall narrow the supplied \texttt{IDispatch} to \texttt{ExperimentDevice\_Dispatch} via \texttt{query\_interface}.}
+\acrej{\textbf{AC-006-1}}{The constructor shall narrow the supplied \texttt{IDispatch} to \texttt{ExperimentDevice\_Dispatch} via \texttt{query\_interface}.}
 \reqdef{\textbf{AC-006-2}}{\texttt{GetName()} shall return a \texttt{std::wstring} with the device name obtained from the underlying BSTR.}
-\reqdef{\textbf{AC-006-3}}{\texttt{get()} shall return a non-owning raw pointer (\texttt{ExperimentDevice\_Dispatch*}) suitable for use as a COM method argument; it shall be marked \texttt{noexcept}.}
-\reqdef{\textbf{AC-006-4}}{The class shall be move-only.}
+\acobs{\textbf{AC-006-3}}{A raw non-owning pointer shall be obtainable via \texttt{get()}.}
+\acobs{\textbf{AC-006-4}}{The class shall be move-only.}
+\acnew{\textbf{AC-006-5}}{The class shall respect all the requirements of \texttt{COMProxy}.}
 
 \medskip
 \reqfield{Testing:}

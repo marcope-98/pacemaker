@@ -1,0 +1,19 @@
+% ===================================================================
+\section{REQ-010 -- \texttt{DispatchWrapper} pattern} \statusnew
+% ===================================================================
+\label{sec:dispatchwrapper}
+
+\reqfield{Title:} Convention for COM dispatch wrapper structs \statusnew
+
+\medskip
+\reqfield{Intent:}
+Every COM interface used by the library must be wrapped by a \texttt{DispatchWrapper} struct that follows a consistent pattern. This pattern enables \texttt{query\_interface} to resolve the correct COM UUID and allows \texttt{COMProxy} to be instantiated uniformly across all proxy types.
+
+\medskip
+\reqfield{Acceptance criteria:}
+\acnew{\textbf{AC-010-1}}{\texttt{DispatchWrapper} shall inherit all public methods from the corresponding COM Dispatch type.}
+\acnew{\textbf{AC-010-2}}{The \texttt{DispatchWrapper} shall expose publicly the underlying COM Dispatch type}
+
+\medskip
+\reqfield{Testing:}
+See test document, section \textit{TC-010}.

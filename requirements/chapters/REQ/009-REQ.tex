@@ -3,25 +3,36 @@
 % ===================================================================
 \label{sec:session}
 
-\reqfield{Title:} Top-level session factory and lifetime manager \status{implemented}
+\reqfield{Title:} Top-level session factory and lifetime manager \statusupd
+
+\changenote{\\
+Session now shall expose the full experiment workflow API directly (\texttt{add\_param}, \texttt{set\_param}, \texttt{reset}, \texttt{start\_recording}, \texttt{stop\_recording}) via a pimpl (\texttt{Session::Impl}). \\
+The \texttt{experiment()} accessor shall be removed.\\
+The private constructor shall now be a default constructor \texttt{Session()}.\\
+\texttt{DisconnectFromTool()} shall no longer be responsibility of \texttt{IncaProxy}; but shall be called in \texttt{Session::Impl}'s destructor (see REQ-010).}
 
 \medskip
 \reqfield{Intent:}
-The user needs a single entry point that establishes a COM connection to a running INCA
-instance, validates that the environment is ready (experiment open, device online), and
-returns a fully-initialised object through which the experiment can be controlled. The
-session shall be non-copyable and non-movable to prevent accidental duplication of COM
-connections.
+The user needs a single entry point that connects to INCA, validates the environment, and exposes the complete measurement workflow, parameter management, recording control, and teardown, through one object.
 
 \medskip
 \reqfield{Acceptance criteria:}
-\reqdef{\textbf{AC-009-1}}{\texttt{Session::connect()} shall call \texttt{CoCreateInstance} with the \texttt{CLSID\_Inca} class identifier and \texttt{CLSCTX\_LOCAL\_SERVER}.}
+\reqdef{\textbf{AC-009-1}}{\texttt{Session::connect()} shall call \texttt{CoCreateInstance} to initialize Inca COM object.}
 \reqdef{\textbf{AC-009-2}}{If \texttt{CoCreateInstance} fails, \texttt{connect()} shall throw \texttt{std::runtime\_error} with a message indicating that INCA may not be installed.}
 \reqdef{\textbf{AC-009-3}}{\texttt{connect()} shall retrieve the open experiment and experiment-view objects via \texttt{IncaProxy}.}
 \reqdef{\textbf{AC-009-4}}{\texttt{connect()} shall enumerate devices; if none are found it shall throw \texttt{std::runtime\_error} with a message indicating no device is configured or online.}
-\reqdef{\textbf{AC-009-5}}{On success, \texttt{connect()} shall return a \texttt{Session} owning an \texttt{IncaProxy} and an \texttt{Experiment} built from the first available device.}
-\reqdef{\textbf{AC-009-6}}{\texttt{experiment()} shall return a non-const reference to the owned \texttt{Experiment}.}
+\acupd{\textbf{AC-009-5}}{On success, \texttt{connect()} shall return a \texttt{Session} constructed via its private default constructor.}
+\acrej{\textbf{AC-009-6}}{\texttt{experiment()} shall return a non-const reference to the owned \texttt{Experiment}.}
 \reqdef{\textbf{AC-009-7}}{The class shall be non-copyable and non-movable.}
+\acnew{\textbf{AC-009-8}}{The destructor shall call \texttt{DisconnectFromTool()} on the \texttt{IncaProxy} if the proxy is non-null.}
+\acnew{\textbf{AC-009-9}}{\texttt{add\_param(name)} shall look up the named calibration scalar on the primary device and store the resulting \texttt{CalibrationScalarDataProxy} internally.}
+\acnew{\textbf{AC-009-10}}{Calling \texttt{add\_param} two or more times with the same name shall be a no-op.}
+\acnew{\textbf{AC-009-11}}{\texttt{set\_param(name, value)} shall write the value to the registered calibration scalar.}
+\acnew{\textbf{AC-009-12}}{Calling \texttt{set\_param(name, value)} with a \texttt{name} that was not registered via \texttt{add\_param}, shall throw \texttt{std::out\_of\_range} with a message containing the parameter name.}
+\acnew{\textbf{AC-009-13}}{\texttt{reset()} shall call \texttt{ResetValueToRP()} on every registered calibration proxy.}
+\acnew{\textbf{AC-009-14}}{\texttt{start\_recording()} shall delegate to \texttt{IncaOnlineExperimentProxy::StartRecording()} via \texttt{operator->}.}
+\acnew{\textbf{AC-009-15}}{\texttt{stop\_recording(filename)} shall: sleep for (40\,ms) before saving stopping the recording and resetting all calibration values to the Reference Page.}
+\acnew{\textbf{AC-009-16}}{It shall be possible to initialize \texttt{Session} by providing a lambda expression via \texttt{Session::connect(...)}.}
 
 \medskip
 \reqfield{Non-functional constraints:}
@@ -29,12 +40,6 @@ connections.
   \item COM must be initialised by the caller before invoking \texttt{connect()} (e.g.\ via \texttt{CoInitializeEx}).
   \item Platform: Windows only.
 \end{itemize}
-
-\medskip
-\reqfield{Notes:}
-The \texttt{Session} destructor is explicitly defined (even if empty) to ensure that the
-\texttt{IncaProxy} destructor (which calls \texttt{DisconnectFromTool}) is invoked at a
-predictable point during session teardown.
 
 \medskip
 \reqfield{Testing:}

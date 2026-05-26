@@ -3,7 +3,11 @@
 % ===================================================================
 \label{sec:incaexperimentviewproxy}
 
-\reqfield{Title:} Proxy for the INCA experiment-view COM object \status{implemented}
+\reqfield{Title:} Proxy for the INCA experiment-view COM object \statusupd
+
+\changenote{\\
+The \texttt{DispatchWrapper} shall not add new C++ methods. AC-005-2 is therefore obsolete: \\
+\texttt{OpenViewForExperimentDataItem} shall no longer be wrapped and shall not be part of this component's C++ interface.}
 
 \medskip
 \reqfield{Intent:}
@@ -13,9 +17,10 @@ experiment run.
 
 \medskip
 \reqfield{Acceptance criteria:}
-\reqdef{\textbf{AC-005-1}}{The constructor shall narrow the supplied \texttt{IDispatch} to \texttt{IncaExperimentView\_Dispatch} via \texttt{query\_interface}.}
-\reqdef{\textbf{AC-005-2}}{\texttt{OpenViewForExperimentDataItem(dataitem)} shall forward the raw \texttt{IDispatch*} pointer (without transferring ownership) to the underlying COM method.}
-\reqdef{\textbf{AC-005-3}}{The class shall be move-only.}
+\acrej{\textbf{AC-005-1}}{The constructor shall narrow the supplied \texttt{IDispatch} to \texttt{IncaExperimentView\_Dispatch} via \texttt{query\_interface}.}
+\acobs{\textbf{AC-005-2}}{\texttt{OpenViewForExperimentDataItem(dataitem)} shall forward the raw \texttt{IDispatch*} pointer (without transferring ownership) to the underlying COM method.}
+\acobs{\textbf{AC-005-3}}{The class shall be move-only.}
+\acnew{\textbf{AC-005-4}}{The class shall respect all the requirements of \texttt{COMProxy}.}
 
 \medskip
 \reqfield{Testing:}

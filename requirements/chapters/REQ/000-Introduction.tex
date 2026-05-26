@@ -6,9 +6,12 @@ This document specifies the software requirements for the \textbf{pacemaker} lib
 Windows COM automation wrapper that provides a safe, idiomatic C++ interface to the
 INCA calibration and measurement tool.
 
-The library is organised around a thin proxy layer: each COM interface exported by INCA
-is wrapped in a dedicated C++ class that owns the underlying COM pointer via a
-\texttt{unique\_com\_ptr} RAII handle. A \texttt{Session} object composes the proxies
-into a higher-level experiment workflow.
-
-The requirements below are grouped by header file / component.
+\vfill
+\noindent\textbf{Change legend used in this document:}
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+  \item \textcolor{newgreen}{\textbf{[NEW]}}: requirement or criterion added in revision 2.
+  \item \textcolor{updatedorange}{\textbf{[UPDATED]}}: criterion wording changed; behaviour changed.
+  \item \textcolor{obsoletegray}{\textbf{[OBSOLETE]}}: criterion or requirement no longer applicable.
+  \item \textcolor{rejectred}{\textbf{[REJECTED]}}: criterion explicitly invalidated by a conflicting design decision.
+  \item Unmarked items are unchanged from revision 1.
+\end{itemize}

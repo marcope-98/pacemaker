@@ -7,6 +7,7 @@ if (${LATEX_FOUND})
       ${CMAKE_CURRENT_BINARY_DIR}/pacemaker_SRS.pdf
       ${CMAKE_CURRENT_BINARY_DIR}/pacemaker_TS.pdf
   )
+  file(GLOB SRS_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/chapters/REQ/*.tex)
   add_custom_command(
     OUTPUT  
       ${CMAKE_CURRENT_BINARY_DIR}/pacemaker_SRS.pdf
@@ -22,8 +23,10 @@ if (${LATEX_FOUND})
         ${CMAKE_CURRENT_SOURCE_DIR}/pacemaker_SRS.tex
     DEPENDS 
       ${CMAKE_CURRENT_SOURCE_DIR}/pacemaker_SRS.tex
+      ${SRS_SOURCE_FILES}
   )
 
+  file(GLOB TC_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/chapters/TC/*.tex)
   add_custom_command(
     OUTPUT 
       ${CMAKE_CURRENT_BINARY_DIR}/pacemaker_TS.pdf
@@ -39,5 +42,6 @@ if (${LATEX_FOUND})
         ${CMAKE_CURRENT_SOURCE_DIR}/pacemaker_TS.tex
     DEPENDS 
       ${CMAKE_CURRENT_SOURCE_DIR}/pacemaker_TS.tex
+      ${TC_SOURCE_FILES}
   )
 endif()

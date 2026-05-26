@@ -2,22 +2,27 @@
 \section{REQ-002 -- \texttt{COMProxy<T>} (Base Proxy Template)}
 % ===================================================================
 \label{sec:comproxy}
-
-\reqfield{Title:} Generic non-copyable base class for COM dispatch proxies \status{implemented}
-
+ 
+\reqfield{Title:} Generic owning base class for COM dispatch proxies \statusupd
+ 
 \medskip
 \reqfield{Intent:}
-The user wants a single, reusable base that stores the typed COM pointer and enforces
-ownership rules, so that concrete proxy classes do not repeat boilerplate and cannot
-accidentally be copied (which would silently duplicate COM reference counts).
+The user wants a single, reusable base that both owns the typed COM pointer and \emph{is} that pointer, so that proxy type aliases can be used directly as smart pointers without a separate accessor member. Copying must remain impossible to prevent silent duplication of COM reference counts.
 
-\medskip
+\medskip 
 \reqfield{Acceptance criteria:}
-\reqdef{\textbf{AC-002-1}}{\texttt{COMProxy<T>} shall be copy-constructible and copy-assignable only when explicitly deleted (not available to callers).}
+\acupd{\textbf{AC-002-1}}{\texttt{COMProxy<T>} shall not be copy-constructible and copy-assignable.}
 \reqdef{\textbf{AC-002-2}}{\texttt{COMProxy<T>} shall be move-constructible and move-assignable.}
-\reqdef{\textbf{AC-002-3}}{The constructor shall accept a \texttt{unique\_com\_ptr<T>} by value (taking ownership via move).}
-\reqdef{\textbf{AC-002-4}}{The protected member \texttt{p\_subject} shall be accessible to derived classes.}
-\reqdef{\textbf{AC-002-5}}{The destructor shall be non-virtual and defaulted; derived classes are responsible for their own destructors.}
+\acrej{\textbf{AC-002-3}}{{The constructor shall accept a \texttt{unique\_com\_ptr<T>} by value (taking ownership via move).}}
+\acrej{\textbf{AC-002-4}}{The protected member \texttt{p\_subject} shall be accessible to derived classes.}
+\acrej{\textbf{AC-002-5}}{{The destructor shall be non-virtual and defaulted; derived classes are responsible for their own destructors.}}
+\acnew{\textbf{AC-002-6}}{\texttt{COMProxy<T>} shall enable the user to directly call method on the underlying pointer via \texttt{operator->} and \texttt{get()}.}
+\acnew{\textbf{AC-002-7}}{\texttt{COMProxy<T>} shall provide a default constructor that leaves the pointer null.}
+\acnew{\textbf{AC-002-8}}{\texttt{COMProxy<T>} shall provide an explicit constructor accepting a raw \texttt{::IDispatch*}.}
+\acnew{\textbf{AC-002-9}}{\texttt{COMProxy<T>} shall provide an explicit constructor accepting a \texttt{unique\_com\_ptr<::IDispatch>} by value.}
+\acnew{\textbf{AC-002-10}}{\texttt{COMProxy<T>} ctors shall query the COM object specified in the template parameter.}
+\acnew{\textbf{AC-002-11}}{\texttt{COMProxy<T>} ctors shall throw an exception if querying the COM object failed.}
+\acnew{\textbf{AC-002-12}}{It shall not be possible to create a \texttt{COMProxy<::IDispatch>} object}
 
 \medskip
 \reqfield{Testing:}

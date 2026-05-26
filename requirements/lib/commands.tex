@@ -6,6 +6,11 @@
 \definecolor{lightgray}{RGB}{245,245,245}
 \definecolor{rulegray}{RGB}{180,180,180}
 
+\definecolor{obsoletegray}{RGB}{140,140,140}
+\definecolor{rejectred}{RGB}{180,30,30}
+\definecolor{newgreen}{RGB}{0,120,60}
+\definecolor{updatedorange}{RGB}{180,90,0}
+
 \definecolor{testred}{RGB}{160,30,30}
 \definecolor{steelblue}{RGB}{30,80,160}
 \definecolor{givencolor}{RGB}{0,100,60}
@@ -40,10 +45,21 @@
 % GWT shorthand
 % -----------------------------------------------------------------------
 \newcommand{\given}[1]{\par\textbf{\color{givencolor}Given} #1}
+\newcommand{\andgiven}[1]{\par\phantom{Given } #1}
 \newcommand{\when}[1]{\par\textbf{\color{whencolor}When} #1}
 \newcommand{\then}[1]{\par\textbf{\color{thencolor}Then} #1}
+\newcommand{\andthen}[1]{\par\phantom{Then } #1}
 \newcommand{\andstep}[1]{\par\textbf{\color{steelblue}And} #1}
 
+\newcommand{\statusobs}{\hfill{\small\color{obsoletegray}\textbf{[OBSOLETE]}}}
+\newcommand{\statusrej}{\hfill{\small\color{rejectred}\textbf{[REJECTED]}}}
+\newcommand{\statusupd}{\hfill{\small\color{updatedorange}\textbf{[UPDATED]}}}
+\newcommand{\statusnew}{\hfill{\small\color{newgreen}\textbf{[NEW]}}}
+\newcommand{\acobs}[2]{\reqdef{\textcolor{obsoletegray}{#1\hfill[obsolete]}}{\textcolor{obsoletegray}{#2}}}
+\newcommand{\acrej}[2]{\reqdef{\textcolor{rejectred}{#1\hfill[rejected]}}{\textcolor{rejectred}{#2}}}
+\newcommand{\acnew}[2]{\reqdef{\textcolor{newgreen}{#1\hfill[new]}}{\textcolor{newgreen}{#2}}}
+\newcommand{\acupd}[2]{\reqdef{\textcolor{updatedorange}{#1\hfill[updated]}}{\textcolor{updatedorange}{#2}}}
+\newcommand{\changenote}[1]{\par\smallskip{\footnotesize\color{updatedorange}\textit{Change note: #1}}}
 
 % -----------------------------------------------------------------------
 % Test-case environment
@@ -62,7 +78,7 @@
   innerbottommargin=6pt,
 ]{tcbox}
 
-\newcommand{\tcfield}[1]{\textbf{#1}\par\vspace{2pt}}
+\newcommand{\tcfield}[1]{\textbf{#1}\hfill}
 \newcommand{\reqref}[1]{\hfill{\small\texttt{[#1]}}}
 
 
