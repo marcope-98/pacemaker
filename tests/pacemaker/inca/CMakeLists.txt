@@ -16,6 +16,7 @@ target_sources(
 target_link_libraries(
   pacemaker.inca.tests
   PRIVATE 
+    pacemaker::inca::internal
     pacemaker::inca
     pacemaker::fixture
     GTest::gtest GTest::gtest_main
