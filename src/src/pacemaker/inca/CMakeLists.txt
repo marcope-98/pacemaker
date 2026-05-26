@@ -17,7 +17,6 @@ target_sources(
       ${PACEMAKER_SOURCE_DIR}/include/pacemaker/inca/com/IncaOnlineExperimentProxy.hpp
       ${PACEMAKER_SOURCE_DIR}/include/pacemaker/inca/com/IncaProxy.hpp
       ${PACEMAKER_SOURCE_DIR}/include/pacemaker/inca/detail/COMProxy.hpp
-      ${PACEMAKER_SOURCE_DIR}/include/pacemaker/inca/detail/unique_com_ptr.hpp
   PRIVATE
     FILE_SET  private_headers
     TYPE      HEADERS
@@ -25,6 +24,7 @@ target_sources(
     FILES 
       ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/incacom.hpp
       ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/utils.hpp
+      ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/detail/unique_com_ptr.hpp
   PRIVATE
     ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/Session.cpp
     ${PACEMAKER_SOURCE_DIR}/src/pacemaker/inca/com/CalibrationScalarDataProxy.cpp
