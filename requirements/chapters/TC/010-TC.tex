@@ -29,8 +29,9 @@ Requirement reference: REQ-010.
 \tcfield{Requirement:} AC-010-2
 
 \medskip
-\given{\texttt{DispatchWrapper<double>}}
-\when{comparing types \texttt{DispatchWrapper<double>::type} and \texttt{double}}
+\given{and empty \texttt{XDispatch} class}
+\andgiven{\texttt{DispatchWrapper<XDispatch>}}
+\when{comparing types \texttt{DispatchWrapper<XDispatch>::type} and \texttt{XDispatch}}
 \then{the two constructs have the same type}
 \end{tcbox}
 
@@ -43,7 +44,8 @@ Requirement reference: REQ-010.
 \tcfield{Requirement:} AC-010-2
 
 \medskip
-\given{an empty class \texttt{MockDispatchWrapper} inheriting publicly from \texttt{DispatchWrapper<int>}}
-\when{comparing types \texttt{MockDispatchWrapper::type} and \texttt{int}}
+\given{and empty \texttt{XDispatch} class}
+\andgiven{an empty class \texttt{MockDispatchWrapper} inheriting publicly from \texttt{DispatchWrapper<XDispatch>}}
+\when{comparing types \texttt{MockDispatchWrapper::type} and \texttt{XDispatch}}
 \then{the two constructs have the same type}
 \end{tcbox}
