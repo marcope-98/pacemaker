@@ -117,10 +117,31 @@ TEST_F(TC009, C)
     variant->vt     = (VT_ARRAY | VT_VARIANT);
 
     return S_OK; });
+
+  /**
+   * AddRef:
+   *  - Session factory function (cfr. connect lambda)
+   *  - Implicit call in Invoke(GetOpenedExperiment_dispid)
+   *  - Implicit call in Invoke(GetOpenedExperimentView_dispid)
+   * QueryInterface:
+   *  - IncaProxy                 ctor
+   *  - IncaOnlineExperimentProxy ctor
+   *  - IncaExperimentViewProxy   ctor
+   * Release:
+   *  - IncaProxy                 dtor
+   *  - IncaOnlineExperimentProxy dtor
+   *  - IncaExperimentView        dtor
+   *  - Implicit call in QueryInterface x3
+   */
+  EXPECT_CALL(mock, AddRef()).Times(3);
+  EXPECT_CALL(mock, Release()).Times(6);
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(3);
+  EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
+
   EXPECT_THROW(
       {
         auto session = pacemaker::inca::Session::connect([&mock]()
-                                                         { return &mock; });
+                                                         { mock.AddRef(); return &mock; });
       },
       std::runtime_error);
 }
@@ -137,21 +158,77 @@ TEST_F(TC009, E)
 {
   MockCOM mock;
   mock.Delegate();
+  /**
+   * AddRef:
+   *  - Session factory function (cfr. connect lambda)
+   *  - Implicit call in Invoke(GetOpenedExperiment_dispid)
+   *  - Implicit call in Invoke(GetOpenedExperimentView_dispid)
+   *  - Implicit call in Invoke(GetAllDevices_dispid)
+   *  - Implicit call in GetAllDevices (IDispatch* cast operator on _variant_t)
+   *  - Implicit call in GetAllDevices (SafeArrayGetElement implicit AddRef())
+   * QueryInterface:
+   *  - IncaProxy                  ctor
+   *  - IncaOnlineExperimentProxy  ctor
+   *  - IncaExperimentViewProxy    ctor
+   *  - ExperimentDeviceProxy      ctor
+   * Release:
+   *  - IncaProxy                  dtor
+   *  - IncaOnlineExperimentProxy  dtor
+   *  - IncaExperimentView         dtor
+   *  - ExperimentDeviceProxy      dtor
+   *  - Implicit call in QueryInterface x4
+   *  - Implicit call in SAFEARRAY dtor
+   *  - Implicit call in GetAllDevices (_variant_t device dtor implicit Release())
+   */
+  EXPECT_CALL(mock, AddRef()).Times(6);
+  EXPECT_CALL(mock, Release()).Times(10);
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(4);
   EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
+
   EXPECT_CALL(mock, Invoke(0x60020021, _, _, _, _, _, _, _)).Times(1);
   {
     auto session = pacemaker::inca::Session::connect([&mock]()
-                                                     { return &mock; });
+                                                     { mock.AddRef(); return &mock; });
   }
 }
 TEST_F(TC009, F)
 {
   MockCOM mock;
   mock.Delegate();
+  /**
+   * AddRef:
+   *  - Session factory function (cfr. connect lambda)
+   *  - Implicit call in Invoke(GetOpenedExperiment_dispid)
+   *  - Implicit call in Invoke(GetOpenedExperimentView_dispid)
+   *  - Implicit call in Invoke(GetCalibrationValueInDevice_dispid)
+   *  - Implicit call in Invoke(GetAllDevices_dispid)
+   *  - Implicit call in GetCalibrationValueInDevice (cast of device to _variant_t)
+   *  - Implicit call in GetAllDevices (IDispatch* cast operator on _variant_t)
+   *  - Implicit call in GetAllDevices (SafeArrayGetElement implicit AddRef())
+   * QueryInterface:
+   *  - IncaProxy                  ctor
+   *  - IncaOnlineExperimentProxy  ctor
+   *  - IncaExperimentViewProxy    ctor
+   *  - ExperimentDeviceProxy      ctor
+   *  - CalibrationScalarData      ctor
+   * Release:
+   *  - IncaProxy                  dtor
+   *  - IncaOnlineExperimentProxy  dtor
+   *  - IncaExperimentView         dtor
+   *  - ExperimentDeviceProxy      dtor
+   *  - CalibrationScalarData      dtor
+   *  - Implicit call in QueryInterface x5
+   *  - Implicit call in SAFEARRAY dtor
+   *  - Implicit call in GetAllDevices (_variant_t device dtor implicit Release())
+   *  - Implicit call in GetCalibrationValueInDevice (_variant_t device dtor implicit Release())
+   */
+  EXPECT_CALL(mock, AddRef()).Times(8);
+  EXPECT_CALL(mock, Release()).Times(13);
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(5);
   EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
   EXPECT_CALL(mock, Invoke(0x60020090, _, _, _, _, _, _, _)).Times(1);
   auto session = pacemaker::inca::Session::connect([&mock]()
-                                                   { return &mock; });
+                                                   { mock.AddRef(); return &mock; });
   session.add_param("speed");
   session.add_param("speed");
 }
@@ -161,13 +238,45 @@ TEST_F(TC009, G)
   double  expected{50.0};
   MockCOM mock;
   mock.Delegate();
+  /**
+   * AddRef:
+   *  - Session factory function (cfr. connect lambda)
+   *  - Implicit call in Invoke(GetOpenedExperiment_dispid)
+   *  - Implicit call in Invoke(GetOpenedExperimentView_dispid)
+   *  - Implicit call in Invoke(GetCalibrationValueInDevice_dispid)
+   *  - Implicit call in Invoke(GetAllDevices_dispid)
+   *  - Implicit call in GetCalibrationValueInDevice (cast of device to _variant_t)
+   *  - Implicit call in GetAllDevices (IDispatch* cast operator on _variant_t)
+   *  - Implicit call in GetAllDevices (SafeArrayGetElement implicit AddRef())
+   * QueryInterface:
+   *  - IncaProxy                  ctor
+   *  - IncaOnlineExperimentProxy  ctor
+   *  - IncaExperimentViewProxy    ctor
+   *  - ExperimentDeviceProxy      ctor
+   *  - CalibrationScalarData      ctor
+   * Release:
+   *  - IncaProxy                  dtor
+   *  - IncaOnlineExperimentProxy  dtor
+   *  - IncaExperimentView         dtor
+   *  - ExperimentDeviceProxy      dtor
+   *  - CalibrationScalarData      dtor
+   *  - Implicit call in QueryInterface x5
+   *  - Implicit call in SAFEARRAY dtor
+   *  - Implicit call in GetAllDevices (_variant_t device dtor implicit Release())
+   *  - Implicit call in GetCalibrationValueInDevice (_variant_t device dtor implicit Release())
+   */
+  EXPECT_CALL(mock, AddRef()).Times(8);
+  EXPECT_CALL(mock, Release()).Times(13);
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(5);
+
   mock.Delegate_SetImplValue([&mock, expected](DISPID, const IID &, LCID, WORD, DISPPARAMS *dispparams, VARIANT *, EXCEPINFO *, UINT *)
                              { EXPECT_EQ(dispparams->rgvarg[0].dblVal, expected); return S_OK; });
 
   EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
   EXPECT_CALL(mock, Invoke(0x60020015, _, _, _, _, _, _, _)).Times(1);
+
   auto session = pacemaker::inca::Session::connect([&mock]()
-                                                   { return &mock; });
+                                                   { mock.AddRef(); return &mock; });
   session.add_param("torque");
   session.set_param("torque", expected);
 }
@@ -176,9 +285,36 @@ TEST_F(TC009, H)
 {
   MockCOM mock;
   mock.Delegate();
+  /**
+   * AddRef:
+   *  - Session factory function (cfr. connect lambda)
+   *  - Implicit call in GetOpenedExperiment
+   *  - Implicit call in GetOpenedExperimentView
+   *  - Implicit call in Invoke(GetAllDevices_dispid)
+   *  - Implicit call in GetAllDevices (IDispatch* cast operator on _variant_t)
+   *  - Implicit call in GetAllDevices (SafeArrayGetElement implicit AddRef())
+   * QueryInterface:
+   *  - IncaProxy                  ctor
+   *  - IncaOnlineExperimentProxy  ctor
+   *  - IncaExperimentViewProxy    ctor
+   *  - ExperimentDeviceProxy      ctor
+   * Release:
+   *  - IncaProxy                  dtor
+   *  - IncaOnlineExperimentProxy  dtor
+   *  - IncaExperimentView         dtor
+   *  - ExperimentDeviceProxy      dtor
+   *  - Implicit call in QueryInterface x4
+   *  - Implicit call in SAFEARRAY dtor
+   *  - Implicit call in GetAllDevices (_variant_t device dtor implicit Release())
+   */
+  EXPECT_CALL(mock, AddRef()).Times(6);
+  EXPECT_CALL(mock, Release()).Times(10);
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(4);
+  EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
 
-  auto        session = pacemaker::inca::Session::connect([&mock]()
-                                                   { return &mock; });
+  auto session = pacemaker::inca::Session::connect([&mock]()
+                                                   { mock.AddRef(); return &mock; });
+
   std::string param{"torque"};
   EXPECT_THROW(
       {
@@ -199,14 +335,44 @@ TEST_F(TC009, I)
 {
   MockCOM mock;
   mock.Delegate();
+  /**
+   * AddRef:
+   *  - Session factory function (cfr. connect lambda)
+   *  - Implicit call in Invoke(GetOpenedExperiment_dispid)
+   *  - Implicit call in Invoke(GetOpenedExperimentView_dispid)
+   *  - Implicit call in Invoke(GetCalibrationValueInDevice_dispid)                 x2
+   *  - Implicit call in Invoke(GetAllDevices_dispid)
+   *  - Implicit call in GetCalibrationValueInDevice (cast of device to _variant_t) x2
+   *  - Implicit call in GetAllDevices (IDispatch* cast operator on _variant_t)
+   *  - Implicit call in GetAllDevices (SafeArrayGetElement implicit AddRef())
+   * QueryInterface:
+   *  - IncaProxy                  ctor
+   *  - IncaOnlineExperimentProxy  ctor
+   *  - IncaExperimentViewProxy    ctor
+   *  - ExperimentDeviceProxy      ctor
+   *  - CalibrationScalarData      ctor x2
+   * Release:
+   *  - IncaProxy                  dtor
+   *  - IncaOnlineExperimentProxy  dtor
+   *  - IncaExperimentView         dtor
+   *  - ExperimentDeviceProxy      dtor
+   *  - CalibrationScalarData      dtor x2
+   *  - Implicit call in QueryInterface x6
+   *  - Implicit call in SAFEARRAY dtor
+   *  - Implicit call in GetAllDevices (_variant_t device dtor implicit Release())
+   *  - Implicit call in GetCalibrationValueInDevice (_variant_t device dtor implicit Release()) x2
+   */
+  EXPECT_CALL(mock, AddRef()).Times(10);
+  EXPECT_CALL(mock, Release()).Times(16);
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(6);
   EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
   EXPECT_CALL(mock, Invoke(0x60020028, _, _, _, _, _, _, _)).Times(2);
 
   auto session = pacemaker::inca::Session::connect([&mock]()
-                                                   { return &mock; });
+                                                   { mock.AddRef(); return &mock; });
 
   session.add_param("a");
-  session.add_param("B");
+  session.add_param("b");
   session.reset();
 }
 
@@ -214,9 +380,35 @@ TEST_F(TC009, J)
 {
   MockCOM mock;
   mock.Delegate();
+  /**
+   * AddRef:
+   *  - Session factory function (cfr. connect lambda)
+   *  - Implicit call in GetOpenedExperiment
+   *  - Implicit call in GetOpenedExperimentView
+   *  - Implicit call in Invoke(GetAllDevices_dispid)
+   *  - Implicit call in GetAllDevices (IDispatch* cast operator on _variant_t)
+   *  - Implicit call in GetAllDevices (SafeArrayGetElement implicit AddRef())
+   * QueryInterface:
+   *  - IncaProxy                  ctor
+   *  - IncaOnlineExperimentProxy  ctor
+   *  - IncaExperimentViewProxy    ctor
+   *  - ExperimentDeviceProxy      ctor
+   * Release:
+   *  - IncaProxy                  dtor
+   *  - IncaOnlineExperimentProxy  dtor
+   *  - IncaExperimentView         dtor
+   *  - ExperimentDeviceProxy      dtor
+   *  - Implicit call in QueryInterface x4
+   *  - Implicit call in SAFEARRAY dtor
+   *  - Implicit call in GetAllDevices (_variant_t device dtor implicit Release())
+   */
+  EXPECT_CALL(mock, AddRef()).Times(6);
+  EXPECT_CALL(mock, Release()).Times(10);
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(4);
+  EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
 
   auto session = pacemaker::inca::Session::connect([&mock]()
-                                                   { return &mock; });
+                                                   { mock.AddRef(); return &mock; });
 
   auto begin = std::chrono::steady_clock::now();
   session.stop_recording("");
@@ -229,6 +421,32 @@ TEST_F(TC009, K)
 {
   MockCOM mock;
   mock.Delegate();
+  /**
+   * AddRef:
+   *  - Session factory function (cfr. connect lambda)
+   *  - Implicit call in GetOpenedExperiment
+   *  - Implicit call in GetOpenedExperimentView
+   *  - Implicit call in Invoke(GetAllDevices_dispid)
+   *  - Implicit call in GetAllDevices (IDispatch* cast operator on _variant_t)
+   *  - Implicit call in GetAllDevices (SafeArrayGetElement implicit AddRef())
+   * QueryInterface:
+   *  - IncaProxy                  ctor
+   *  - IncaOnlineExperimentProxy  ctor
+   *  - IncaExperimentViewProxy    ctor
+   *  - ExperimentDeviceProxy      ctor
+   * Release:
+   *  - IncaProxy                  dtor
+   *  - IncaOnlineExperimentProxy  dtor
+   *  - IncaExperimentView         dtor
+   *  - ExperimentDeviceProxy      dtor
+   *  - Implicit call in QueryInterface x4
+   *  - Implicit call in SAFEARRAY dtor
+   *  - Implicit call in GetAllDevices (_variant_t device dtor implicit Release())
+   */
+  EXPECT_CALL(mock, AddRef()).Times(6);
+  EXPECT_CALL(mock, Release()).Times(10);
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(4);
+
   EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
 
   InSequence seq;
@@ -236,7 +454,7 @@ TEST_F(TC009, K)
   EXPECT_CALL(mock, Invoke(0x60020074, _, _, _, _, _, _, _)).Times(1); // StopMeasurement
 
   auto session = pacemaker::inca::Session::connect([&mock]()
-                                                   { return &mock; });
+                                                   { mock.AddRef(); return &mock; });
   session.stop_recording("");
 }
 
@@ -244,11 +462,37 @@ TEST_F(TC009, L)
 {
   MockCOM mock;
   mock.Delegate();
+  /**
+   * AddRef:
+   *  - Session factory function (cfr. connect lambda)
+   *  - Implicit call in GetOpenedExperiment
+   *  - Implicit call in GetOpenedExperimentView
+   *  - Implicit call in Invoke(GetAllDevices_dispid)
+   *  - Implicit call in GetAllDevices (IDispatch* cast operator on _variant_t)
+   *  - Implicit call in GetAllDevices (SafeArrayGetElement implicit AddRef())
+   * QueryInterface:
+   *  - IncaProxy                  ctor
+   *  - IncaOnlineExperimentProxy  ctor
+   *  - IncaExperimentViewProxy    ctor
+   *  - ExperimentDeviceProxy      ctor
+   * Release:
+   *  - IncaProxy                  dtor
+   *  - IncaOnlineExperimentProxy  dtor
+   *  - IncaExperimentView         dtor
+   *  - ExperimentDeviceProxy      dtor
+   *  - Implicit call in QueryInterface x4
+   *  - Implicit call in SAFEARRAY dtor
+   *  - Implicit call in GetAllDevices (_variant_t device dtor implicit Release())
+   */
+  EXPECT_CALL(mock, AddRef()).Times(6);
+  EXPECT_CALL(mock, Release()).Times(10);
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(4);
+
   EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
   EXPECT_CALL(mock, Invoke(0x600200a1, _, _, _, _, _, _, _)).Times(1);
 
   auto session = pacemaker::inca::Session::connect([&mock]()
-                                                   { return &mock; });
+                                                   { mock.AddRef(); return &mock; });
   session.start_recording();
 }
 
