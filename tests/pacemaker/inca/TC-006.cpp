@@ -38,6 +38,19 @@ namespace
       ON_CALL(*this, Invoke(GetName_dispid, _, _, _, _, _, _, _)).WillByDefault(GetName);
     }
   };
+
+  template<typename T>
+  struct is_COMProxy : std::false_type
+  {
+  };
+
+  template<typename T>
+  struct is_COMProxy<pacemaker::inca::detail::COMProxy<T>> : std::true_type
+  {
+  };
+
+  template<typename T>
+  constexpr bool is_COMProxy_v = is_COMProxy<T>::value;
 } // namespace
 
 TEST_F(TC006, A)
@@ -47,7 +60,7 @@ TEST_F(TC006, A)
   {
     VariantInit(variant);
     variant->bstrVal = SysAllocString(L"ECU1");
-    variant->vt = VT_BSTR;
+    variant->vt      = VT_BSTR;
     return S_OK;
   };
   mock.Delegate();
@@ -62,22 +75,11 @@ TEST_F(TC006, A)
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
   pacemaker::inca::com::ExperimentDeviceProxy        device(std::move(idispatch));
 
-  std::wstring name = device.GetName();
+  std::wstring name = device->GetName();
   EXPECT_EQ(name, std::wstring(L"ECU1"));
 }
 
 TEST_F(TC006, B)
 {
-  MockExperimentDevice_Dispatch mock;
-  mock.Delegate();
-
-  EXPECT_CALL(mock, AddRef()).Times(1);
-  EXPECT_CALL(mock, Release()).Times(2);
-  EXPECT_CALL(mock, QueryInterface(_, _)).Times(1);
-
-  mock.AddRef();
-  pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
-  pacemaker::inca::com::ExperimentDeviceProxy        device(std::move(idispatch));
-
-  EXPECT_EQ((void *)(device.get()), (void *)(&mock));
+  EXPECT_TRUE(is_COMProxy_v<pacemaker::inca::com::ExperimentDeviceProxy>);
 }

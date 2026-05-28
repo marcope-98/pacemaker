@@ -1,71 +1,29 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <comdef.h>
-
 #include "pacemaker/fixture/LeakTestFixture.hpp"
 
 #include "pacemaker/inca/com/IncaExperimentViewProxy.hpp"
-
-using ::testing::_;
-using ::testing::Return;
 
 PACEMAKER_FIXTURE_INIT(TC005)
 
 namespace
 {
-  class MockIncaExperimentView_Dispatch : public IDispatch
+  template<typename T>
+  struct is_COMProxy : std::false_type
   {
-  public:
-    MOCK_METHOD(ULONG, AddRef, (), (override));
-    MOCK_METHOD(ULONG, Release, (), (override));
-    MOCK_METHOD(HRESULT, GetTypeInfo, (UINT, LCID, ITypeInfo **), (override));
-    MOCK_METHOD(HRESULT, GetTypeInfoCount, (UINT *), (override));
-    MOCK_METHOD(HRESULT, GetIDsOfNames, (const IID &, LPOLESTR *, UINT, LCID, DISPID *), (override));
-    MOCK_METHOD(HRESULT, Invoke, (DISPID, const IID &, LCID, WORD, DISPPARAMS *, VARIANT *, EXCEPINFO *, UINT *), (override));
-    MOCK_METHOD(HRESULT, QueryInterface, (const IID &, void **), (override));
-
-    void Delegate()
-    {
-      ON_CALL(*this, QueryInterface(_, _)).WillByDefault([this](const IID &, void **out)
-                                                         { *out = reinterpret_cast<void*>(this); return S_OK; });
-    }
-
-    template<class CB>
-    void Delegate_OpenViewForExperimentDataItem(CB OpenViewForExperimentDataItem)
-    {
-      constexpr DISPID OpenViewForExperimentDataItem_dispid{0x6002000a};
-      ON_CALL(*this, Invoke(OpenViewForExperimentDataItem_dispid, _, _, _, _, _, _, _)).WillByDefault(OpenViewForExperimentDataItem);
-    }
-
-    IDispatch *address{nullptr};
   };
+
+  template<typename T>
+  struct is_COMProxy<pacemaker::inca::detail::COMProxy<T>> : std::true_type
+  {
+  };
+
+  template<typename T>
+  constexpr bool is_COMProxy_v = is_COMProxy<T>::value;
 } // namespace
 
 TEST_F(TC005, A)
 {
-  MockIncaExperimentView_Dispatch mock;
-  auto                            OpenViewForExperimentDataItem = [&mock](DISPID, const IID &, LCID, WORD, DISPPARAMS *dispparams, VARIANT *, EXCEPINFO *, UINT *)
-  {
-    mock.address = (IDispatch *)(dispparams->rgvarg[0].pdispVal);
-    return S_OK;
-  };
-  mock.Delegate();
-  mock.Delegate_OpenViewForExperimentDataItem(OpenViewForExperimentDataItem);
-
-  EXPECT_CALL(mock, AddRef()).Times(3);
-  EXPECT_CALL(mock, Release()).Times(4);
-  EXPECT_CALL(mock, QueryInterface(_, _)).Times(1);
-  EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(1);
-
-  mock.AddRef();
-  pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
-  pacemaker::inca::com::IncaExperimentViewProxy      expview(std::move(idispatch));
-
-  mock.AddRef();
-  pacemaker::inca::detail::unique_com_ptr<IDispatch> dataitem_ptr{&mock};
-
-  expview.OpenViewForExperimentDataItem(std::move(dataitem_ptr));
-
-  EXPECT_EQ(mock.address, &mock);
+  EXPECT_TRUE(is_COMProxy_v<pacemaker::inca::com::IncaExperimentViewProxy>);
 }

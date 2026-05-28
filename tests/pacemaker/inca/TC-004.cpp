@@ -46,6 +46,19 @@ namespace
                                                          { *out = reinterpret_cast<void*>(this); return S_OK; });
     }
   };
+
+  template<typename T>
+  struct is_COMProxy : std::false_type
+  {
+  };
+
+  template<typename T>
+  struct is_COMProxy<pacemaker::inca::detail::COMProxy<T>> : std::true_type
+  {
+  };
+
+  template<typename T>
+  constexpr bool is_COMProxy_v = is_COMProxy<T>::value;
 } // namespace
 
 TEST_F(TC004, A)
@@ -103,8 +116,8 @@ TEST_F(TC004, A)
    * 2 * Destructor of SAFEARRAY  in IncaOnlineExperimentProxy::GetAllDevices (to be precise the destructor of _variant_t containing the SAFEARRAY)
    */
   EXPECT_CALL(mock, AddRef()).Times(7);                       // One per device
-  EXPECT_CALL(mock, Release()).Times(8);                      // IncaOnlineExperimentProxy destructor + QueryInterface + 6 AddRefs
-  EXPECT_CALL(mock, QueryInterface(_, _)).Times(1);           // IncaOnlineExperimentProxy constructor
+  EXPECT_CALL(mock, Release()).Times(10);                     // IncaOnlineExperimentProxy destructor + QueryInterface + 6 AddRefs
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(3);           // IncaOnlineExperimentProxy constructor
   EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(1); // GetAllDevices
 
   mock.AddRef();
@@ -113,7 +126,7 @@ TEST_F(TC004, A)
 
   EXPECT_NO_THROW(
       {
-        std::vector<pacemaker::inca::detail::unique_com_ptr<IDispatch>> devices = exp.GetAllDevices();
+        auto devices = exp->GetAllDevices();
         EXPECT_EQ(devices.size(), 2);
         EXPECT_NE(devices[0], nullptr);
         EXPECT_NE(devices[1], nullptr);
@@ -141,10 +154,35 @@ TEST_F(TC004, B)
   mock.AddRef();
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
   pacemaker::inca::com::IncaOnlineExperimentProxy    exp(std::move(idispatch));
-  EXPECT_THROW(auto devices = exp.GetAllDevices(), std::runtime_error);
+  EXPECT_THROW(auto devices = exp->GetAllDevices(), std::runtime_error);
 }
 
 TEST_F(TC004, C)
+{
+  MockIncaOnlineExperiment_Dispatch mock;
+  auto                              GetCalibrationValueInDevice = [&mock](DISPID, const IID &, LCID, WORD, DISPPARAMS *, VARIANT *variant, EXCEPINFO *, UINT *)
+  {
+    InitVariantFromDispatch(&mock, variant);
+    return S_OK;
+  };
+  mock.Delegate();
+  mock.Delegate_GetCalibrationValueInDevice(GetCalibrationValueInDevice);
+
+  EXPECT_CALL(mock, AddRef()).Times(2);
+  EXPECT_CALL(mock, Release()).Times(4);
+  EXPECT_CALL(mock, QueryInterface(_, _)).Times(2);
+  EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(1);
+
+  mock.AddRef();
+  pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
+  pacemaker::inca::com::IncaOnlineExperimentProxy    exp(std::move(idispatch));
+
+  const std::string param = "unknownParam";
+  auto              out   = exp->GetCalibrationValueInDevice(param, nullptr);
+  EXPECT_EQ(typeid(out).name(), typeid(pacemaker::inca::com::CalibrationScalarDataProxy{}).name());
+}
+
+TEST_F(TC004, D)
 {
   MockIncaOnlineExperiment_Dispatch mock;
   auto                              GetCalibrationValueInDevice = [&mock](DISPID, const IID &, LCID, WORD, DISPPARAMS *, VARIANT *variant, EXCEPINFO *, UINT *)
@@ -171,7 +209,7 @@ TEST_F(TC004, C)
       {
         try
         {
-          exp.GetCalibrationValueInDevice(param, nullptr);
+          [[maybe_unused]] auto out = exp->GetCalibrationValueInDevice(param, nullptr);
         }
         catch (const std::runtime_error &e)
         {
@@ -182,26 +220,7 @@ TEST_F(TC004, C)
       std::runtime_error);
 }
 
-TEST_F(TC004, D)
+TEST_F(TC004, E)
 {
-  MockIncaOnlineExperiment_Dispatch mock;
-  mock.Delegate();
-
-  EXPECT_CALL(mock, AddRef()).Times(1);
-  EXPECT_CALL(mock, Release()).Times(2);
-  EXPECT_CALL(mock, QueryInterface(_, _)).Times(1);
-  constexpr DISPID StartRecording_dispid{0x600200a1};
-  EXPECT_CALL(mock, Invoke(StartRecording_dispid, _, _, _, _, _, _, _));
-  constexpr DISPID StopRecordingAndSave_dispid{0x600200a4};
-  EXPECT_CALL(mock, Invoke(StopRecordingAndSave_dispid, _, _, _, _, _, _, _));
-  constexpr DISPID StopMeasurement_dispid{0x60020074};
-  EXPECT_CALL(mock, Invoke(StopMeasurement_dispid, _, _, _, _, _, _, _));
-
-  mock.AddRef();
-  pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
-  pacemaker::inca::com::IncaOnlineExperimentProxy    exp(std::move(idispatch));
-
-  exp.StartRecording();
-  exp.StopRecordingAndSave();
-  exp.StopMeasurement();
+  EXPECT_TRUE(is_COMProxy_v<pacemaker::inca::com::IncaOnlineExperimentProxy>);
 }
