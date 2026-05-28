@@ -2,8 +2,11 @@
 #define PACEMAKER_INCA_SESSION_HPP_
 
 #include <chrono>
+#include <functional>
 #include <memory>
 #include <string>
+
+struct ::IDispatch;
 
 namespace pacemaker::inca
 {
@@ -44,9 +47,9 @@ namespace pacemaker::inca
     /**
      * @brief Factory function that connects to a running INCA instance and returns an initialised `Session`.
      *
-     * The function allows to specify a custom way to
+     * The function allows to specify a custom way to initialize Session and its underlying structures.
      *
-     * @tparam F Functor returning the argument to initialize the underlying IncaProxy member variable
+     * @param factory Function returning the argument to initialize the underlying IncaProxy member variable
      *
      * @return A fully constructed `Session` ready for use.
      *
@@ -55,11 +58,7 @@ namespace pacemaker::inca
      *
      * @pre COM must be initialised on the calling thread (e.g.\ `CoInitialize` oir `CoInitializeEx`)
      */
-    template<typename F>
-    [[nodiscard]] static auto connect(const F &factory) -> Session
-    {
-      return Session{factory};
-    }
+    [[nodiscard]] static auto connect(const std::function<IDispatch *(void)> &factory) -> Session;
 
     /**
      * @brief Factory function that connects to a running INCA instance and returns an initialised `Session`.
@@ -166,10 +165,7 @@ namespace pacemaker::inca
     struct Impl;
     std::unique_ptr<Impl> pimpl;
 
-    template<typename F>
-    explicit Session(const F &factory) : pimpl{std::make_unique<Impl>(factory)}
-    {
-    }
+    explicit Session(const std::function<IDispatch *(void)> &factory);
 
     /**
      * @brief Minimum delay before stopping a recording to allow INCA to flush buffered measurement data.
