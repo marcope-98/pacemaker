@@ -103,7 +103,7 @@ Requirement reference: REQ-009.
 
 \medskip
 \given{a \texttt{Session} with \texttt{"torque"} added via \texttt{add\_param}.}
-\when{\texttt{set\_param("torque"), 50.0} is called.}
+\when{\texttt{set\_param("torque", 50.0)} is called.}
 \then{the underlying mock proxy's \texttt{SetImplValue} is called with \texttt{50.0}}
 \end{tcbox}
 
@@ -136,7 +136,7 @@ Requirement reference: REQ-009.
 \end{tcbox}
 
 % -------------------------------------------------------------------
-\subsection{TC-009-J: stop\_recording sleeps at leas 40\,ms before delegating}
+\subsection{TC-009-J: stop\_recording sleeps at least 40\,ms before delegating}
 % -------------------------------------------------------------------
 
 \begin{tcbox}
