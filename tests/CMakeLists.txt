@@ -19,3 +19,4 @@ add_compile_definitions(_CRTDBG_MAP_ALLOC)
 
 add_subdirectory(pacemaker/fixture)
 add_subdirectory(pacemaker/inca)
+add_subdirectory(pacemaker/timer)
