@@ -19,17 +19,19 @@ pacemaker
 ├───src
 │   ├───include
 │   │   └───pacemaker
-│   │       └───inca
-│   │           ├───com
-│   │           └───detail
+│   │       ├───inca
+│   │       └───timer
 │   └───src
 │       └───pacemaker
-│           └───inca
-│               ├───com
-│               └───detail
+│           ├───inca
+│           │   ├───com
+│           │   └───detail
+│           └───timer
 └───tests
     └───pacemaker
-        └───inca
+        ├───fixture
+        ├───inca
+        └───timer
 ```
 ## Getting started
 
