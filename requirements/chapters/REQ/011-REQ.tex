@@ -1,0 +1,32 @@
+% ===================================================================
+\section{REQ-011 -- \texttt{Timer}} \statusnew
+% ===================================================================
+\label{sec:timer}
+
+\reqfield{Title:} Wrapper to OS dependent fixed-rate, fixed-count periodic timer classes/functions \statusnew
+
+\medskip
+\reqfield{Intent:}
+The user needs to create a timer that will fire at a fixed interval for exaclty a predetermined number of ticks. Both the interval and the count must be fixed at construction time and must not be changeable afterwards. Construction must fail immediately and explicitly if the operating system cannot provide a high-resolution timer handle.
+
+\medskip
+\reqfield{Acceptance criteria:}
+\acnew{\textbf{AC-011-1}}{The constructor shall accept the timer period in milliseconds and an iteration count.}
+\acnew{\textbf{AC-011-2}}{If the OS-dependent timer fails to instantiate, \texttt{std::runtime\_error} shall throw.}
+\acnew{\textbf{AC-011-3}}{After successful construction the timer shall be in a stopped, unarmed state (not running).}
+\acnew{\textbf{AC-011-4}}{The class shall be non-copyable and non-movable.}
+\acnew{\textbf{AC-011-5}}{Providing zero or a negative period shall result in a \texttt{std::invalid\_argument} exception.}
+\acnew{\textbf{AC-011-6}}{\texttt{start()} shall set the timer in a running state before invoking the start callback.}
+\acnew{\textbf{AC-011-7}}{\texttt{start(StartFcn)} shall invoke the \texttt{StartFcn} callback exactly once on the calling thread.}
+\acnew{\textbf{AC-011-8}}{If \texttt{start()} is called when the timer is already running it shall throw \texttt{std::runtimer\_error}.}
+\acnew{\textbf{AC-011-9}}{Passing no argument to \texttt{start()} shall be valid and default to a noop.}
+\acnew{\textbf{AC-011-10}}{If \texttt{wait()} is called before \texttt{start()} it shall throw \texttt{std::runtime\_error}.}
+\acnew{\textbf{AC-011-11}}{\texttt{wait} shall repeat the callback exactly \texttt{tasks\_to\_execute} iterations.}
+\acnew{\textbf{AC-011-12}}{\texttt{stop} shall invoke \texttt{StopFcn} exactly once on the calling thread.}
+\acnew{\textbf{AC-011-13}}{\texttt{stop(StopFcn)} shall set the time in a stopped state after invoking \texttt{StopFcn}.}
+\acnew{\textbf{AC-011-14}}{Passing no argument to \texttt{stop()} shall be valid and default to a noop.}
+\acnew{\textbf{AC-011-15}}{\texttt{stop()} shall not cleanup the timer.}
+
+\medskip
+\reqfield{Testing:}
+See test document, section \textit{TC-011}.
