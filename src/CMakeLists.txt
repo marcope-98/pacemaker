@@ -34,6 +34,7 @@ add_compile_options(
       /permissive- # standards conformance mode for MSVC compiler. 
 )
 add_subdirectory(src/pacemaker/inca)
+add_subdirectory(src/pacemaker/timer)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
