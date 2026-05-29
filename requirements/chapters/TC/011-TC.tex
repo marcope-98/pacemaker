@@ -1,0 +1,235 @@
+% ===================================================================
+\section{TC-011 -- \texttt{Timer}}
+% ===================================================================
+\label{sec:tc011}
+
+Requirement reference: REQ-011.
+
+% -------------------------------------------------------------------
+\subsection{TC-011-A: Timer accepts period in milliseconds and the task counter}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit] (compile-time check)}\\
+\tcfield{Requirement:} AC-011-1
+
+\medskip
+\given{}
+\when{Calling \texttt{std::is\_constructible\_v<Timer, std::chrono::milliseconds, std::size\_t>}}
+\then{The result is true}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-011-B: Timer throws if underlying timer construction fails}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[integration]}\\
+\tcfield{Requirement:} AC-011-2
+
+\medskip
+\given{a \texttt{Timer} object}
+\when{when the timer construction fails.}
+\then{an exception is thrown}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-011-C: After construction, timer is in a stopped state}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-011-3
+
+\medskip
+\given{a \texttt{Timer} object}
+\when{the timer object is contructed}
+\then{\texttt{Timer::is\_running} returns \texttt{false}}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-011-D: Timer is non-copyable and non-movable}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-011-4
+
+\medskip
+\given{the \texttt{Timer} type definition.}
+\when{copy and move traits are evaluated at compile time.}
+\then{\texttt{std::is\_copy\_constructible\_v<Timer>} is \texttt{false}}
+\andthen{\texttt{std::is\_copy\_assignable\_v<Timer>} is \texttt{false}}
+\andthen{\texttt{std::is\_move\_constructible\_v<Timer>} is \texttt{true}}
+\andthen{\texttt{std::is\_move\_assignable\_v<Timer>} is \texttt{true}.}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-011-E: Timer throws on negative period}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-011-5
+
+\medskip
+\given{a \texttt{Timer} object}
+\when{calling the constructor with a negative period}
+\then{an \texttt{std::invalid\_argument} exception is thrown.}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-011-F: Timer throws on zero period}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-011-5
+
+\medskip
+\given{a \texttt{Timer} object}
+\when{calling the constructor with a 0ms}
+\then{an \texttt{std::invalid\_argument} exception is thrown.}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-011-G: Timer is running before calling StartFcn}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-011-6
+
+\medskip
+\given{a \texttt{Timer} object}
+\when{calling \texttt{Timer::start([\&timer, \&running]()\{ running = timer.is\_running(); \})}}
+\then{\texttt{running} is true}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-011-H: Timer start callback is called once}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-011-7
+
+\medskip
+\given{a \texttt{Timer} object}
+\andgiven{a mock class with a dummy method \texttt{func}}
+\when{calling \texttt{Timer::start([\&mock]()\{ mock.func() \})}}
+\then{\texttt{mock.func()} is called exactly once}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-011-I: \texttt{start} throws when timer is running}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-011-8
+
+\medskip
+\given{a \texttt{Timer} object}
+\when{calling \texttt{Timer::start} twice}
+\then{an exception is thrown.}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-011-J: \texttt{start} can be called without arguments}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-011-9
+
+\medskip
+\given{a \texttt{Timer} object}
+\when{calling \texttt{Timer::start} without arguments}
+\then{no exception is thrown.}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-011-K: \texttt{wait} fails if \texttt{start} was not called}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-011-10
+
+\medskip
+\given{a \texttt{Timer} object}
+\when{calling \texttt{Timer::wait} without calling \texttt{Timer::start} before}
+\then{an exception is thrown.}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-011-L: \texttt{wait} calls the callback \texttt{tasks\_to\_execute} times}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-011-11
+
+\medskip
+\given{a \texttt{Timer\{10ms, 10\}} object}
+\when{calling \texttt{Timer::wait([\&vec](std::size\_t i)\{vec.emplace\_back(i);\})}}
+\then{the vector contains the numbers between 0 and 9, boundaries included.}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-011-M: Timer stop callback is called exactly once}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-011-12
+
+\medskip
+\given{a \texttt{Timer} object}
+\andgiven{a mock class with a dummy method \texttt{func}}
+\when{calling \texttt{Timer::stop([\&mock]()\{ mock.func() \})}}
+\then{\texttt{mock.func()} is called exactly once}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-011-N: Timer is not running after stop callback}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-011-13
+
+\medskip
+\given{a \texttt{Timer} object}
+\when{calling \texttt{Timer::stop([\&timer, \&running]()\{running = timer.is\_running();\})}}
+\then{\texttt{running} is true and \texttt{timer.is\_running} is false}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-011-O: \texttt{stop} can be called without arguments}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-011-14
+
+\medskip
+\given{a \texttt{Timer} object}
+\when{calling \texttt{Timer::stop} without arguments}
+\then{no exception is thrown.}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-011-P: \texttt{start-wait-stop} can be called multiple times without errors}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-011-15
+
+\medskip
+\given{a \texttt{Timer} object}
+\when{calling \texttt{Timer::start}, \texttt{Timer::wait}, and \texttt{Timer::stop} twice}
+\then{no exception is thrown.}
+\end{tcbox}
