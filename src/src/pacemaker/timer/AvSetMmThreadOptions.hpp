@@ -6,11 +6,11 @@
 namespace pacemaker::timer
 {
   /**
-   * @brief RAII guard for Windows Multimedia Scheduler Service (MMCSS) thread elevation.
+   * @brief Helper class for Windows Multimedia Scheduler Service (MMCSS) thread elevation.
    *
-   * On construction, registers the calling thread with the MMCSS `"Pro Audio"` task and sets its
+   * On call to `av_set`, registers the calling thread with the MMCSS `"Pro Audio"` task and sets its
    * priority to `AVRT_PRIORITY_HIGH` via `AvSetMmThreadCharacteristics` and `AvSetMmThreadPriority`.
-   * On destruction, reverts the thread's scheduling characteristics via `AvRevertMmThreadCharacteristics`.
+   * On call to `av_revert`, reverts the thread's scheduling characteristics via `AvRevertMmThreadCharacteristics`.
    *
    * MMCSS elevation reduces the likelihood that the Windows scheduler preempts the timer loop thread in favour
    * of lower-priority background work, which in turn reduces jitter in the period at which `Timer::wait()`'s
