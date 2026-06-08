@@ -31,13 +31,6 @@ namespace pacemaker::timer
         CloseHandle(this->handle);
       }
     }
-
-    void init()
-    {
-      LARGE_INTEGER due{};
-      due.QuadPart = -4000000LL; // 40ms
-      SetWaitableTimer(this->handle, &due, this->period, NULL, NULL, FALSE);
-    }
   };
 } // namespace pacemaker::timer
 
@@ -58,7 +51,11 @@ auto pacemaker::timer::Timer::start(const std::function<void(void)> &StartFcn) -
     throw std::runtime_error("Timer is already running");
 
   this->pimpl->running = true;
-  this->pimpl->init();
+
+  LARGE_INTEGER due{};
+  due.QuadPart = -4000000LL; // 40ms
+  SetWaitableTimer(this->pimpl->handle, &due, this->pimpl->period, NULL, NULL, FALSE);
+
   StartFcn();
 }
 
