@@ -80,9 +80,9 @@ auto pacemaker::timer::Timer::wait(const std::function<void(std::size_t)> &Timer
   }
   this->pimpl->opts.av_revert();
 }
-auto pacemaker::timer::Timer::enable_thread_opts() -> void { this->pimpl->opts.av_set(); }
+auto pacemaker::timer::Timer::set_thread_opts() -> void { this->pimpl->opts.av_set(); }
 
-auto pacemaker::timer::Timer::disable_thread_opts() -> void { this->pimpl->opts.av_revert(); }
+auto pacemaker::timer::Timer::revert_thread_opts() -> void { this->pimpl->opts.av_revert(); }
 
 auto pacemaker::timer::Timer::wait_for_single_object() -> void { WaitForSingleObject(this->pimpl->handle, INFINITE); }
 
