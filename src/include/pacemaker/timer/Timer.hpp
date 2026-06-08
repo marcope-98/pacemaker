@@ -143,6 +143,13 @@ namespace pacemaker::timer
     [[nodiscard]] auto is_running() const -> bool;
 
   private:
+    /// @brief Wrapper to OS-dependent function that waits for next timer expiration
+    auto wait_for_single_object() -> void;
+    /// @brief Sets OS-dependent thread priority elevation options
+    auto set_thread_opts() -> void;
+    /// @brief Reverts OS-dependent thread priority elevation options
+    auto revert_thread_opts() -> void;
+
     struct Impl;
     /// @brief Owning pointer to the pimpl; heap-allocated by the constructor.
     std::unique_ptr<Impl> pimpl;
