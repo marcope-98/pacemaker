@@ -67,23 +67,11 @@ auto pacemaker::timer::Timer::stop(const std::function<void(void)> &StopFcn) -> 
   this->pimpl->running = false;
 }
 
-auto pacemaker::timer::Timer::wait(const std::function<void(std::size_t)> &TimerFcn) -> void
-{
-  if (!this->pimpl->running)
-    throw std::runtime_error("Timer was not started correctly. Did you forget a timer.start()?");
+auto pacemaker::timer::Timer::is_running() const -> bool { return this->pimpl->running; }
 
-  this->pimpl->opts.av_set();
-  for (std::size_t i{}; i < this->m_tasksToExecute; ++i)
-  {
-    WaitForSingleObject(this->pimpl->handle, INFINITE);
-    TimerFcn(i);
-  }
-  this->pimpl->opts.av_revert();
-}
 auto pacemaker::timer::Timer::set_thread_opts() -> void { this->pimpl->opts.av_set(); }
 
 auto pacemaker::timer::Timer::revert_thread_opts() -> void { this->pimpl->opts.av_revert(); }
 
 auto pacemaker::timer::Timer::wait_for_single_object() -> void { WaitForSingleObject(this->pimpl->handle, INFINITE); }
 
-auto pacemaker::timer::Timer::is_running() const -> bool { return this->pimpl->running; }

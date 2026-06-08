@@ -1,8 +1,11 @@
 #ifndef PACEMAKER_TIMER_TIMER_HPP_
 #define PACEMAKER_TIMER_TIMER_HPP_
+
 #include <chrono>
 #include <functional>
 #include <memory>
+#include <stdexcept>
+
 
 namespace pacemaker::timer
 {
@@ -120,7 +123,7 @@ namespace pacemaker::timer
      *
      * Elevates the calling thread to the Windows Multimedia Class Scheduling Service (MMCSS) "Pro Audio" task
      * at `AVRT_PRIORITY_HIGH` for the duration of the loop, then iterates `tasks_to_execute` times. Each iteration:
-     * 1. Calls `WaitForSingleObject(handle, INFINITE)` to block until the next timer tick fires.
+     * 1. Calls `Timer::wait_for_single_object` to block until the next timer tick fires.
      * 2. Invokes @p TimerFcn with the current zero-based iteration index.
      *
      * MMCSS elevation is automatically reverted when `wait()` returns (via the RAII destructor of `AvSetMmThreadOptions`).
@@ -130,14 +133,15 @@ namespace pacemaker::timer
      *
      * @param TimerFcn Callback invoked once per timer tick. Receives the zero-based iteration index (`0 ... tasks_to_execute - 1`)
      *                 as its sole argument. The callback runs on the calling thread synchronously within the loop body; it must
-     *                 complete before the next `WaitForSingleObject` call.
+     *                 complete before the next `Timer::wait_for_single_object` call.
      *
      * @throws std::runtime_error if `start()` was not called before `wait()`
      *
      * @note If @p TimerFcn takes longer than one tick period to execute, subsequent ticks will fire late because the timer
-     *       is re-armed relative to the previous expiry by the OS, not relative to when `WaitForSingleObject` returns.
+     *       is re-armed relative to the previous expiry by the OS, not relative to when `Timer::wait_for_single_object` returns.
      */
-    auto wait(const std::function<void(std::size_t)> &TimerFcn) -> void;
+    template<class F>
+    auto wait(const F &TimerFcn) -> void;
 
     /// @brief Getter to check whether or not the timer is running
     [[nodiscard]] auto is_running() const -> bool;
@@ -161,5 +165,20 @@ namespace pacemaker::timer
      */
     std::size_t m_tasksToExecute{};
   };
+
+  template<class F>
+  inline auto Timer::wait(const F &TimerFcn) -> void
+  {
+    if (!this->is_running())
+      throw std::runtime_error("Timer was not started correctly. Did you forget a timer.start()?");
+
+    this->set_thread_opts();
+    for (std::size_t i{}; i < this->m_tasksToExecute; ++i)
+    {
+      this->wait_for_single_object();
+      TimerFcn(i);
+    }
+    this->revert_thread_opts();
+  }
 } // namespace pacemaker::timer
 #endif // PACEMAKER_TIMER_TIMER_HPP_
