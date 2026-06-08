@@ -15,6 +15,8 @@ namespace pacemaker::timer
     LONG   period;
     bool   running{false};
 
+    AvSetMmThreadOptions opts;
+
     explicit Impl(const std::chrono::milliseconds &period)
         : period{static_cast<LONG>(period.count())}
     {
@@ -70,12 +72,13 @@ auto pacemaker::timer::Timer::wait(const std::function<void(std::size_t)> &Timer
   if (!this->pimpl->running)
     throw std::runtime_error("Timer was not started correctly. Did you forget a timer.start()?");
 
-  [[maybe_unused]] AvSetMmThreadOptions opts{};
+  this->pimpl->opts.av_set();
   for (std::size_t i{}; i < this->m_tasksToExecute; ++i)
   {
     WaitForSingleObject(this->pimpl->handle, INFINITE);
     TimerFcn(i);
   }
+  this->pimpl->opts.av_revert();
 }
 
 auto pacemaker::timer::Timer::is_running() const -> bool { return this->pimpl->running; }

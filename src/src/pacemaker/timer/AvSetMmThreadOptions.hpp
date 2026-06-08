@@ -34,7 +34,7 @@ namespace pacemaker::timer
      *
      * @note if `AvSetMmThreadCharacteristics` fails it returns NULL; no exception is thrown in the current implementation.
      */
-    AvSetMmThreadOptions()
+    auto av_set() -> void
     {
       DWORD taskIndex{0};
       this->hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
@@ -47,7 +47,7 @@ namespace pacemaker::timer
      * Calls `AvRevertMmThreadCharacteristics` to de-register the thread from the MMCSS "Pro Audio" task,
      * restoring its normal scheduling behaviour.
      */
-    ~AvSetMmThreadOptions() { AvRevertMmThreadCharacteristics(this->hTask); }
+    auto av_revert() -> void { AvRevertMmThreadCharacteristics(this->hTask); }
 
   private:
     /// @brief Handle returned by `AvSetMmThreadCharacteristics`; used to revert the thread on destruction.
