@@ -1,0 +1,25 @@
+% ===================================================================
+\section{REQ-012 -- \texttt{CSV}} \statusnew
+% ===================================================================
+\label{sec:timer}
+
+\reqfield{Title:} Validate file existence and openability before parsing, and parse well-formed CSV content into an ordered vector of records. \statusnew
+
+\medskip
+\reqfield{Intent:}
+The user needs immediate, explicit feedback when the requested file cannot be parsed for reasons unrelated to its content, rather than a confusing failure surfaced later from inside the parser. Moreover, the user needs the parsed result to preserve the exact row and column structure of the source file: the number of records, the number of fields per records, and the order of both, so that downstream code can index into the result positionally without ambiguity.
+
+\medskip
+\reqfield{Acceptance criteria:}
+\acnew{\textbf{AC-012-1}}{The class shall throw an exception if the provided file does not exist}
+\acnew{\textbf{AC-012-2}}{The class shall throw an exception if the provided file exists but is not a regular file}
+\acnew{\textbf{AC-012-3}}{The class shall return one entry in the outer vector per record in the source file, in the order the records appear.}
+\acnew{\textbf{AC-012-4}}{Each inner vector shall contain one entry per field in that record, in the order the fields appear, separated by \texttt{COMMA} in the source.}
+\acnew{\textbf{AC-012-5}}{Records shall be recognised as separated by either \texttt{'$\backslash$n'}, \texttt{'$\backslash$r'} or \texttt{'$\backslash$r$\backslash$n'}; both separator forms shall be accepted within the same file.}
+\acnew{\textbf{AC-012-6}}{A record consisting of a single empty field (i.e. two consecutive record separators, or an empty field token) shall produce one record containing one empty string, non zero fields and not a skipped record.}
+\acnew{\textbf{AC-012-7}}{The relative order of records and of fields within a record shall always match the order in the source file.}
+\acnew{\textbf{AC-012-8}}{The class shall parse a csv file following RFC 4180 conventions.}
+
+\medskip
+\reqfield{Testing:}
+See test document, section \textit{TC-012}.
