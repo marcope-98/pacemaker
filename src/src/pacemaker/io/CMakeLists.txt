@@ -49,6 +49,12 @@ add_library(pacemaker::io ALIAS pacemaker.io)
 
 target_sources(
   pacemaker.io
+  PUBLIC
+    FILE_SET  HEADERS
+    TYPE      HEADERS
+    BASE_DIRS "${PACEMAKER_SOURCE_DIR}/include"
+    FILES
+      ${PACEMAKER_SOURCE_DIR}/include/pacemaker/io/CSV.hpp
     PRIVATE
       FILE_SET  private_headers
       TYPE      HEADERS
@@ -58,6 +64,7 @@ target_sources(
       ${CMAKE_CURRENT_BINARY_DIR}/bison-csv.hpp
       ${CMAKE_CURRENT_BINARY_DIR}/flex-csv.hpp
     PRIVATE
+      ${PACEMAKER_SOURCE_DIR}/src/pacemaker/io/CSV.cpp
       ${CMAKE_CURRENT_BINARY_DIR}/bison-csv.cpp
       ${CMAKE_CURRENT_BINARY_DIR}/flex-csv.cpp
 )
