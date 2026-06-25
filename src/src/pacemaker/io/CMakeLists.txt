@@ -42,3 +42,50 @@ flex_target(
     ${CMAKE_CURRENT_BINARY_DIR}/flex-csv.hpp
 )
 add_flex_bison_dependency(pacemaker.io.flex-csv pacemaker.io.bison-csv)
+
+# ====================== pacemaker.io ======================
+add_library(pacemaker.io)
+add_library(pacemaker::io ALIAS pacemaker.io)
+
+target_sources(
+  pacemaker.io
+    PRIVATE
+      FILE_SET  private_headers
+      TYPE      HEADERS
+      BASE_DIRS "${PACEMAKER_SOURCE_DIR}/src" "${CMAKE_CURRENT_BINARY_DIR}"
+      FILES
+      ${PACEMAKER_SOURCE_DIR}/src/pacemaker/io/CSVLexer.hpp
+      ${CMAKE_CURRENT_BINARY_DIR}/bison-csv.hpp
+      ${CMAKE_CURRENT_BINARY_DIR}/flex-csv.hpp
+    PRIVATE
+      ${CMAKE_CURRENT_BINARY_DIR}/bison-csv.cpp
+      ${CMAKE_CURRENT_BINARY_DIR}/flex-csv.cpp
+)
+
+target_link_libraries(pacemaker.io PRIVATE FLEX::fl)
+target_compile_definitions(pacemaker.io PRIVATE YY_NO_UNISTD_H)
+target_compile_features(pacemaker.io PRIVATE cxx_std_17)
+
+set_target_properties(
+  pacemaker.io 
+  PROPERTIES 
+    VERIFY_INTERFACE_HEADER_SETS ON
+    VERIFY_PRIVATE_HEADER_SETS   ON
+    EXPORT_NAME                  io
+)
+
+include(GNUInstallDirs)
+install(
+  TARGETS pacemaker.io
+  EXPORT  pacemaker.io
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}$<$<CONFIG:Debug>:/debug>
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}$<$<CONFIG:Debug>:/debug>
+  FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+install(
+  EXPORT      pacemaker.io
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/pacemaker"
+  NAMESPACE   pacemaker:: 
+  FILE        pacemaker.io-targets.cmake
+)

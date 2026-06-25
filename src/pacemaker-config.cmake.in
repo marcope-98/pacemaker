@@ -1,6 +1,6 @@
 @PACKAGE_INIT@
 
-set(_pacemaker_supported_components inca timer)
+set(_pacemaker_supported_components inca timer io)
 
 foreach(_comp ${pacemaker_FIND_COMPONENTS})
   if(NOT _comp IN_LIST _pacemaker_supported_components)
