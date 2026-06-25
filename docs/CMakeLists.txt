@@ -41,9 +41,11 @@ if(${DOXYGEN_FOUND})
     ${CMAKE_CURRENT_SOURCE_DIR}/index.html.md
     # Source file documentation
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/include/pacemaker/inca 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src/include/pacemaker/io 
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/include/pacemaker/timer 
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/src/pacemaker/inca/com 
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/src/pacemaker/inca/detail
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src/src/pacemaker/io 
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/src/pacemaker/timer
     ALL
   )
