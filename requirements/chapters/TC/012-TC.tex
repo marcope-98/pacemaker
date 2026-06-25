@@ -1,0 +1,603 @@
+% ===================================================================
+\section{TC-012 -- \texttt{CSV}}
+% ===================================================================
+\label{sec:tc012}
+
+Requirement reference: REQ-012.
+
+% -------------------------------------------------------------------
+\subsection{TC-012-A: A not-existant file cannot be parsed}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-1
+
+\medskip
+\given{}
+\when{Calling \texttt{pacemaker::io::CSV::parse("")}}
+\then{An \texttt{std::invalid\_argument} exception is raised.}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-B: A directory cannot be parsed}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-2
+
+\medskip
+\given{The OS specific temporary folder.}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the temporary folder directory}
+\then{An \texttt{std::invalid\_argument} exception is raised.}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-C: The record delimiter is $\backslash$r, $\backslash$n, and/or $\backslash$r$\backslash$n and the fields are returned in order}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-3, AC-012-5
+
+\medskip
+\given{A file created in the temporary folder with the string literal "a$\backslash$rb$\backslash$nc$\backslash$r$\backslash$nd"}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The returned structure contains a vector of 4 vectors of string, where each first element are the letter "a", "b", "c", and "d"}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-D: The field delimiter is a comma and the fields are returned in order}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-4
+
+\medskip
+\given{A file created in the temporary folder with the string literal "a,b"}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The returned inner vector contains the strings "a" and "b"}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-E: Empty fields are valid fields}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-6
+
+\medskip
+\given{A file created in the temporary folder with the string literal ",,,"}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The returned inner vector contains four empty strings}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-F: The returned structure preserves the order of records and fields in the source file}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-7
+
+\medskip
+\given{A file created in the temporary folder with the string literal "0,1,2$\backslash$n3,4,5"}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The returned vector is equal to \{\{"0", "1", "2"\}, \{"3", "4", "5"\}\}}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-G: Empty/minimal content}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following contents:
+  \begin{itemize}
+    \item \textit{(empty string)}
+    \item $\backslash$r$\backslash$n
+    \item $\backslash$r$\backslash$n$\backslash$r$\backslash$n
+  \end{itemize}
+}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The results:
+  \begin{itemize}
+    \item \{\{\}\}
+    \item \{\{""\}\}
+    \item \{\{""\}, \{""\}\}
+  \end{itemize}
+}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-H: Single record, single field}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following contents:
+\begin{itemize}
+  \item hello
+  \item hello$\backslash$r$\backslash$n
+  \item "hello"
+  \item "hello"$\backslash$r$\backslash$n
+  \item ""
+  \item ""$\backslash$r$\backslash$n
+\end{itemize}
+}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The results:
+  \begin{itemize}
+    \item \{\{"hello"\}\}
+    \item \{\{"hello"\}\}
+    \item \{\{"hello"\}\}
+    \item \{\{"hello"\}\}
+    \item \{\{""\}\}
+    \item \{\{""\}\}
+  \end{itemize}
+}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-I: Single record, multiple fields}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following contents:
+\begin{itemize}
+  \item a,b,c
+  \item a,b,c$\backslash$r$\backslash$n
+  \item ,b,c
+  \item a,b,
+  \item a,,c
+  \item ,,
+  \item ,
+  \item a,b,c,d,e,f,g,h,i,j
+\end{itemize}}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The results:
+  \begin{itemize}
+    \item \{\{"a", "b", "c"\}\}
+    \item \{\{"a", "b", "c"\}\}
+    \item \{\{"", "b", "c"\}\}
+    \item \{\{"a", "b", ""\}\}
+    \item \{\{"a", "", "c"\}\}
+    \item \{\{"", "", ""\}\}
+    \item \{\{"", ""\}\}
+    \item \{\{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"\}\}
+  \end{itemize}
+}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-J: Multiple records}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following contents:
+\begin{itemize}
+  \item a,b$\backslash$r$\backslash$nc,d
+  \item a,b$\backslash$r$\backslash$nc,d$\backslash$r$\backslash$n
+  \item a$\backslash$r$\backslash$nb$\backslash$r$\backslash$nc
+  \item a$\backslash$r$\backslash$nb$\backslash$r$\backslash$nc$\backslash$r$\backslash$n
+\end{itemize}
+}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The results:
+\begin{itemize}
+  \item \{\{"a", "b"\},\{"c", "d"\}\}
+  \item \{\{"a", "b"\},\{"c", "d"\}\}
+  \item \{\{"a"\},\{"b"\},\{"c"\}\}
+  \item \{\{"a"\},\{"b"\},\{"c"\}\}
+\end{itemize}}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-K: Trailing CRLF}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following contents:
+\begin{itemize}
+  \item a$\backslash$r$\backslash$n
+  \item a,b$\backslash$r$\backslash$n
+  \item a$\backslash$r$\backslash$nb$\backslash$r$\backslash$n
+  \item a$\backslash$r$\backslash$nb$\backslash$r$\backslash$nc$\backslash$r$\backslash$n
+  \item "x"$\backslash$r$\backslash$n
+  \item $\backslash$r$\backslash$n
+\end{itemize}}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The results:
+\begin{itemize}
+  \item \{\{"a"\}\}
+  \item \{\{"a", "b"\}\}
+  \item \{\{"a"\},\{"b"\}\}
+  \item \{\{"a"\},\{"b"\},\{"c"\}\}
+  \item \{\{"x"\}\}
+  \item \{\{\}\}
+\end{itemize}}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-L: Non-escaped field}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following contents:
+\begin{itemize}
+  \item \textit{(0x20)}
+  \item \textit{(0x21)}
+  \item \textit{(0x23)}
+  \item \textit{(0x2B)}
+  \item \textit{(0x2D)}
+  \item \textit{(0x7E)}
+  \item \#\$\%\&'()*+
+  \item -./\textit{0...9}:;<=>?@\textit{A...Z}[$\backslash$]$\hat{}$\_\textit{a...z}\{ \}~
+  \item \textit{string with leading spaces}
+  \item hello world
+\end{itemize}}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The results:
+  \begin{itemize}
+  \item \{\{\textit{(0x20)}\}\}
+  \item \{\{\textit{(0x21)}\}\}
+  \item \{\{\textit{(0x23)}\}\}
+  \item \{\{\textit{(0x2B)}\}\}
+  \item \{\{\textit{(0x2D)}\}\}
+  \item \{\{\textit{(0x7E)}\}\}
+  \item \{\{"\#\$\%\&'()*+"\}\}
+  \item \{\{"-./\textit{0...9}:;<=>?@\textit{A...Z}[$\backslash$]$\hat{}$\_\textit{a...z}\{ \}~"\}\}
+  \item \{\{\textit{leading spaces are preserved}\}\}
+  \item \{\{"hello world"\}\}
+\end{itemize}
+}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-M: Escaped Field, basic quoting}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following contents:
+\begin{itemize}
+  \item "hello"
+  \item ""
+  \item " "
+  \item " leading"
+  \item "trailing "
+  \item "a","b","c"
+\end{itemize}}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The results:
+  \begin{itemize}
+  \item \{\{"hello"\}\}
+  \item \{\{""\}\}
+  \item \{\{" "\}\}
+  \item \{\{" leading"\}\}
+  \item \{\{"trailing "\}\}
+  \item \{\{"a","b","c"\}\}
+  \end{itemize}}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-N: Escaped Field, embedded comma}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following contents:
+\begin{itemize}
+  \item "a,b"
+  \item "a,b,c,d"
+  \item ",value"
+  \item "value,"
+  \item ","
+  \item x,"a,b",z
+  \item "a,b","c,d"
+\end{itemize}}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The results:
+\begin{itemize}
+  \item \{\{"a,b"\}\}
+  \item \{\{"a,b,c,d"\}\}
+  \item \{\{",value"\}\}
+  \item \{\{"value,"\}\}
+  \item \{\{","\}\}
+  \item \{\{"x","a,b","z"\}\}
+  \item \{\{"a,b","c,d"\}\}
+\end{itemize}}
+\end{tcbox}
+
+
+% -------------------------------------------------------------------
+\subsection{TC-012-O: Escaped Field, embedded CR, LF, CRLF}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following contents:
+\begin{itemize}
+  \item "line1$\backslash$nline2"
+  \item "line1$\backslash$rline2"
+  \item "line1$\backslash$r$\backslash$nline2"
+  \item "a$\backslash$r$\backslash$nb$\backslash$r$\backslash$nc"
+  \item before,"has$\backslash$r$\backslash$nnewline",after
+  \item r1$\backslash$r$\backslash$n"r2$\backslash$r$\backslash$nstill\_r2"$\backslash$r$\backslash$nr3
+\end{itemize}}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The results:
+\begin{itemize}
+  \item \{\{"line1$\backslash$nline2"\}\}
+  \item \{\{"line1$\backslash$rline2"\}\}
+  \item \{\{"line1$\backslash$r$\backslash$nline2"\}\}
+  \item \{\{"a$\backslash$r$\backslash$nb$\backslash$r$\backslash$nc"\}\}
+  \item \{\{"before","has$\backslash$r$\backslash$nnewline","after"\}\}
+  \item \{\{"r1"\},\{"r2$\backslash$r$\backslash$nstill\_r2"\},\{"r3"\}\}
+\end{itemize}}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-P: Escaped Field, double double quote}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following contents:
+\begin{itemize}
+  \item """"
+  \item """""" 
+  \item """"""""
+  \item """hello"
+  \item "hello"""
+  \item "say ""hi"""
+  \item "he said, ""hello"""
+  \item "a""b""c"
+  \item """
+  \item "line1$\backslash$r$\backslash$n""quoted"""
+\end{itemize}}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The results:
+\begin{itemize}
+  \item \{\{"""\}\}
+  \item \{\{""""\}\}
+  \item \{\{"""""\}\}
+  \item \{\{""hello"\}\}
+  \item \{\{"hello""\}\}
+  \item \{\{"say "hi""\}\}
+  \item \{\{"he said, "hello""\}\}
+  \item \{\{"a"b"c"\}\}
+  \item \textit{invalid input}
+  \item \{\{"line1$\backslash$r$\backslash$n"quoted""\}\}
+\end{itemize}
+}
+\end{tcbox}
+
+
+% -------------------------------------------------------------------
+\subsection{TC-012-Q: Escaped Field, empty field}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following contents:
+\begin{itemize}
+  \item ""
+  \item "",b,c
+  \item a,"",c
+  \item a,b,""
+  \item "","",""
+\end{itemize}}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The results:
+\begin{itemize}
+  \item \{\{""\}\}
+  \item \{\{"", "b", "c"\}\}
+  \item \{\{"a", "", "c"\}\}
+  \item \{\{"a", "b", ""\}\}
+  \item \{\{"", "", ""\}\}
+\end{itemize}}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-R: Escaped Field, combinations}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following contents:
+\begin{itemize}
+  \item "a,""b"""
+  \item "a$\backslash$r$\backslash$n""b"""
+  \item ",$\backslash$r$\backslash$n"""
+  \item "","a,b","c""d"
+\end{itemize}}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The results:
+\begin{itemize}
+  \item \{\{"a,"b""\}\}
+  \item \{\{"a$\backslash$r$\backslash$n"b""\}\}
+  \item \{\{",$\backslash$r$\backslash$n"""\}\}
+  \item \{\{"", "a,b", "c"d"\}\}
+\end{itemize}}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-S: RFC4180 §2 canonical example}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following content:
+
+Year,Make,Model,Description,Price\\
+1997,Ford,E350,"ac, abs, moon",3000.00\\
+1999,Chevy,"Venture ""Extended Edition""","",4900.00\\
+2000,Ford,E350,"super, luxurious truck",5000.00
+}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The resulting structure is as follows:
+
+\{
+\{"Year", "Make", "Model", "Description", "Price"\}\\
+\{"1997", "Ford", "E350", "ac, abs, moon", "3000.00"\}\\
+\{"1999", "Chevy", "Venture "Extended Edition"","", "4900.00"\}\\
+\{"2000", "Ford", "E350", "super, luxurious truck", "5000.00"\}
+\}
+}
+\end{tcbox}
+
+
+% -------------------------------------------------------------------
+\subsection{TC-012-T: Mixed escaped and non-escaped in same record}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following contents:
+\begin{itemize}
+  \item plain,"quoted",plain2
+  \item a,"b"$\backslash$r$\backslash$n"c",d
+  \item ,"x",
+  \item "",plain,""
+\end{itemize}
+}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The results:
+\begin{itemize}
+  \item \{\{"plain", "quoted", "plain2"\}\} 
+  \item \{\{"a", "b"\}, \{"c", "d"\}\} 
+  \item \{\{"", "x", ""\}\} 
+  \item \{\{"", "plain", ""\}\} 
+\end{itemize}
+}
+\end{tcbox}
+
+
+% -------------------------------------------------------------------
+\subsection{TC-012-U: Ragged rows (varying field counts)}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following contents:
+\begin{itemize}
+  \item a,b$\backslash$r$\backslash$nc,d,e,f
+  \item a,b,c,d$\backslash$r$\backslash$ne,f
+  \item a,b,c$\backslash$r$\backslash$nx$\backslash$r$\backslash$nd,e,f
+\end{itemize}}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The results:
+\begin{itemize}
+  \item \{\{"a", "b"\}, \{"c", "d", "e", "f"\}\}
+  \item \{\{"a", "b", "c", "d"\}, \{"e", "f"\}\}
+  \item \{\{"a", "b", "c"\}, \{"x"\}, \{"d", "e", "f"\}\}
+\end{itemize}}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-012-V: Single-column files}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following contents:
+\begin{itemize}
+  \item alpha$\backslash$r$\backslash$nbeta$\backslash$r$\backslash$ngamma
+  \item alpha$\backslash$r$\backslash$nbeta$\backslash$r$\backslash$ngamma$\backslash$r$\backslash$n
+  \item $\backslash$r$\backslash$n
+\end{itemize}}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The results:
+\begin{itemize}
+  \item \{\{"alpha"\}, \{"beta"\}, \{"gamma"\}\}
+  \item \{\{"alpha"\}, \{"beta"\}, \{"gamma"\}\}
+  \item \{\{""\}\}
+\end{itemize}}
+\end{tcbox}
+
+
+
+% -------------------------------------------------------------------
+\subsection{TC-012-W: Invalid input}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-012-8
+
+\medskip
+\given{A file created in the temporary folder with the following contents:
+\begin{itemize}
+  \item "unterminated
+  \item hel"lo
+  \item \texttt{(0x01)}
+  \item \texttt{(0x7F)}
+  \item \texttt{(0x80)} 
+\end{itemize}}
+\when{Calling \texttt{pacemaker::io::CSV::parse} with the path to the created file}
+\then{The results:
+\begin{itemize}
+  \item exception thrown
+  \item exception thrown
+  \item \{\{""\}\} 
+  \item \{\{""\}\} 
+  \item \{\{""\}\} 
+\end{itemize}
+}
+\end{tcbox}
