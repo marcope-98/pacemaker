@@ -3,12 +3,7 @@
 % ===================================================================
 \label{sec:incaonlineexperimentproxy}
 
-\reqfield{Title:} Proxy for the INCA online experiment COM object \statusupd
-
-\changenote{\\
-\texttt{GetAllDevices} now returns \texttt{std::vector<ExperimentDeviceProxy>}. \\
-\texttt{GetCalibrationValueInDevice} now returns \texttt{CalibrationScalarDataProxy}. \\
-\texttt{StartRecording}, \texttt{StopRecordingAndSave}, and \texttt{StopMeasurement} are no longer C++ wrapper methods; they are inherited from the base dispatch type and called via \texttt{operator->} on the proxy.}
+\reqfield{Title:} Proxy for the INCA online experiment COM object \status{implemented}
 
 \medskip
 \reqfield{Intent:}
@@ -16,16 +11,11 @@ The user needs to start and stop measurement recordings, enumerate connected ECU
 
 \medskip
 \reqfield{Acceptance criteria:}
-\acrej{\textbf{AC-004-1}}{The constructor shall narrow the supplied \texttt{IDispatch} to \texttt{IncaOnlineExperiment\_Dispatch} via \texttt{query\_interface}.}
-\acupd{\textbf{AC-004-2}}{\texttt{GetAllDevices()} shall return a \texttt{std::vector} of \texttt{ExperimentDeviceProxy}, one element per device reported by INCA.}
+\reqdef{\textbf{AC-004-2}}{\texttt{GetAllDevices()} shall return a \texttt{std::vector} of \texttt{ExperimentDeviceProxy}, one element per device reported by INCA.}
 \reqdef{\textbf{AC-004-3}}{\texttt{GetAllDevices()} shall throw \texttt{std::runtime\_error} if the returned SAFEARRAY is not of type \texttt{VT\_ARRAY | VT\_VARIANT} or if any element is not \texttt{VT\_DISPATCH}.}
-\acobs{\textbf{AC-004-4}}{\texttt{StartRecording()} shall delegate to the underlying COM method without additional side-effects.}
-\acobs{\textbf{AC-004-5}}{\texttt{StopRecordingAndSave()} shall delegate to the underlying COM method.}
-\acobs{\textbf{AC-004-6}}{\texttt{StopMeasurement()} shall delegate to the underlying COM method.}
-\acupd{\textbf{AC-004-7}}{\texttt{GetCalibrationValueInDevice(name, device)} shall return a \texttt{CalibrationScalarDataProxy}.}
-\acupd{\textbf{AC-004-8}}{\texttt{GetCalibrationValueInDevice(name, device)} shall throw \texttt{std::runtime\_error} if the underlying COM call returns a null pointer.}
-\acobs{\textbf{AC-004-9}}{The class shall be move-only.}
-\acnew{\textbf{AC-004-10}}{The class shall respect all the requirements of \texttt{COMProxy}.}
+\reqdef{\textbf{AC-004-7}}{\texttt{GetCalibrationValueInDevice(name, device)} shall return a \texttt{CalibrationScalarDataProxy}.}
+\reqdef{\textbf{AC-004-8}}{\texttt{GetCalibrationValueInDevice(name, device)} shall throw \texttt{std::runtime\_error} if the underlying COM call returns a null pointer.}
+\reqdef{\textbf{AC-004-10}}{The class shall respect all the requirements of \texttt{COMProxy}.}
 
 \medskip
 \reqfield{Testing:}

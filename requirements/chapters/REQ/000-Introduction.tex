@@ -7,13 +7,3 @@ Windows COM automation wrapper that provides a safe, idiomatic C++ interface to 
 INCA calibration and measurement tool.
 
 The library is divided into a \textbf{pacemaker::inca} component responsible to interact with INCA via COM API calls, and a \textbf{pacemaker::timer} component that provides a fixed-rate, fixed count periodic timer backed by the Win32 high-resolution waitable timer API. The latter is used to drive real-time measurement and calibration loops at precise, predictable intervals.
-
-\vfill
-\noindent\textbf{Change legend used in this document:}
-\begin{itemize}[leftmargin=*,itemsep=2pt]
-  \item \textcolor{newgreen}{\textbf{[NEW]}}: requirement or criterion added in revision 2.
-  \item \textcolor{updatedorange}{\textbf{[UPDATED]}}: criterion wording changed; behaviour changed.
-  \item \textcolor{obsoletegray}{\textbf{[OBSOLETE]}}: criterion or requirement no longer applicable.
-  \item \textcolor{rejectred}{\textbf{[REJECTED]}}: criterion explicitly invalidated by a conflicting design decision.
-  \item Unmarked items are unchanged from revision 1.
-\end{itemize}

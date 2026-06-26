@@ -3,10 +3,7 @@
 % ===================================================================
 \label{sec:calibrationscalardataproxy}
 
-\reqfield{Title:} Proxy for an INCA calibration scalar data COM object \statusupd
-
-\changenote{\\
-The wrapper adds no C++ methods; \texttt{SetImplValue} and \texttt{ResetValueToRP} are inherited from the base dispatch type and invoked via \texttt{operator->} on the proxy. ACs 007-2 and 007-3 updated.}
+\reqfield{Title:} Proxy for an INCA calibration scalar data COM object \status{implemented}
 
 \medskip
 \reqfield{Intent:}
@@ -14,11 +11,7 @@ The user needs to set a scalar calibration parameter to a specific numeric value
 
 \medskip
 \reqfield{Acceptance criteria:}
-\acrej{\textbf{AC-007-1}}{The constructor shall narrow the supplied \texttt{IDispatch} to \texttt{CalibrationScalarData\_Dispatch} via \texttt{query\_interface}.}
-\acobs{\textbf{AC-007-2}}{\texttt{SetImplValue(value)} shall be accessible via \texttt{operator->} on the proxy and shall forward the \texttt{double} to the underlying COM method.}
-\acobs{\textbf{AC-007-3}}{\texttt{ResetValueToRP()} shall be accessible via \texttt{operator->} on the proxy  and shall call the underlying COM method.}
-\acobs{\textbf{AC-007-4}}{The class shall be move-only.}
-\acnew{\textbf{AC-007-5}}{The class shall respect all the requirements of \texttt{COMProxy}.}
+\reqdef{\textbf{AC-007-5}}{The class shall respect all the requirements of \texttt{COMProxy}.}
 
 \medskip
 \reqfield{Testing:}

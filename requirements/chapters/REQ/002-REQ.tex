@@ -3,7 +3,7 @@
 % ===================================================================
 \label{sec:comproxy}
  
-\reqfield{Title:} Generic owning base class for COM dispatch proxies \statusupd
+\reqfield{Title:} Generic owning base class for COM dispatch proxies \status{implemented}
  
 \medskip
 \reqfield{Intent:}
@@ -11,18 +11,15 @@ The user wants a single, reusable base that both owns the typed COM pointer and 
 
 \medskip 
 \reqfield{Acceptance criteria:}
-\acupd{\textbf{AC-002-1}}{\texttt{COMProxy<T>} shall not be copy-constructible and copy-assignable.}
+\reqdef{\textbf{AC-002-1}}{\texttt{COMProxy<T>} shall not be copy-constructible and copy-assignable.}
 \reqdef{\textbf{AC-002-2}}{\texttt{COMProxy<T>} shall be move-constructible and move-assignable.}
-\acrej{\textbf{AC-002-3}}{{The constructor shall accept a \texttt{unique\_com\_ptr<T>} by value (taking ownership via move).}}
-\acrej{\textbf{AC-002-4}}{The protected member \texttt{p\_subject} shall be accessible to derived classes.}
-\acrej{\textbf{AC-002-5}}{{The destructor shall be non-virtual and defaulted; derived classes are responsible for their own destructors.}}
-\acnew{\textbf{AC-002-6}}{\texttt{COMProxy<T>} shall enable the user to directly call method on the underlying pointer via \texttt{operator->} and \texttt{get()}.}
-\acnew{\textbf{AC-002-7}}{\texttt{COMProxy<T>} shall provide a default constructor that leaves the pointer null.}
-\acnew{\textbf{AC-002-8}}{\texttt{COMProxy<T>} shall provide an explicit constructor accepting a raw \texttt{::IDispatch*}.}
-\acnew{\textbf{AC-002-9}}{\texttt{COMProxy<T>} shall provide an explicit constructor accepting a \texttt{unique\_com\_ptr<::IDispatch>} by value.}
-\acnew{\textbf{AC-002-10}}{\texttt{COMProxy<T>} ctors shall query the COM object specified in the template parameter.}
-\acnew{\textbf{AC-002-11}}{\texttt{COMProxy<T>} ctors shall throw an exception if querying the COM object failed.}
-\acnew{\textbf{AC-002-12}}{\texttt{COMProxy<T>} ctors shall throw an exception if a nullptr is passed.}
+\reqdef{\textbf{AC-002-6}}{\texttt{COMProxy<T>} shall enable the user to directly call method on the underlying pointer via \texttt{operator->} and \texttt{get()}.}
+\reqdef{\textbf{AC-002-7}}{\texttt{COMProxy<T>} shall provide a default constructor that leaves the pointer null.}
+\reqdef{\textbf{AC-002-8}}{\texttt{COMProxy<T>} shall provide an explicit constructor accepting a raw \texttt{::IDispatch*}.}
+\reqdef{\textbf{AC-002-9}}{\texttt{COMProxy<T>} shall provide an explicit constructor accepting a \texttt{unique\_com\_ptr<::IDispatch>} by value.}
+\reqdef{\textbf{AC-002-10}}{\texttt{COMProxy<T>} ctors shall query the COM object specified in the template parameter.}
+\reqdef{\textbf{AC-002-11}}{\texttt{COMProxy<T>} ctors shall throw an exception if querying the COM object failed.}
+\reqdef{\textbf{AC-002-12}}{\texttt{COMProxy<T>} ctors shall throw an exception if a nullptr is passed.}
 
 \medskip
 \reqfield{Testing:}
