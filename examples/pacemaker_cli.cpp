@@ -1,9 +1,10 @@
-#include <algorithm>
 #include <charconv>
 #include <chrono>
 #include <iostream>
+#include <limits>
 #include <string>
 #include <vector>
+
 
 #include <comdef.h>
 
@@ -30,7 +31,8 @@ std::vector<std::vector<double>> get_values(std::vector<std::vector<std::string>
       const auto *begin = st.data();
       const auto *end   = begin + st.size();
       auto [ptr, ec]    = std::from_chars(begin, end, x);
-      if (ec != std::errc() || ptr != end) throw std::runtime_error("Invalid double: '" + st + "'");
+      if (ec != std::errc() || ptr != end)
+        x = std::numeric_limits<double>::quiet_NaN();
       tmp.push_back(x);
     }
     values.emplace_back(std::move(tmp));
@@ -44,7 +46,7 @@ std::chrono::milliseconds cvt_str_to_ms(const std::string &s)
   auto        value = std::stoll(s, &num_end);
   std::string unit  = s.substr(num_end);
   if (unit == "ms") return std::chrono::milliseconds{value};
-  throw std::invalid_argument("Unknown duration unit: '" + unit + "'. Acceptable units are: 'ms'");
+  return 0ms;
 }
 
 int main(int argc, char *argv[])
@@ -56,17 +58,8 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
 
-  // Convert first argument to std::chrono::milliseconds (e.g. valid inputs are in the form: 10ms)
-  std::chrono::milliseconds period{};
-  try
-  {
-    period = cvt_str_to_ms(std::string{argv[1]});
-  }
-  catch (const std::exception &e)
-  {
-    std::cerr << e.what() << "\n";
-    return EXIT_FAILURE;
-  }
+  // Convert first argument to std::chrono::milliseconds (e.g. valid inputs are in the form: 10ms, invalid inputs are returned as 0ms)
+  auto period = cvt_str_to_ms(std::string{argv[1]});
 
   // CSV parsing
   std::vector<std::string>         header;
@@ -97,7 +90,8 @@ int main(int argc, char *argv[])
     timer.wait([&session, &header, &values](std::size_t i)
                {
                 for (std::size_t j{}; j < values[i].size(); ++j)
-                  session.set_param(header[j], values[i][j]); 
+                  if (!std::isnan(values[i][j]))
+                    session.set_param(header[j], values[i][j]); 
                 });
     timer.stop([&session] { session.stop_recording(""); });
     // clang-format on
