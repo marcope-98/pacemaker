@@ -23,16 +23,12 @@
 %%
 
 file:
-  records opt_crlf
+    records
+  | records crlf
 ;
 
 crlf:
   CRLF | LF | CR
-;
-
-opt_crlf:
-    %empty
-  | crlf
 ;
 
 records:
