@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-
 #include <comdef.h>
 
 #include "pacemaker/inca/Session.hpp"
@@ -14,26 +13,41 @@
 
 using namespace std::chrono_literals;
 
-std::vector<std::string>         get_header(std::vector<std::vector<std::string>> &csv_content) { return std::move(csv_content.front()); }
+struct COMGuard
+{
+  COMGuard()
+  {
+    if (FAILED(CoInitialize(NULL))) throw std::runtime_error("CoInitialize failed");
+  }
+  ~COMGuard() { CoUninitialize(); }
+  COMGuard(const COMGuard &)            = delete;
+  COMGuard &operator=(const COMGuard &) = delete;
+  COMGuard(COMGuard &&)                 = delete;
+  COMGuard &operator=(COMGuard &&)      = delete;
+};
+
+std::vector<std::string> get_header(std::vector<std::vector<std::string>> &csv_content)
+{
+  auto header = std::move(csv_content.front());
+  csv_content.erase(csv_content.begin());
+  return header;
+}
+
 std::vector<std::vector<double>> get_values(std::vector<std::vector<std::string>> &csv_content)
 {
   std::vector<std::vector<double>> values;
   values.reserve(csv_content.size() - 1);
-  for (std::size_t row{1}; row < csv_content.size(); ++row)
+  for (const auto &csv_row : csv_content)
   {
-    const auto &csv_row = csv_content[row];
-
     std::vector<double> tmp;
     tmp.reserve(csv_row.size());
     for (const auto &st : csv_row)
     {
-      double      x{};
-      const auto *begin = st.data();
-      const auto *end   = begin + st.size();
-      auto [ptr, ec]    = std::from_chars(begin, end, x);
-      if (ec != std::errc() || ptr != end)
-        x = std::numeric_limits<double>::quiet_NaN();
-      tmp.push_back(x);
+      double x{};
+      auto [ptr, ec] = std::from_chars(st.data(), st.data() + st.size(), x);
+      tmp.push_back((ec != std::errc() || ptr != st.data() + st.size())
+                        ? x
+                        : std::numeric_limits<double>::quiet_NaN());
     }
     values.emplace_back(std::move(tmp));
   }
@@ -54,7 +68,9 @@ int main(int argc, char *argv[])
   // Initial parameter check
   if (argc != 3)
   {
-    std::cerr << "Incorrect number of arguments provided. Expected 2, got " + std::to_string(argc - 1) << "\n";
+    std::cerr << "Usage: " << argv[0] << " <period> <csv_file>\n"
+              << "  <period>    Sampling period, e.g. 100ms\n"
+              << "  <csv_file>  Path to the CSV input file\n";
     return EXIT_FAILURE;
   }
 
@@ -77,10 +93,10 @@ int main(int argc, char *argv[])
   }
 
   // Actual execution of the inca automation
-  CoInitialize(NULL);
   try
   {
-    auto session = pacemaker::inca::Session::connect();
+    [[maybe_unused]] COMGuard com;
+    auto                      session = pacemaker::inca::Session::connect();
     for (const auto &name : header)
       session.add_param(name);
 
@@ -99,8 +115,8 @@ int main(int argc, char *argv[])
   catch (const std::exception &e)
   {
     std::cerr << e.what() << '\n';
+    return EXIT_FAILURE;
   }
-  CoUninitialize();
 
-  return 0;
+  return EXIT_SUCCESS;
 }
