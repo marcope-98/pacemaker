@@ -493,10 +493,9 @@ TEST_F(TC009, M)
   EXPECT_THROW(
       { 
         auto session = pacemaker::inca::Session::connect(
-          [&mock]() 
+          [&mock]() -> IDispatch*
           {
             throw TC009M_Exception{};
-            return &mock; 
           }
         ); 
       },
