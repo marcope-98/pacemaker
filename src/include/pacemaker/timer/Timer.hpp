@@ -1,11 +1,10 @@
 #ifndef PACEMAKER_TIMER_TIMER_HPP_
 #define PACEMAKER_TIMER_TIMER_HPP_
 
+#include <cassert>
 #include <chrono>
 #include <functional>
 #include <memory>
-#include <stdexcept>
-
 
 namespace pacemaker::timer
 {
@@ -169,8 +168,7 @@ namespace pacemaker::timer
   template<class F>
   inline auto Timer::wait(const F &TimerFcn) -> void
   {
-    if (!this->is_running())
-      throw std::runtime_error("Timer was not started correctly. Did you forget a timer.start()?");
+    assert(this->is_running() && "Timer was not started correctly. Did you forget a Timer::start?");
 
     this->set_thread_opts();
     for (std::size_t i{}; i < this->m_tasksToExecute; ++i)

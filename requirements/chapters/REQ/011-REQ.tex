@@ -20,7 +20,7 @@ The user needs to create a timer that will fire at a fixed interval for exaclty 
 \acnew{\textbf{AC-011-7}}{\texttt{start(StartFcn)} shall invoke the \texttt{StartFcn} callback exactly once on the calling thread.}
 \acupd{\textbf{AC-011-8}}{A debug build shall detect if \texttt{start()} is called when the timer is already running.}
 \acnew{\textbf{AC-011-9}}{Passing no argument to \texttt{start()} shall be valid and default to a noop.}
-\acnew{\textbf{AC-011-10}}{If \texttt{wait()} is called before \texttt{start()} it shall throw \texttt{std::runtime\_error}.}
+\acupd{\textbf{AC-011-10}}{A debug build shall detect if \texttt{wait()} is called before \texttt{start()}.}
 \acnew{\textbf{AC-011-11}}{\texttt{wait} shall repeat the callback exactly \texttt{tasks\_to\_execute} iterations.}
 \acnew{\textbf{AC-011-12}}{\texttt{stop} shall invoke \texttt{StopFcn} exactly once on the calling thread.}
 \acnew{\textbf{AC-011-13}}{\texttt{stop(StopFcn)} shall set the time in a stopped state after invoking \texttt{StopFcn}.}

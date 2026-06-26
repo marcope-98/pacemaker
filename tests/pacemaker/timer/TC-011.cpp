@@ -89,8 +89,8 @@ TEST_F(TC011, J)
 TEST_F(TC011, K)
 {
   pacemaker::timer::Timer timer{10ms, 0};
-  EXPECT_THROW(timer.wait([](std::size_t) {}),
-               std::runtime_error);
+  EXPECT_DEBUG_DEATH(timer.wait([](std::size_t) {}),
+                     "Timer was not started correctly. Did you forget a Timer::start?");
 }
 
 TEST_F(TC011, L)
