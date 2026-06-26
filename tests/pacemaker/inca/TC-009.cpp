@@ -316,19 +316,7 @@ TEST_F(TC009, H)
                                                    { mock.AddRef(); return &mock; });
 
   std::string param{"torque"};
-  EXPECT_THROW(
-      {
-        try
-        {
-          session.set_param(param, 50.0);
-        }
-        catch (const std::out_of_range &e)
-        {
-          EXPECT_EQ("Session::set_param: unknown parameter '" + param + "'. Call add_param() before set_param().", e.what());
-          throw;
-        }
-      },
-      std::out_of_range);
+  EXPECT_NO_THROW(session.set_param(param, 50.0));
 }
 
 TEST_F(TC009, I)

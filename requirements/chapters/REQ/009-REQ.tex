@@ -28,7 +28,7 @@ The user needs a single entry point that connects to INCA, validates the environ
 \acnew{\textbf{AC-009-9}}{\texttt{add\_param(name)} shall look up the named calibration scalar on the primary device and store the resulting \texttt{CalibrationScalarDataProxy} internally.}
 \acnew{\textbf{AC-009-10}}{Calling \texttt{add\_param} two or more times with the same name shall be a no-op.}
 \acnew{\textbf{AC-009-11}}{\texttt{set\_param(name, value)} shall write the value to the registered calibration scalar.}
-\acnew{\textbf{AC-009-12}}{Calling \texttt{set\_param(name, value)} with a \texttt{name} that was not registered via \texttt{add\_param}, shall throw \texttt{std::out\_of\_range} with a message containing the parameter name.}
+\acupd{\textbf{AC-009-12}}{Calling \texttt{set\_param(name, value)} with a \texttt{name} that was not registered via \texttt{add\_param}, shall return without taking further actions.}
 \acnew{\textbf{AC-009-13}}{\texttt{reset()} shall call \texttt{ResetValueToRP()} on every registered calibration proxy.}
 \acnew{\textbf{AC-009-14}}{\texttt{start\_recording()} shall delegate to \texttt{IncaOnlineExperimentProxy::StartRecording()} via \texttt{operator->}.}
 \acnew{\textbf{AC-009-15}}{\texttt{stop\_recording(filename)} shall: sleep for (40\,ms) before saving stopping the recording and resetting all calibration values to the Reference Page.}

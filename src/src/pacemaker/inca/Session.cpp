@@ -76,8 +76,7 @@ namespace pacemaker::inca
   auto pacemaker::inca::Session::set_param(const std::string &name, double value) -> void
   {
     auto it = this->pimpl->map.find(name);
-    if (it == this->pimpl->map.end())
-      throw std::out_of_range("Session::set_param: unknown parameter '" + name + "'. Call add_param() before set_param().");
+    if (it == this->pimpl->map.end()) return;
     this->pimpl->vector[it->second]->SetImplValue(value);
   }
 

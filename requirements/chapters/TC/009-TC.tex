@@ -108,7 +108,7 @@ Requirement reference: REQ-009.
 \end{tcbox}
 
 % -------------------------------------------------------------------
-\subsection{TC-009-H: set\_param throws for unknown parameter}
+\subsection{TC-009-H: set\_param noops for unknown parameter}
 % -------------------------------------------------------------------
 
 \begin{tcbox}
@@ -118,7 +118,7 @@ Requirement reference: REQ-009.
 \medskip
 \given{a \texttt{Session} with no previous calls to \texttt{add\_param}.}
 \when{\texttt{set\_param("torque", 50.0)} is called.}
-\then{\texttt{std::out\_of\_range} is thrown with a message containing \texttt{"torque"}.}
+\then{returns without a call to \texttt{SetImplValue}}
 \end{tcbox}
 
 % -------------------------------------------------------------------
