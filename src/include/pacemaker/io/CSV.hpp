@@ -19,12 +19,8 @@ namespace pacemaker::io
    * The underlying grammar (see `csv.l` / `csv.y`) follows the RFC 4180 conventions:
    * - Records are separated by `CRLF`, `CR` or `LF`.
    * - Fields within a record are separated by a comma.
-   * - A field may be **unescaped** (printable ASCII excluding comma and double-quote)
-   *   or **escaped** (enclosed in double quotes, in which case it may contain commas,
-   *   `CR`, `LF`, and double-quote characters represented as a double `""`).
-   * - Escaped fields are unescaped during parsing: a doubled quote `""` becomes
-   *   a single `"` in the returned string, and embedded `CR`/`LF` tokens become
-   *   literal `\r`/`\n` characters in the field.
+   * - A field may be **unescaped** (printable ASCII excluding comma and double-quote) or **escaped** (enclosed in double quotes, in which case it may contain commas, `CR`, `LF`, and double-quote characters represented as a double `""`).
+   * - Escaped fields are unescaped during parsing: a doubled quote `""` becomes a single '' in the returned string, and embedded `CR`/`LF` tokens become literal `\r`/`\n` characters in the field.
    *
    * `CSV` has no instance state; both `parse()` and the private `parse_helper()` are static.
    * The class exists purely to namespace the parsing entry point and is never instantiated.
@@ -62,8 +58,7 @@ namespace pacemaker::io
      * @throws std::invalid_argument if @p filename does not exist or does not refer to a regular file
      * @throws std::invalid_argument if the file cannot be opened for reading (e.g.\ permissions)
      * @throws (parse-defined) if the file content does not conform to the CSV grammar;
-     *         parse errors are currently reported to `std::cerr` by `CSVParser::error()` rather that
-     *         thrown.
+     *         parse errors are thrown.
      */
     static auto parse(const std::filesystem::path &filename) -> std::vector<std::vector<std::string>>;
 
