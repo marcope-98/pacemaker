@@ -1,6 +1,7 @@
 set(PACEMAKER_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_compile_options(  
+add_compile_options( 
+      /EHsc 
       /W4     # Baseline reasonable warnings
       /w14242 # 'identifier': conversion from 'type1' to 'type1', possible loss
               # of data
