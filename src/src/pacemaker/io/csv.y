@@ -18,7 +18,7 @@
   #define yylex lexer.yylex
 }
 
-%token TEXTDATA CR LF COMMA DQUOTE
+%token TEXTDATA CR LF CRLF COMMA DQUOTE
 
 %%
 
@@ -27,7 +27,7 @@ file:
 ;
 
 crlf:
-  CR LF | LF | CR
+  CRLF | LF | CR
 ;
 
 opt_crlf:
@@ -56,6 +56,7 @@ escaped:
 escaped_content:
     %empty                        { $$  = ""; }
   | escaped_content TEXTDATA      { $$ += $2; }
+  | escaped_content CRLF          { $$ += "\r\n"; }
   | escaped_content CR            { $$ += '\r'; }
   | escaped_content LF            { $$ += '\n'; }
   | escaped_content COMMA         { $$ += ','; }

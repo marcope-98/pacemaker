@@ -20,7 +20,7 @@ bison_target(
   DEFINES_FILE
     ${CMAKE_CURRENT_BINARY_DIR}/bison-csv.hpp
   OPTIONS
-    -Wall --no-lines $<$<CONFIG:Debug>:--debug>
+    -Wall --no-lines -Wcounterexamples $<$<CONFIG:Debug>:--debug>
 )
 
 # ====================== FLEX ======================
