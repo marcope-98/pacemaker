@@ -99,6 +99,30 @@ cmake --build build --target docs
 
 The CMake option `PACEMAKER_BUILD_REQUIREMENTS` is `ON` by default in case the project is the top level project. 
 
+## Building and Running Examples
+A Command Line Interface example is provided that uses all the implemented components of the `pacemaker` library.
+
+```console
+cmake -B build -S . ^
+      -DPACEMAKER_BUILD_EXAMPLES=ON
+
+cmake --build build --target examples
+
+.\build\examples\pacemaker-cli <period> <csv_file>
+```
+
+The CMake option `PACEMAKER_BUILD_TESTS` is `ON` by default in case the project is the top level project. 
+
+The CLI reads the csv file that has the following form:
+- Header: comma separated names of the INCA parameters to change (quoted or unquoted)
+- Values: comma separated double values to set the INCA parameters to
+
+Each row of the Values refers to a different sample. The period of execution of each row is dictated by the first CLI argument that has to be the period in milliseconds.
+
+Putting all things together, suppose I would like to execute every row of a csv file called `thefile.csv` at 10ms intervals, I would call the CLI with the following syntax:
+```console
+.\build\examples\pacemaker-cli 10ms .\thefile.csv
+```
 
 # Contributing
 We welcome contributions from everyone in the community! To get started, please read our [CONTRIBUTING.md](CONTRIBUTING.md) guide. Whether you're adding a new feature, improving documentation, or fixing a bug, your help and feedback are invaluable. 
