@@ -127,3 +127,8 @@ TEST_F(TC002, G)
   pacemaker::inca::detail::unique_com_ptr<IDispatch> idispatch{&mock};
   EXPECT_THROW(ConcreteProxy proxy{std::move(idispatch)}, std::runtime_error);
 }
+
+TEST_F(TC002, H)
+{
+  EXPECT_THROW(ConcreteProxy proxy{nullptr}, std::invalid_argument);
+}

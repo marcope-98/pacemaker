@@ -114,3 +114,17 @@ Requirement reference: REQ-002.
 \when{Constucting a \texttt{COMProxy<MockCOM>} object with the \texttt{unique\_com\_ptr<IDispatch>}}
 \then{QueryInterface is called and an exception is thrown}
 \end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-002-H: nullptr exception}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-002-11
+
+\medskip
+\given{a mock class \texttt{MockCOM} that inherits from IDispatch and mocks its methods.}
+\when{Constucting a \texttt{COMProxy<MockCOM>} object with the \texttt{nullptr}}
+\then{QueryInterface is not called and an exception is thrown}
+\end{tcbox}

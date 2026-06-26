@@ -22,6 +22,7 @@ The user wants a single, reusable base that both owns the typed COM pointer and 
 \acnew{\textbf{AC-002-9}}{\texttt{COMProxy<T>} shall provide an explicit constructor accepting a \texttt{unique\_com\_ptr<::IDispatch>} by value.}
 \acnew{\textbf{AC-002-10}}{\texttt{COMProxy<T>} ctors shall query the COM object specified in the template parameter.}
 \acnew{\textbf{AC-002-11}}{\texttt{COMProxy<T>} ctors shall throw an exception if querying the COM object failed.}
+\acnew{\textbf{AC-002-12}}{\texttt{COMProxy<T>} ctors shall throw an exception if a nullptr is passed.}
 
 \medskip
 \reqfield{Testing:}
