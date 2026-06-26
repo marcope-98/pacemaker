@@ -131,7 +131,7 @@ cmake --build build --target examples
 .\build\examples\pacemaker-cli <period> <csv_file>
 ```
 
-The CMake option `PACEMAKER_BUILD_TESTS` is `ON` by default in case the project is the top level project. 
+The CMake option `PACEMAKER_BUILD_EXAMPLES` is `ON` by default in case the project is the top level project. 
 
 The CLI reads the csv file that has the following form:
 - Header: comma separated names of the INCA parameters to change (quoted or unquoted)
