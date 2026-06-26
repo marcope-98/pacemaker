@@ -49,8 +49,7 @@ pacemaker::timer::Timer::~Timer()
 
 auto pacemaker::timer::Timer::start(const std::function<void(void)> &StartFcn) -> void
 {
-  if (this->pimpl->running)
-    throw std::runtime_error("Timer is already running");
+  assert((!this->pimpl->running) && "Timer is already running");
 
   this->pimpl->running = true;
 
@@ -74,4 +73,3 @@ auto pacemaker::timer::Timer::set_thread_opts() -> void { this->pimpl->opts.av_s
 auto pacemaker::timer::Timer::revert_thread_opts() -> void { this->pimpl->opts.av_revert(); }
 
 auto pacemaker::timer::Timer::wait_for_single_object() -> void { WaitForSingleObject(this->pimpl->handle, INFINITE); }
-

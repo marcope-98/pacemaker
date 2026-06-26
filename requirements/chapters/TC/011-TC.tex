@@ -122,7 +122,7 @@ Requirement reference: REQ-011.
 \end{tcbox}
 
 % -------------------------------------------------------------------
-\subsection{TC-011-I: \texttt{start} throws when timer is running}
+\subsection{TC-011-I: \texttt{start} asserts when timer is running}
 % -------------------------------------------------------------------
 
 \begin{tcbox}
@@ -132,7 +132,7 @@ Requirement reference: REQ-011.
 \medskip
 \given{a \texttt{Timer} object}
 \when{calling \texttt{Timer::start} twice}
-\then{an exception is thrown.}
+\then{an assertion is raised.}
 \end{tcbox}
 
 % -------------------------------------------------------------------

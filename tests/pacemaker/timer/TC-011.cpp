@@ -77,7 +77,7 @@ TEST_F(TC011, I)
 {
   pacemaker::timer::Timer timer{10ms, 0};
   timer.start();
-  EXPECT_THROW(timer.start(), std::runtime_error);
+  EXPECT_DEBUG_DEATH(timer.start(), "Timer is already running");
 }
 
 TEST_F(TC011, J)
