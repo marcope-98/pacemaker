@@ -108,7 +108,7 @@ cmake -B build -S . ^
 
 cmake --build build --target examples
 
-.\build\examples\pacemaker-cli <period> <csv_file>
+.\build\examples\pacemaker-cli <period> <csv_file> [<output file or folder>]
 ```
 
 The CMake option `PACEMAKER_BUILD_EXAMPLES` is `ON` by default in case the project is the top level project. 
@@ -123,6 +123,11 @@ Putting all things together, suppose I would like to execute every row of a csv 
 ```console
 .\build\examples\pacemaker-cli 10ms .\thefile.csv
 ```
+
+Optionally, once can specify the output file or folder for the recording:
+- If one omit the argument, the recording will be saved in the default location with the default name
+- If one provides a folder location, the recording will be saved at the specified location with the default name
+- If one provides the full path and filename, the recording will be saved with the provided name and location.
 
 # Contributing
 We welcome contributions from everyone in the community! To get started, please read our [CONTRIBUTING.md](CONTRIBUTING.md) guide. Whether you're adding a new feature, improving documentation, or fixing a bug, your help and feedback are invaluable. 

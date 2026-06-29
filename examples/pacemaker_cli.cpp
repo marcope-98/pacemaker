@@ -66,11 +66,12 @@ std::chrono::milliseconds cvt_str_to_ms(const std::string &s)
 int main(int argc, char *argv[])
 {
   // Initial parameter check
-  if (argc != 3)
+  if (argc != 3 || argc != 4)
   {
     std::cerr << "Usage: " << argv[0] << " <period> <csv_file>\n"
-              << "  <period>    Sampling period, e.g. 100ms\n"
-              << "  <csv_file>  Path to the CSV input file\n";
+              << "  [required] <period>    Sampling period, e.g. 100ms\n"
+              << "  [required] <csv_file>  Path to the CSV input file\n"
+              << "  [optional] <mf4_file>  Path to the recording output file or folder\n";
     return EXIT_FAILURE;
   }
 
@@ -92,6 +93,10 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
 
+  // MF4 save options
+  auto mf4 = std::filesystem::path{""};
+  if (argc == 4) mf4 = argv[3];    
+
   // Actual execution of the inca automation
   try
   {
@@ -109,7 +114,7 @@ int main(int argc, char *argv[])
                   if (!std::isnan(values[i][j]))
                     session.set_param(header[j], values[i][j]); 
                 });
-    timer.stop([&session] { session.stop_recording(""); });
+    timer.stop([&session, mf4] { session.stop_recording(mf4); });
     // clang-format on
   }
   catch (const std::exception &e)
