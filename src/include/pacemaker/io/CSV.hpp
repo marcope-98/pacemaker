@@ -11,7 +11,7 @@ namespace pacemaker::io
   /**
    * @brief Stateless utility for parsing CSV files into in-memory records.
    *
-   * `CSV exposes a single static entry point, `parse()`, which reads a file
+   * `CSV` exposes a single static entry point, `parse()`, which reads a file
    * from disk and returns its contents as
    * `std::vector<std::vector<std::string>>`: one inner vector per record
    * (row), each containing the unescaped field values of that record in order.
