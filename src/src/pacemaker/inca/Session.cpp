@@ -88,7 +88,7 @@ namespace pacemaker::inca
 
   auto pacemaker::inca::Session::start_recording() -> void { this->pimpl->exp->StartRecording(); }
 
-  auto pacemaker::inca::Session::stop_recording(const std::string &filename) -> void
+  auto pacemaker::inca::Session::stop_recording(const std::filesystem::path &filename) -> void
   {
     std::this_thread::sleep_for(this->k_flush_delay);
     this->pimpl->exp->StopRecordingAndSaveAs(filename.c_str()); // HACK: fails if filename is invalid and saves the recording in the default Measure folder

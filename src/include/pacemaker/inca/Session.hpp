@@ -2,6 +2,7 @@
 #define PACEMAKER_INCA_SESSION_HPP_
 
 #include <chrono>
+#include <filesystem>
 #include <functional>
 #include <memory>
 #include <string>
@@ -158,7 +159,7 @@ namespace pacemaker::inca
      *
      * @param filename Output recording filename or filepath passed to INCA.
      */
-    auto stop_recording(const std::string &filename) -> void;
+    auto stop_recording(const std::filesystem::path &filename) -> void;
 
   private:
     struct Impl;
