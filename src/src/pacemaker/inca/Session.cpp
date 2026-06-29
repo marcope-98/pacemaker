@@ -90,9 +90,8 @@ namespace pacemaker::inca
 
   auto pacemaker::inca::Session::stop_recording(const std::string &filename) -> void
   {
-    (void)filename;
     std::this_thread::sleep_for(this->k_flush_delay);
-    this->pimpl->exp->StopRecordingAndSave();
+    this->pimpl->exp->StopRecordingAndSaveAs(filename.c_str()); // HACK: fails if filename is invalid and saves the recording in the default Measure folder
     this->pimpl->exp->StopMeasurement();
     this->reset();
   }

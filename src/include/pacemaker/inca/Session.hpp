@@ -156,8 +156,7 @@ namespace pacemaker::inca
      * 3. Stop measurement
      * 4. Resets all registered calibration parameters to their reference-page values
      *
-     * @param filename Output recording filename or filepath passed to INCA. Currently forwarded but not yet consumed
-     *                 by the underlying COM call; reserved for future use.
+     * @param filename Output recording filename or filepath passed to INCA.
      */
     auto stop_recording(const std::string &filename) -> void;
 

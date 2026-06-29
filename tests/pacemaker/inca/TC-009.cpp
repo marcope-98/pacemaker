@@ -438,7 +438,7 @@ TEST_F(TC009, K)
   EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
 
   InSequence seq;
-  EXPECT_CALL(mock, Invoke(0x600200a4, _, _, _, _, _, _, _)).Times(1); // StopRecordingAndSave
+  EXPECT_CALL(mock, Invoke(0x600200a5, _, _, _, _, _, _, _)).Times(1); // StopRecordingAndSave
   EXPECT_CALL(mock, Invoke(0x60020074, _, _, _, _, _, _, _)).Times(1); // StopMeasurement
 
   auto session = pacemaker::inca::Session::connect([&mock]()
