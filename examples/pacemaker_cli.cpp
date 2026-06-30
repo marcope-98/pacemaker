@@ -46,8 +46,8 @@ std::vector<std::vector<double>> get_values(std::vector<std::vector<std::string>
       double x{};
       auto [ptr, ec] = std::from_chars(st.data(), st.data() + st.size(), x);
       tmp.push_back((ec != std::errc() || ptr != st.data() + st.size())
-                        ? x
-                        : std::numeric_limits<double>::quiet_NaN());
+                        ? std::numeric_limits<double>::quiet_NaN()  
+                        : x);
     }
     values.emplace_back(std::move(tmp));
   }
@@ -66,7 +66,7 @@ std::chrono::milliseconds cvt_str_to_ms(const std::string &s)
 int main(int argc, char *argv[])
 {
   // Initial parameter check
-  if (argc != 3 || argc != 4)
+  if (argc != 3 && argc != 4)
   {
     std::cerr << "Usage: " << argv[0] << " <period> <csv_file>\n"
               << "  [required] <period>    Sampling period, e.g. 100ms\n"
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 
   // MF4 save options
   auto mf4 = std::filesystem::path{""};
-  if (argc == 4) mf4 = argv[3];    
+  if (argc == 4) mf4 = argv[3];
 
   // Actual execution of the inca automation
   try
