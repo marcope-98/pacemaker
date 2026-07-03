@@ -3,6 +3,7 @@
 
 #include <istream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #ifndef yyFlexLexerOnce
@@ -94,7 +95,14 @@ namespace pacemaker::io
      *
      * @return A vector of records, each a vector of field strings, in the order they were parsed.
      */
-    auto data() -> std::vector<std::vector<std::string>> { return this->m_content; }
+    auto data() const & -> const std::vector<std::vector<std::string>> & { return this->m_content; }
+
+    /**
+     * @brief Moves all records accumulated so far.
+     *
+     * @return A vector of records, each a vector of field strings, in the order they were parsed.
+     */
+    auto data() && -> std::vector<std::vector<std::string>> { return std::move(this->m_content); }
 
     /**
      * @brief Clears all accumulated records.

@@ -19,5 +19,5 @@ auto pacemaker::io::CSV::parse_helper(std::istream &stream) -> std::vector<std::
   pacemaker::io::CSVLexer  lexer(&stream);
   pacemaker::io::CSVParser parser(lexer);
   parser.parse();
-  return lexer.data();
+  return std::move(lexer).data();
 }
