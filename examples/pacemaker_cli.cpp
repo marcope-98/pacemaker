@@ -30,7 +30,7 @@ CSVContent get_CSVContent(const std::filesystem::path &filename)
 
   auto expected_row_size = header.size();
   // clang-format off
-  auto size_mismatch = [expected_row_size](const std::vector<double> &element)
+  auto size_mismatch = [expected_row_size](const std::vector<std::string> &element)
                        { return element.size() != expected_row_size; };
   // clang-format on
   auto row_mismatch = std::any_of(csv_content.cbegin(), csv_content.cend(), size_mismatch);
@@ -52,7 +52,7 @@ CSVContent get_CSVContent(const std::filesystem::path &filename)
                         ? std::numeric_limits<double>::quiet_NaN()
                         : x);
     }
-    values.emplace_back(std::move(tmp))
+    values.emplace_back(std::move(tmp));
   }
 
   return CSVContent{std::move(header), std::move(values)};
