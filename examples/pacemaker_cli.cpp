@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <charconv>
 #include <chrono>
 #include <iostream>
@@ -13,30 +14,32 @@
 
 using namespace std::chrono_literals;
 
-struct COMGuard
+struct CSVContent
 {
-  COMGuard()
-  {
-    if (FAILED(CoInitialize(NULL))) throw std::runtime_error("CoInitialize failed");
-  }
-  ~COMGuard() { CoUninitialize(); }
-  COMGuard(const COMGuard &)            = delete;
-  COMGuard &operator=(const COMGuard &) = delete;
-  COMGuard(COMGuard &&)                 = delete;
-  COMGuard &operator=(COMGuard &&)      = delete;
+  std::vector<std::string>         header;
+  std::vector<std::vector<double>> values;
 };
 
-std::vector<std::string> get_header(std::vector<std::vector<std::string>> &csv_content)
+CSVContent get_CSVContent(const std::filesystem::path &filename)
 {
+  auto csv_content = pacemaker::io::CSV::parse(filename);
+
+  // header
   auto header = std::move(csv_content.front());
   csv_content.erase(csv_content.begin());
-  return header;
-}
 
-std::vector<std::vector<double>> get_values(std::vector<std::vector<std::string>> &csv_content)
-{
+  auto expected_row_size = header.size();
+  // clang-format off
+  auto size_mismatch = [expected_row_size](const std::vector<double> &element)
+                       { return element.size() != expected_row_size; };
+  // clang-format on
+  auto row_mismatch = std::any_of(csv_content.cbegin(), csv_content.cend(), size_mismatch);
+  if (row_mismatch)
+    throw std::invalid_argument("CSV has inconsistent number of columns");
+
+  // values
   std::vector<std::vector<double>> values;
-  values.reserve(csv_content.size() - 1);
+  values.reserve(csv_content.size());
   for (const auto &csv_row : csv_content)
   {
     std::vector<double> tmp;
@@ -46,13 +49,28 @@ std::vector<std::vector<double>> get_values(std::vector<std::vector<std::string>
       double x{};
       auto [ptr, ec] = std::from_chars(st.data(), st.data() + st.size(), x);
       tmp.push_back((ec != std::errc() || ptr != st.data() + st.size())
-                        ? std::numeric_limits<double>::quiet_NaN()  
+                        ? std::numeric_limits<double>::quiet_NaN()
                         : x);
     }
-    values.emplace_back(std::move(tmp));
+    values.emplace_back(std::move(tmp))
   }
-  return values;
+
+  return CSVContent{std::move(header), std::move(values)};
 }
+
+struct COMGuard
+{
+  COMGuard()
+  {
+    if (FAILED(CoInitialize(NULL))) 
+      throw std::runtime_error("CoInitialize failed");
+  }
+  ~COMGuard() { CoUninitialize(); }
+  COMGuard(const COMGuard &)            = delete;
+  COMGuard &operator=(const COMGuard &) = delete;
+  COMGuard(COMGuard &&)                 = delete;
+  COMGuard &operator=(COMGuard &&)      = delete;
+};
 
 std::chrono::milliseconds cvt_str_to_ms(const std::string &s)
 {
@@ -75,31 +93,19 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
 
-  // Convert first argument to std::chrono::milliseconds (e.g. valid inputs are in the form: 10ms, invalid inputs are returned as 0ms)
-  auto period = cvt_str_to_ms(std::string{argv[1]});
-
-  // CSV parsing
-  std::vector<std::string>         header;
-  std::vector<std::vector<double>> values;
   try
   {
-    auto csv_content = pacemaker::io::CSV::parse(argv[2]);
-    header           = std::move(get_header(csv_content));
-    values           = std::move(get_values(csv_content));
-  }
-  catch (const std::exception &e)
-  {
-    std::cerr << e.what() << '\n';
-    return EXIT_FAILURE;
-  }
+    // Convert first argument to std::chrono::milliseconds (e.g. valid inputs are in the form: 10ms, invalid inputs are returned as 0ms)
+    auto period = cvt_str_to_ms(std::string{argv[1]});
 
-  // MF4 save options
-  auto mf4 = std::filesystem::path{""};
-  if (argc == 4) mf4 = argv[3];
+    // CSV parsing
+    auto [header, values] = get_CSVContent(argv[2]);
 
-  // Actual execution of the inca automation
-  try
-  {
+    // MF4 save options
+    auto mf4 = std::filesystem::path{""};
+    if (argc == 4) mf4 = argv[3];
+
+    // Actual execution of the inca automation
     [[maybe_unused]] COMGuard com;
     auto                      session = pacemaker::inca::Session::connect();
     for (const auto &name : header)
