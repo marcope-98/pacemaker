@@ -54,7 +54,7 @@ auto pacemaker::timer::Timer::start(const std::function<void(void)> &StartFcn) -
   this->pimpl->running = true;
 
   LARGE_INTEGER due{};
-  due.QuadPart = -4000000LL; // 40ms
+  due.QuadPart = -400000LL; // 40ms
   SetWaitableTimer(this->pimpl->handle, &due, this->pimpl->period, NULL, NULL, FALSE);
 
   StartFcn();
