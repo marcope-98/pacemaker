@@ -91,7 +91,7 @@ namespace pacemaker::timer
     /**
      * @brief Arms the timer and invokes the start callback.
      *
-     * Arms the Win32 waitable timer with an initial due time of -400ms (~40ms from now, expressed as a relative 100-ns
+     * Arms the Win32 waitable timer with an initial due time of -40ms (~40ms from now, expressed as a relative 100-ns
      * interval) and the configured period, then calls @p StartFcn on the calling thread.
      *
      * The timer must **not** already be running when this method is called.
@@ -99,8 +99,6 @@ namespace pacemaker::timer
      * @param StartFcn Optional callback invoked once on the calling thread immediately after the timer is armeds.
      *                 Defaults to a no-op lambda. Use it to perform any initialisation tht must happen at the moment
      *                 recording begins (e.g.\ opening a file, logging a timestamp).
-     *
-     * @throws std::runtime_error if the timer is already running.
      */
     auto start(const std::function<void(void)> &StartFcn = []() {}) -> void;
 
@@ -133,8 +131,6 @@ namespace pacemaker::timer
      * @param TimerFcn Callback invoked once per timer tick. Receives the zero-based iteration index (`0 ... tasks_to_execute - 1`)
      *                 as its sole argument. The callback runs on the calling thread synchronously within the loop body; it must
      *                 complete before the next `Timer::wait_for_single_object` call.
-     *
-     * @throws std::runtime_error if `start()` was not called before `wait()`
      *
      * @note If @p TimerFcn takes longer than one tick period to execute, subsequent ticks will fire late because the timer
      *       is re-armed relative to the previous expiry by the OS, not relative to when `Timer::wait_for_single_object` returns.

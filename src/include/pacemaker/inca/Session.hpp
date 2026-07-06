@@ -121,8 +121,7 @@ namespace pacemaker::inca
      * @param name  Name of the calibration parameter previously registered via `add_param()`.
      * @param value New value to write to the parameter's implementation page.
      *
-     * @throws std::out_of_range if @p name was not registered via `add_param()`. The exception message includes
-     *         the parameter name and a hint to call `add_param()` first.
+     * @note returns silently if @p name was not registered via `add_param()`.
      */
     auto set_param(const std::string &name, double value) -> void;
 
