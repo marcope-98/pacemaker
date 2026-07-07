@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include "pacemaker/io/pacemaker.io_export.h"
+
 namespace pacemaker::io
 {
   /**
@@ -38,7 +40,7 @@ namespace pacemaker::io
    *
    * @see pacemaker::io::CSVLexer
    */
-  class CSV
+  class PACEMAKER_IO_EXPORT CSV
   {
   public:
     /**

@@ -47,6 +47,9 @@ add_flex_bison_dependency(pacemaker.io.flex-csv pacemaker.io.bison-csv)
 add_library(pacemaker.io)
 add_library(pacemaker::io ALIAS pacemaker.io)
 
+include(GenerateExportHeader)
+generate_export_header(pacemaker.io)
+
 target_sources(
   pacemaker.io
   PUBLIC
@@ -55,18 +58,24 @@ target_sources(
     BASE_DIRS "${PACEMAKER_SOURCE_DIR}/include"
     FILES
       ${PACEMAKER_SOURCE_DIR}/include/pacemaker/io/CSV.hpp
-    PRIVATE
-      FILE_SET  private_headers
-      TYPE      HEADERS
-      BASE_DIRS "${PACEMAKER_SOURCE_DIR}/src" "${CMAKE_CURRENT_BINARY_DIR}"
-      FILES
+  PUBLIC
+    FILE_SET generated_headers
+    TYPE     HEADERS
+    BASE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/../.."
+    FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/pacemaker.io_export.h
+  PRIVATE
+    FILE_SET  private_headers
+    TYPE      HEADERS
+    BASE_DIRS "${PACEMAKER_SOURCE_DIR}/src" "${CMAKE_CURRENT_BINARY_DIR}"
+    FILES
       ${PACEMAKER_SOURCE_DIR}/src/pacemaker/io/CSVLexer.hpp
       ${CMAKE_CURRENT_BINARY_DIR}/bison-csv.hpp
       ${CMAKE_CURRENT_BINARY_DIR}/flex-csv.hpp
-    PRIVATE
-      ${PACEMAKER_SOURCE_DIR}/src/pacemaker/io/CSV.cpp
-      ${CMAKE_CURRENT_BINARY_DIR}/bison-csv.cpp
-      ${CMAKE_CURRENT_BINARY_DIR}/flex-csv.cpp
+  PRIVATE
+    ${PACEMAKER_SOURCE_DIR}/src/pacemaker/io/CSV.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/bison-csv.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/flex-csv.cpp
 )
 
 target_link_libraries(pacemaker.io PRIVATE FLEX::fl)
@@ -87,7 +96,8 @@ install(
   EXPORT  pacemaker.io
   DESTINATION ${CMAKE_INSTALL_LIBDIR}$<$<CONFIG:Debug>:/debug>
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}$<$<CONFIG:Debug>:/debug>
-  FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  FILE_SET HEADERS           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  FILE_SET generated_headers DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 install(
