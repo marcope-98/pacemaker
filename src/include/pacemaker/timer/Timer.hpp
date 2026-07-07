@@ -6,6 +6,8 @@
 #include <functional>
 #include <memory>
 
+#include "pacemaker/timer/pacemaker.timer_export.h"
+
 namespace pacemaker::timer
 {
   /**
@@ -69,7 +71,7 @@ namespace pacemaker::timer
      * @throws std::runtime_error if `CreateWaitableTimerExW` returns NULL (e.g.\ insufficient privileges or the
      *         high-resolution timer is unavailable on the current platform).
      */
-    Timer(const std::chrono::milliseconds &period, const std::size_t &tasks_to_execute);
+    PACEMAKER_TIMER_EXPORT Timer(const std::chrono::milliseconds &period, const std::size_t &tasks_to_execute);
     /// @brief Copying is deleted; The Win32 timer handle must not be duplicated.
     Timer(const Timer &) = delete;
     /// @brief Move construction is deleted; the timer has a unique identity.
@@ -86,7 +88,7 @@ namespace pacemaker::timer
      * stop callback. The Win32 waitable timer is then cancelled via `CancelWaitableTimer` and its handle is
      * closed via `CloseHandle`
      */
-    ~Timer();
+    PACEMAKER_TIMER_EXPORT ~Timer();
 
     /**
      * @brief Arms the timer and invokes the start callback.
@@ -100,7 +102,7 @@ namespace pacemaker::timer
      *                 Defaults to a no-op lambda. Use it to perform any initialisation tht must happen at the moment
      *                 recording begins (e.g.\ opening a file, logging a timestamp).
      */
-    auto start(const std::function<void(void)> &StartFcn = []() {}) -> void;
+    auto PACEMAKER_TIMER_EXPORT start(const std::function<void(void)> &StartFcn = []() {}) -> void;
 
     /**
      * @brief Invokes the stop callback and marks the timer as no longer running.
@@ -113,7 +115,7 @@ namespace pacemaker::timer
      * @param StopFcn Optional callback invoked once on the calling thread before the running flag is cleared. Defaults to a no-op lambda.
      *                Use it to perform any teardown that must happen at the moment recording ends (e.g.\ flushing a buffer, logging a timestamp).
      */
-    auto stop(const std::function<void(void)> &StopFcn = []() {}) -> void;
+    auto PACEMAKER_TIMER_EXPORT stop(const std::function<void(void)> &StopFcn = []() {}) -> void;
 
     /**
      * @brief Blocks the calling thread and drives the timer callback to `tasks_to_execute` iterations.
@@ -139,15 +141,15 @@ namespace pacemaker::timer
     auto wait(const F &TimerFcn) -> void;
 
     /// @brief Getter to check whether or not the timer is running
-    [[nodiscard]] auto is_running() const -> bool;
+    [[nodiscard]] auto PACEMAKER_TIMER_EXPORT is_running() const -> bool;
 
   private:
     /// @brief Wrapper to OS-dependent function that waits for next timer expiration
-    auto wait_for_single_object() -> void;
+    auto PACEMAKER_TIMER_EXPORT wait_for_single_object() -> void;
     /// @brief Sets OS-dependent thread priority elevation options
-    auto set_thread_opts() -> void;
+    auto PACEMAKER_TIMER_EXPORT set_thread_opts() -> void;
     /// @brief Reverts OS-dependent thread priority elevation options
-    auto revert_thread_opts() -> void;
+    auto PACEMAKER_TIMER_EXPORT revert_thread_opts() -> void;
 
     struct Impl;
     /// @brief Owning pointer to the pimpl; heap-allocated by the constructor.
