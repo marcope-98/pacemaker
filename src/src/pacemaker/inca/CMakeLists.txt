@@ -43,6 +43,9 @@ set_target_properties(
 add_library(pacemaker.inca)
 add_library(pacemaker::inca ALIAS pacemaker.inca)
 
+include(GenerateExportHeader)
+generate_export_header(pacemaker.inca)
+
 target_sources(
   pacemaker.inca
   PUBLIC
@@ -51,6 +54,12 @@ target_sources(
     BASE_DIRS "${PACEMAKER_SOURCE_DIR}/include"
     FILES
       ${PACEMAKER_SOURCE_DIR}/include/pacemaker/inca/Session.hpp
+  PUBLIC
+    FILE_SET  generated_headers
+    TYPE      HEADERS
+    BASE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/../.."
+    FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/pacemaker.inca_export.h
   PRIVATE
     FILE_SET  private_headers
     TYPE      HEADERS
@@ -93,7 +102,8 @@ install(
   EXPORT  pacemaker.inca
   DESTINATION ${CMAKE_INSTALL_LIBDIR}$<$<CONFIG:Debug>:/debug>
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}$<$<CONFIG:Debug>:/debug>
-  FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  FILE_SET HEADERS           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  FILE_SET generated_headers DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 install(

@@ -7,6 +7,8 @@
 #include <memory>
 #include <string>
 
+#include "pacemaker/inca/pacemaker.inca_export.h"
+
 struct ::IDispatch;
 
 namespace pacemaker::inca
@@ -59,7 +61,7 @@ namespace pacemaker::inca
      *
      * @pre COM must be initialised on the calling thread (e.g.\ `CoInitialize` oir `CoInitializeEx`)
      */
-    [[nodiscard]] static auto connect(const std::function<IDispatch *(void)> &factory) -> Session;
+    [[nodiscard]] static auto PACEMAKER_INCA_EXPORT connect(const std::function<IDispatch *(void)> &factory) -> Session;
 
     /**
      * @brief Factory function that connects to a running INCA instance and returns an initialised `Session`.
@@ -77,7 +79,7 @@ namespace pacemaker::inca
      *
      * @pre COM must be initialised on the calling thread (e.g.\ `CoInitialize` oir `CoInitializeEx`)
      */
-    [[nodiscard]] static auto connect() -> Session;
+    [[nodiscard]] static auto PACEMAKER_INCA_EXPORT connect() -> Session;
 
     /// @brief Copying is deleted; the COM connection must not be duplicated.
     Session(const Session &) = delete;
@@ -94,7 +96,7 @@ namespace pacemaker::inca
      * `DisconnectFromTool()` is called on the `Incaproxy` object, so INCA is notified of the disconnection.
      * Then the Proxies are destroyed in reverse order.
      */
-    ~Session();
+    PACEMAKER_INCA_EXPORT ~Session();
 
     /**
      * @brief Registers a calibration parameter for use during the experiment.
@@ -110,7 +112,7 @@ namespace pacemaker::inca
      *
      * @throws std::runtime_error if the parameter cannot be found in the primary device.
      */
-    auto add_param(const std::string &name) -> void;
+    auto PACEMAKER_INCA_EXPORT add_param(const std::string &name) -> void;
 
     /**
      * @brief Sets a registered calibration parameter to the given value.
@@ -123,7 +125,7 @@ namespace pacemaker::inca
      *
      * @note returns silently if @p name was not registered via `add_param()`.
      */
-    auto set_param(const std::string &name, double value) -> void;
+    auto PACEMAKER_INCA_EXPORT set_param(const std::string &name, double value) -> void;
 
     /**
      * @brief Resets all registered parameters to their reference-page values and clears the internal parameter table.
@@ -135,7 +137,7 @@ namespace pacemaker::inca
      * This method is called automatically by `stop_recording()` at the end of each run, but may also be called explicitly if
      * an early reset is needed.
      */
-    auto reset() -> void;
+    auto PACEMAKER_INCA_EXPORT reset() -> void;
 
     /**
      * @brief Starts a new measurement recording in INCA.
@@ -145,7 +147,7 @@ namespace pacemaker::inca
      *
      * Register all calibration parameters via `add_param()` before calling `start_recording()`.
      */
-    auto start_recording() -> void;
+    auto PACEMAKER_INCA_EXPORT start_recording() -> void;
 
     /**
      * @brief Stops the recording, saves the measurement data, and resets all registered parameters.
@@ -158,7 +160,7 @@ namespace pacemaker::inca
      *
      * @param filename Output recording filename or filepath passed to INCA.
      */
-    auto stop_recording(const std::filesystem::path &filename) -> void;
+    auto PACEMAKER_INCA_EXPORT stop_recording(const std::filesystem::path &filename) -> void;
 
   private:
     struct Impl;
