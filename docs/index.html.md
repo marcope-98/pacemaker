@@ -149,6 +149,18 @@ Optionally, once can specify the output file or folder for the recording:
 - If one provides a folder location, the recording will be saved at the specified location with the default name
 - If one provides the full path and filename, the recording will be saved with the provided name and location.
 
+### Installing
+```console
+cmake -B build -S . ^
+      -DCMAKE_INSTALL_PREFIX=<path/to/install/folder>
+cmake --build build
+
+cmake --install build
+```
+You can supply a custom installation folder via the `CMAKE_INSTALL_PREFIX` at project configuration.
+
+As of release `v3.0.x` only public headers and shared/static libraries will be installed.
+
 # Contributing
 ## AI Policy
 

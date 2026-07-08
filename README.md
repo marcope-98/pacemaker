@@ -72,7 +72,7 @@ The Software Requirements Specification (SRS) and Test Specification (TS) docume
 
 ```console
 cmake -B build -S . ^
-      -DMIKTEX_BINARY_PATH="<path/tp/miktex/bin>" ^
+      -DMIKTEX_BINARY_PATH="<path/to/miktex/bin>" ^
       -DPACEMAKER_BUILD_REQUIREMENTS=ON
 
 cmake --build build --target requirements
@@ -128,6 +128,18 @@ Optionally, once can specify the output file or folder for the recording:
 - If one omit the argument, the recording will be saved in the default location with the default name
 - If one provides a folder location, the recording will be saved at the specified location with the default name
 - If one provides the full path and filename, the recording will be saved with the provided name and location.
+
+## Installing
+```console
+cmake -B build -S . ^
+      -DCMAKE_INSTALL_PREFIX=<path/to/install/folder>
+cmake --build build
+
+cmake --install build
+```
+You can supply a custom installation folder via the `CMAKE_INSTALL_PREFIX` at project configuration.
+
+As of release `v3.0.x` only public headers and shared/static libraries will be installed.
 
 # Contributing
 We welcome contributions from everyone in the community! To get started, please read our [CONTRIBUTING.md](CONTRIBUTING.md) guide. Whether you're adding a new feature, improving documentation, or fixing a bug, your help and feedback are invaluable. 
