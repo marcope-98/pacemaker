@@ -44,4 +44,11 @@ if (${LATEX_FOUND})
       ${CMAKE_CURRENT_SOURCE_DIR}/pacemaker_TS.tex
       ${TC_SOURCE_FILES}
   )
+
+  install(
+    FILES 
+      ${CMAKE_CURRENT_BINARY_DIR}/pacemaker_SRS.pdf 
+      ${CMAKE_CURRENT_BINARY_DIR}/pacemaker_TS.pdf
+    TYPE  DOC
+  )
 endif()
