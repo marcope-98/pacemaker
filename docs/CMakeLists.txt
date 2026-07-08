@@ -52,3 +52,7 @@ if(${DOXYGEN_FOUND})
   )
 endif()
 
+install(
+  DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
+  TYPE 	    DOC
+)
