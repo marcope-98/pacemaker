@@ -40,7 +40,7 @@ namespace pacemaker::io
    *
    * @see pacemaker::io::CSVLexer
    */
-  class PACEMAKER_IO_EXPORT CSV
+  class CSV
   {
   public:
     /**
@@ -62,7 +62,7 @@ namespace pacemaker::io
      * @throws (parse-defined) if the file content does not conform to the CSV grammar;
      *         parse errors are thrown.
      */
-    static auto parse(const std::filesystem::path &filename) -> std::vector<std::vector<std::string>>;
+    static auto PACEMAKER_IO_EXPORT parse(const std::filesystem::path &filename) -> std::vector<std::vector<std::string>>;
 
   private:
     /**
