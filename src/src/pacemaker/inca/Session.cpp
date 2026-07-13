@@ -17,7 +17,7 @@ namespace
     ::IDispatch *raw{nullptr};
     HRESULT      hr = CoCreateInstance(CLSID_Inca,
                                        nullptr,
-                                       CLSCTX_INPROC_SERVER,
+                                       CLSCTX_LOCAL_SERVER,
                                        IID_IDispatch,
                                        reinterpret_cast<void **>(&raw));
     if (FAILED(hr))
