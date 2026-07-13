@@ -79,10 +79,11 @@ namespace pacemaker::inca
     if (it == this->pimpl->map.end()) return;
     this->pimpl->vector[it->second]->SetImplValue(value);
   }
-  
+
   auto pacemaker::inca::Session::set_param(const std::size_t &idx, double value) -> void
   {
-    this->pimpl->vector.at(idx)->SetImplValue(value);
+    if (idx >= this->pimpl->vector.size()) return;
+    this->pimpl->vector[idx]->SetImplValue(value);
   }
 
   auto pacemaker::inca::Session::reset() -> void

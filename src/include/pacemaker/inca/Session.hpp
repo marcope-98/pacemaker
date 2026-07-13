@@ -133,10 +133,10 @@ namespace pacemaker::inca
      * Looks up @p idx in the internal vector container and calls `SetImplValue(value)` via `operator->` on the
      * stored `CalibrationScalarDataProxy`. The change takes effect immediately in the running INCA measurement session.
      * 
-     * @throws std::out_of_range if the idx exceeds the number of `add_param()` calls
-     *
      * @param idx   Index of the calibration parameter previously registered via the idx-th call to `add_param()`.
      * @param value New value to write to the parameter's implementation page.
+     * 
+     * @note returns silently if @p idx is out of range.
      */
     auto PACEMAKER_INCA_EXPORT set_param(const std::size_t &idx, double value) -> void;
 

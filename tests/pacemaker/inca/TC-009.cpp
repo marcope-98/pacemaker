@@ -587,5 +587,5 @@ TEST_F(TC009, O)
   auto session = pacemaker::inca::Session::connect([&mock]()
                                                    { mock.AddRef(); return &mock; });
 
-  EXPECT_THROW(session.set_param(0, 50.0), std::out_of_range);
+  EXPECT_NO_THROW(session.set_param(0, 50.0));
 }

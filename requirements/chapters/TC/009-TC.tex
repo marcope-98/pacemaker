@@ -208,7 +208,7 @@ Requirement reference: REQ-009.
 \end{tcbox}
 
 % -------------------------------------------------------------------
-\subsection{TC-009-O: set\_param throws on invalid index}
+\subsection{TC-009-O: set\_param noops for invalid index}
 % -------------------------------------------------------------------
 
 \begin{tcbox}
@@ -218,5 +218,5 @@ Requirement reference: REQ-009.
 \medskip
 \given{a \texttt{Session} with no previous calls to \texttt{add\_param}.}
 \when{\texttt{set\_param(0, 50.0)} is called.}
-\then{an exception is thrown}
+\then{returns without a call to SetImplValue}
 \end{tcbox}

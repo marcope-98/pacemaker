@@ -14,7 +14,7 @@ FetchContent_MakeAvailable(googletest)
 set(PACEMAKER_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(tests ALL)
-add_compile_definitions(_CRTDBG_MAP_ALLOC)
+add_compile_definitions(/D_CRTDBG_MAP_ALLOC "$<$<CONFIG:Debug>:/D_DEBUG>")
 
 add_subdirectory(pacemaker/fixture)
 add_subdirectory(pacemaker/inca)
