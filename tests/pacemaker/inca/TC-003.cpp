@@ -28,6 +28,8 @@ namespace
     MOCK_METHOD(HRESULT, Invoke, (DISPID, const IID &, LCID, WORD, DISPPARAMS *, VARIANT *, EXCEPINFO *, UINT *), (override));
     MOCK_METHOD(HRESULT, QueryInterface, (const IID &, void **), (override));
 
+    virtual ~MockInca_Dispatch() = default;
+
     void Delegate()
     {
       ON_CALL(*this, QueryInterface(_, _)).WillByDefault([this](const IID &, void **out)

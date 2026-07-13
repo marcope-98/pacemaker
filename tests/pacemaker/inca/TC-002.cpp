@@ -31,6 +31,8 @@ namespace
 
     MOCK_METHOD(void, func, ());
 
+    virtual ~MockCOM() = default;
+
     template<class F>
     void Delegate_QueryInterface(const F &QueryInterface)
     {

@@ -26,6 +26,8 @@ namespace
     MOCK_METHOD(HRESULT, Invoke, (DISPID, const IID &, LCID, WORD, DISPPARAMS *, VARIANT *, EXCEPINFO *, UINT *), (override));
     MOCK_METHOD(HRESULT, QueryInterface, (const IID &, void **), (override));
 
+    virtual ~MockIncaOnlineExperiment_Dispatch() = default;
+
     template<class F>
     void Delegate_GetAllDevices(F GetAllDevices)
     {
