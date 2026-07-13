@@ -10,6 +10,7 @@ project(
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(CMakeOptions.cmake)
+include(CMakeCompileOptions.cmake)
 
 add_subdirectory(src)
 

@@ -14,7 +14,6 @@ FetchContent_MakeAvailable(googletest)
 set(PACEMAKER_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(tests ALL)
-add_compile_options(/EHsc /W4)
 add_compile_definitions(_CRTDBG_MAP_ALLOC)
 
 add_subdirectory(pacemaker/fixture)
