@@ -48,3 +48,9 @@ install(
   TARGETS pacemaker-cli
   DESTINATION ${CMAKE_INSTALL_DATADIR}/examples
 )
+
+add_custom_target(
+  examples ALL
+  DEPENDS
+    pacemaker-cli
+)
