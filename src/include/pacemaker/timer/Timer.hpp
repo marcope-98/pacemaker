@@ -45,7 +45,7 @@ namespace pacemaker::timer
    * `Timer` is non-copyable and non-movable.
    *
    * ### First-tick delay
-   * The waitable timer is armed with an initial due time of -400ms (expressed as a 100-ns relative interval:
+   * The waitable timer is armed with an initial due time of -40ms (expressed as a 100-ns relative interval:
    * -4 000 000 x 100 ns) so that the first tick fires approximately 40ms after `start()` is called, giving
    * downstram systems time to initialise before data capture begins.
    *

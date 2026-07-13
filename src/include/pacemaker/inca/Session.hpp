@@ -141,7 +141,7 @@ namespace pacemaker::inca
     auto PACEMAKER_INCA_EXPORT set_param(const std::size_t &idx, double value) -> void;
 
     /**
-     * @brief Resets all registered parameters to their reference-page values and clears the internal parameter table.
+     * @brief Resets all registered parameters to their reference-page values.
      *
      * Iterates over all stored `CalibrationScalarDataProxy` objects and calls `ResetValueToRP()` via `operator->`
      * on each. After this call the session is in the same state as immediately after `connect(...)`, no parameters are
