@@ -139,8 +139,6 @@ cmake --install build
 ```
 You can supply a custom installation folder via the `CMAKE_INSTALL_PREFIX` at project configuration.
 
-As of release `v3.0.x` only public headers and shared/static libraries will be installed.
-
 # Contributing
 We welcome contributions from everyone in the community! To get started, please read our [CONTRIBUTING.md](CONTRIBUTING.md) guide. Whether you're adding a new feature, improving documentation, or fixing a bug, your help and feedback are invaluable. 
 
