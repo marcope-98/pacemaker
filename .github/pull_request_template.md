@@ -14,7 +14,7 @@ Fixes #<!-- issue number if any -->
 
 ## Checklist
 
-- [ ] I've read [CONTRIBUTING.md](../../CONTRIBUTING.md) and [AI_POLICY.md](../../AI_POLICY.md) 
+- [ ] I've read [CONTRIBUTING.md](../CONTRIBUTING.md) and [AI_POLICY.md](../AI_POLICY.md) 
 - [ ] This is **not** a cosmetic-only change (formatting, renaming, reflow with no function value).
 - [ ] I've updated relevant documentation (README, doxygen comments, requirements docs) to reflect this change
 - [ ] I've added or updated tests covering this change, where applicable
@@ -23,7 +23,7 @@ Fixes #<!-- issue number if any -->
 ## AI assistance disclosure
 
 - [ ] No significant AI assistance was used
-- [ ] AI assistance was used - discosed below, with `Co-authored-by:` trailer(s) added per [AI_POLICY.md](../../AI_POLICY.md) 
+- [ ] AI assistance was used - discosed below, with `Co-authored-by:` trailer(s) added per [AI_POLICY.md](../AI_POLICY.md) 
 
 <!-- If AI-assisted, briefly note what was generated vs. what you wrote/reviewed yourself. -->
 
