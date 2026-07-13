@@ -42,3 +42,9 @@ target_link_libraries(
     pacemaker::timer
 )
 target_compile_features(pacemaker-cli PRIVATE cxx_std_17)
+
+include(GNUInstallDirs)
+install(
+  TARGETS pacemaker-cli
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/examples
+)

@@ -50,9 +50,9 @@ if(${DOXYGEN_FOUND})
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/src/pacemaker/timer
     ALL
   )
-endif()
 
-install(
-  DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
-  TYPE 	    DOC
-)
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
+    TYPE 	    DOC
+  )
+endif()
