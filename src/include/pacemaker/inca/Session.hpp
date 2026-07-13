@@ -117,7 +117,7 @@ namespace pacemaker::inca
     /**
      * @brief Sets a registered calibration parameter to the given value.
      *
-     * Looks up @p name in the internal parameter table and calls `SetImplValue(value)` vis `operator->` on the
+     * Looks up @p name in the internal parameter table and calls `SetImplValue(value)` via `operator->` on the
      * stored `CalibrationScalarDataProxy`. The change takes effect immediately in the running INCA measurement session.
      *
      * @param name  Name of the calibration parameter previously registered via `add_param()`.
@@ -126,6 +126,19 @@ namespace pacemaker::inca
      * @note returns silently if @p name was not registered via `add_param()`.
      */
     auto PACEMAKER_INCA_EXPORT set_param(const std::string &name, double value) -> void;
+
+    /**
+     * @brief Sets a registered calibration parameter to the given value.
+     *
+     * Looks up @p idx in the internal vector container and calls `SetImplValue(value)` via `operator->` on the
+     * stored `CalibrationScalarDataProxy`. The change takes effect immediately in the running INCA measurement session.
+     * 
+     * @throws std::out_of_range if the idx exceeds the number of `add_param()` calls
+     *
+     * @param idx   Index of the calibration parameter previously registered via the idx-th call to `add_param()`.
+     * @param value New value to write to the parameter's implementation page.
+     */
+    auto PACEMAKER_INCA_EXPORT set_param(const std::size_t &idx, double value) -> void;
 
     /**
      * @brief Resets all registered parameters to their reference-page values and clears the internal parameter table.

@@ -114,11 +114,11 @@ int main(int argc, char *argv[])
     auto timer = pacemaker::timer::Timer(period, values.size());
     // clang-format off
     timer.start([&session] { session.start_recording(); });
-    timer.wait([&session, &header, &values](std::size_t i)
+    timer.wait([&session, &values](std::size_t i)
                {
                 for (std::size_t j{}; j < values[i].size(); ++j)
                   if (!std::isnan(values[i][j]))
-                    session.set_param(header[j], values[i][j]); 
+                    session.set_param(j, values[i][j]); 
                 });
     timer.stop([&session, mf4] { session.stop_recording(mf4); });
     // clang-format on

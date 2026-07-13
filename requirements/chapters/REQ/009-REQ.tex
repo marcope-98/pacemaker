@@ -26,6 +26,8 @@ The user needs a single entry point that connects to INCA, validates the environ
 \reqdef{\textbf{AC-009-14}}{\texttt{start\_recording()} shall delegate to \texttt{IncaOnlineExperimentProxy::StartRecording()} via \texttt{operator->}.}
 \reqdef{\textbf{AC-009-15}}{\texttt{stop\_recording(filename)} shall: sleep for (40\,ms) before saving stopping the recording and resetting all calibration values to the Reference Page.}
 \reqdef{\textbf{AC-009-16}}{It shall be possible to initialize \texttt{Session} by providing a lambda expression via \texttt{Session::connect(...)}.}
+\reqdef{\textbf{AC-009-17}}{\texttt{set\_param(idx, value)} shall write the value to the idx-th registered calibration scalar.}
+\reqdef{\textbf{AC-009-18}}{Calling \texttt{set\_param(idx, value)} with a \texttt{idx} that exceeds the numbers of call to \texttt{add\_param}, shall raise an exception.}
 
 \medskip
 \reqfield{Non-functional constraints:}

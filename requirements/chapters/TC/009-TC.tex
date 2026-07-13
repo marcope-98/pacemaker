@@ -191,3 +191,32 @@ Requirement reference: REQ-009.
 \when{calling \texttt{Session::connect(lambda)}.}
 \then{The exception is thrown and no COM API is called.}
 \end{tcbox}
+
+
+% -------------------------------------------------------------------
+\subsection{TC-009-N: set\_param updates i-th registered parameter}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-009-17
+
+\medskip
+\given{a \texttt{Session} with \texttt{"torque"} added via \texttt{add\_param}.}
+\when{\texttt{set\_param(0, 50.0)} is called.}
+\then{the underlying mock proxy's \texttt{SetImplValue} is called with \texttt{50.0}}
+\end{tcbox}
+
+% -------------------------------------------------------------------
+\subsection{TC-009-O: set\_param throws on invalid index}
+% -------------------------------------------------------------------
+
+\begin{tcbox}
+\tcfield{Tags:} \texttt{[unit]}\\
+\tcfield{Requirement:} AC-009-18
+
+\medskip
+\given{a \texttt{Session} with no previous calls to \texttt{add\_param}.}
+\when{\texttt{set\_param(0, 50.0)} is called.}
+\then{an exception is thrown}
+\end{tcbox}
