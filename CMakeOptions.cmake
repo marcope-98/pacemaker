@@ -21,3 +21,9 @@ option(
   "Enable building tests and test infrastructure. Default: ${PROJECT_IS_TOP_LEVEL}. Values: { ON, OFF }."
   ${PROJECT_IS_TOP_LEVEL}
 )
+
+option(
+  PACEMAKER_BUILD_LIBRARY
+  "Enable building pacemaker library. Default: ON. Values: { ON, OFF }."
+  ON
+)
