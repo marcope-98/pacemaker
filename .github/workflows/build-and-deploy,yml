@@ -1,0 +1,108 @@
+name: Build and Deploy documentation
+on:
+  push:
+    tags:
+      - v*.*.*
+  workflow_dispatch:
+
+env: 
+  DOXYGEN_VERSION: 1.12.0
+  GRAPHVIZ_VERSION: 15.1.0
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  
+jobs:
+  build:
+    name: Build Documentation
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v4.2.2
+
+      - name: Download Doxygen
+        shell: powershell
+        run: |
+          $dir = "$env:TEMP\doxygen\$env:DOXYGEN_VERSION"
+          if (-not (Get-ChildItem -Path $dir -Filter doxygen.exe -Recurse -ErrorAction SilentlyContinue)) {
+            New-Item -ItemType Directory -Path $dir -Force | Out-Null
+            $url = "https://www.doxygen.nl/files/doxygen-$env:DOXYGEN_VERSION.windows.x64.bin.zip"
+            Invoke-WebRequest -Uri $url -OutFile "$env:TEMP\doxygen.zip"
+            Expand-Archive -Path "$env:TEMP\doxygen.zip" -DestinationPath $dir -Force
+          } else {
+            Write-Host "Doxygen $env:DOXYGEN_VERSION already cached at $dir"
+          }
+      
+
+      - name: Download Graphviz
+        shell: powershell
+        run: |
+          $dir = "$env:TEMP\graphviz\$env:GRAPHVIZ_VERSION"
+          if (-not (Get-ChildItem -Path $dir -Filter dot.exe -Recurse -ErrorAction SilentlyContinue)) {
+            New-Item -ItemType Directory -Path $dir -Force | Out-Null
+            $base = "https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/$env:GRAPHVIZ_VERSION"
+            $zip = "windows_10_cmake_Release_Graphviz-$env:GRAPHVIZ_VERSION-win64.zip"
+            Invoke-WebRequest -Uri "$base/$zip" -OutFile "$env:TEMP\graphviz.zip"
+            Invoke-WebRequest -Uri "$base/$zip.sha256" -OutFile "$env:TEMP\graphviz.zip.sha256"
+
+            $expected = (Get-Content "$env:TEMP\graphviz.zip.sha256" -Raw).Split(" ")[0].Trim()
+            $actual   = (Get-FileHash "$env:TEMP\graphviz.zip" -Algorithm SHA256).Hash
+            if ($actual -notlike $expected) {
+              throw "Graphviz checksum mismatch: expected $expected, got $actual"
+            }
+
+            Expand-Archive -Path "$env:TEMP\graphviz.zip" -DestinationPath $dir -Force
+          } else {
+            Write-Host "Doxygen $env:GRAPHVIZ_VERSION already cached at $dir"
+          }
+      
+      - name: Add tools to PATH
+        shell: powershell
+        run: |
+          $doxygenBin = (Get-ChildItem -Path "$env:TEMP\doxygen\$env:DOXYGEN_VERSION"   -Filter doxygen.exe -Recurse | Select-Object -First 1).DirectoryName
+          $dotBin     = (Get-ChildItem -Path "$env:TEMP\graphviz\$env:GRAPHVIZ_VERSION" -Filter dot.exe     -Recurse | Select-Object -First 1).DirectoryName
+          if (-not $doxygenBin) { throw "doxygen.exe not found in tool cache" }
+          if (-not $dotBin)     { throw "dot.exe not found in tool cache" }
+          echo $doxygenBin | Out-File -Append -FilePath "$env:GITHUB_PATH" -Encoding utf8
+          echo $dotBin     | Out-File -Append -FilePath "$env:GITHUB_PATH" -Encoding utf8
+
+      - name: Verify tools
+        run: |
+          doxygen --version
+          dot -V
+
+      - name: Build Project Documentation
+        uses: threeal/cmake-action@v2.1.0
+        with:
+          options: |
+            PACEMAKER_BUILD_LIBRARY=OFF
+            PACEMAKER_BUILD_REQUIREMENTS=OFF
+            PACEMAKER_BUILD_EXAMPLES=OFF
+            PACEMAKER_BUILD_TESTS=OFF
+            PACEMAKER_BUILD_DOCS=ON
+          build-args: | 
+            --target docs
+
+      - name: Add .nojekyll file
+        shell: powershell
+        run: |
+          echo $null >> build\docs\html\.nojekyll
+      
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/docs/html
+
+  deploy:
+    name: Deploy Documentation
+    needs: build
+    runs-on: self-hosted
+    environment: 
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub pages
+        id: deployment
+        uses: actions/deploy-pages@v4
