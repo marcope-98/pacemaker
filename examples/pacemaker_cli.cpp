@@ -46,11 +46,13 @@ CSVContent get_CSVContent(const std::filesystem::path &filename)
     tmp.reserve(csv_row.size());
     for (const auto &st : csv_row)
     {
-      double x{};
-      auto [ptr, ec] = std::from_chars(st.data(), st.data() + st.size(), x);
-      tmp.push_back((ec != std::errc() || ptr != st.data() + st.size())
-                        ? std::numeric_limits<double>::quiet_NaN()
-                        : x);
+      auto x{std::numeric_limits<double>::quiet_NaN()};
+      /**
+       * NOTE: https://en.cppreference.com/cpp/utility/from_chars states:
+       *   on failure value (`x`) is unmodified. Hence NaN gets preserved.
+       */
+      std::from_chars(st.data(), st.data() + st.size(), x);
+      tmp.push_back(x);
     }
     values.emplace_back(std::move(tmp));
   }
@@ -62,7 +64,7 @@ struct COMGuard
 {
   COMGuard()
   {
-    if (FAILED(CoInitialize(NULL))) 
+    if (FAILED(CoInitialize(NULL)))
       throw std::runtime_error("CoInitialize failed");
   }
   ~COMGuard() { CoUninitialize(); }
