@@ -142,7 +142,7 @@ TEST_F(TC009, C)
 
   EXPECT_THROW(
       {
-        auto session = pacemaker::inca::Session::connect([&mock]()
+        auto session = pacemaker::inca::Session::connect([&mock]() -> IDispatch *
                                                          { mock.AddRef(); return &mock; });
       },
       std::runtime_error);
@@ -189,7 +189,7 @@ TEST_F(TC009, E)
 
   EXPECT_CALL(mock, Invoke(0x60020021, _, _, _, _, _, _, _)).Times(1);
   {
-    auto session = pacemaker::inca::Session::connect([&mock]()
+    auto session = pacemaker::inca::Session::connect([&mock]() -> IDispatch *
                                                      { mock.AddRef(); return &mock; });
   }
 }
@@ -229,7 +229,7 @@ TEST_F(TC009, F)
   EXPECT_CALL(mock, QueryInterface(_, _)).Times(5);
   EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
   EXPECT_CALL(mock, Invoke(0x60020090, _, _, _, _, _, _, _)).Times(1);
-  auto session = pacemaker::inca::Session::connect([&mock]()
+  auto session = pacemaker::inca::Session::connect([&mock]() -> IDispatch *
                                                    { mock.AddRef(); return &mock; });
   session.add_param("speed");
   session.add_param("speed");
@@ -277,7 +277,7 @@ TEST_F(TC009, G)
   EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
   EXPECT_CALL(mock, Invoke(0x60020015, _, _, _, _, _, _, _)).Times(1);
 
-  auto session = pacemaker::inca::Session::connect([&mock]()
+  auto session = pacemaker::inca::Session::connect([&mock]() -> IDispatch *
                                                    { mock.AddRef(); return &mock; });
   session.add_param("torque");
   session.set_param("torque", expected);
@@ -314,7 +314,7 @@ TEST_F(TC009, H)
   EXPECT_CALL(mock, QueryInterface(_, _)).Times(4);
   EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
 
-  auto session = pacemaker::inca::Session::connect([&mock]()
+  auto session = pacemaker::inca::Session::connect([&mock]() -> IDispatch *
                                                    { mock.AddRef(); return &mock; });
 
   std::string param{"torque"};
@@ -358,7 +358,7 @@ TEST_F(TC009, I)
   EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
   EXPECT_CALL(mock, Invoke(0x60020028, _, _, _, _, _, _, _)).Times(2);
 
-  auto session = pacemaker::inca::Session::connect([&mock]()
+  auto session = pacemaker::inca::Session::connect([&mock]() -> IDispatch *
                                                    { mock.AddRef(); return &mock; });
 
   session.add_param("a");
@@ -397,7 +397,7 @@ TEST_F(TC009, J)
   EXPECT_CALL(mock, QueryInterface(_, _)).Times(4);
   EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
 
-  auto session = pacemaker::inca::Session::connect([&mock]()
+  auto session = pacemaker::inca::Session::connect([&mock]() -> IDispatch *
                                                    { mock.AddRef(); return &mock; });
 
   auto begin = std::chrono::steady_clock::now();
@@ -443,7 +443,7 @@ TEST_F(TC009, K)
   EXPECT_CALL(mock, Invoke(0x600200a5, _, _, _, _, _, _, _)).Times(1); // StopRecordingAndSave
   EXPECT_CALL(mock, Invoke(0x60020074, _, _, _, _, _, _, _)).Times(1); // StopMeasurement
 
-  auto session = pacemaker::inca::Session::connect([&mock]()
+  auto session = pacemaker::inca::Session::connect([&mock]() -> IDispatch *
                                                    { mock.AddRef(); return &mock; });
   session.stop_recording("");
 }
@@ -481,7 +481,7 @@ TEST_F(TC009, L)
   EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
   EXPECT_CALL(mock, Invoke(0x600200a1, _, _, _, _, _, _, _)).Times(1);
 
-  auto session = pacemaker::inca::Session::connect([&mock]()
+  auto session = pacemaker::inca::Session::connect([&mock]() -> IDispatch *
                                                    { mock.AddRef(); return &mock; });
   session.start_recording();
 }
@@ -547,7 +547,7 @@ TEST_F(TC009, N)
   EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
   EXPECT_CALL(mock, Invoke(0x60020015, _, _, _, _, _, _, _)).Times(1);
 
-  auto session = pacemaker::inca::Session::connect([&mock]()
+  auto session = pacemaker::inca::Session::connect([&mock]() -> IDispatch *
                                                    { mock.AddRef(); return &mock; });
   session.add_param("torque");
   session.set_param(0, expected);
@@ -584,7 +584,7 @@ TEST_F(TC009, O)
   EXPECT_CALL(mock, QueryInterface(_, _)).Times(4);
   EXPECT_CALL(mock, Invoke(_, _, _, _, _, _, _, _)).Times(AnyNumber());
 
-  auto session = pacemaker::inca::Session::connect([&mock]()
+  auto session = pacemaker::inca::Session::connect([&mock]() -> IDispatch *
                                                    { mock.AddRef(); return &mock; });
 
   EXPECT_NO_THROW(session.set_param(0, 50.0));

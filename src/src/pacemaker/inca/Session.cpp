@@ -12,7 +12,7 @@
 
 namespace
 {
-  [[nodiscard]] auto create_inca_idispatch() -> IDispatch *
+  [[nodiscard]] auto create_inca_idispatch() -> std::any
   {
     ::IDispatch *raw{nullptr};
     HRESULT      hr = CoCreateInstance(CLSID_Inca,
@@ -39,8 +39,8 @@ namespace pacemaker::inca
     std::unordered_map<std::string, std::size_t>                  map;
     std::vector<pacemaker::inca::com::CalibrationScalarDataProxy> vector;
 
-    Impl(const std::function<IDispatch *(void)> &factory)
-        : inca{factory()},
+    Impl(const std::function<std::any(void)> &factory)
+        : inca{std::any_cast<IDispatch *>(factory())},
           exp{this->inca->GetOpenedExperiment()},
           expview{this->inca->GetOpenedExperimentView()}
     {
@@ -58,11 +58,11 @@ namespace pacemaker::inca
     }
   };
 
-  pacemaker::inca::Session::Session(const std::function<IDispatch *(void)> &factory) : pimpl{std::make_unique<Impl>(factory)} {}
+  pacemaker::inca::Session::Session(const std::function<std::any(void)> &factory) : pimpl{std::make_unique<Impl>(factory)} {}
 
   pacemaker::inca::Session::~Session() = default;
 
-  auto pacemaker::inca::Session::connect(const std::function<IDispatch *(void)> &factory) -> Session { return Session{factory}; }
+  auto pacemaker::inca::Session::connect(const std::function<std::any(void)> &factory) -> Session { return Session{factory}; }
 
   auto pacemaker::inca::Session::connect() -> Session { return connect(create_inca_idispatch); }
 

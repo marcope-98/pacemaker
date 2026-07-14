@@ -1,15 +1,15 @@
 #ifndef PACEMAKER_INCA_SESSION_HPP_
 #define PACEMAKER_INCA_SESSION_HPP_
 
+#include <any>
 #include <chrono>
 #include <filesystem>
 #include <functional>
 #include <memory>
 #include <string>
 
-#include "pacemaker/inca/pacemaker.inca_export.h"
 
-struct ::IDispatch;
+#include "pacemaker/inca/pacemaker.inca_export.h"
 
 namespace pacemaker::inca
 {
@@ -61,7 +61,7 @@ namespace pacemaker::inca
      *
      * @pre COM must be initialised on the calling thread (e.g.\ `CoInitialize` oir `CoInitializeEx`)
      */
-    [[nodiscard]] static auto PACEMAKER_INCA_EXPORT connect(const std::function<IDispatch *(void)> &factory) -> Session;
+    [[nodiscard]] static auto PACEMAKER_INCA_EXPORT connect(const std::function<std::any(void)> &factory) -> Session;
 
     /**
      * @brief Factory function that connects to a running INCA instance and returns an initialised `Session`.
@@ -132,10 +132,10 @@ namespace pacemaker::inca
      *
      * Looks up @p idx in the internal vector container and calls `SetImplValue(value)` via `operator->` on the
      * stored `CalibrationScalarDataProxy`. The change takes effect immediately in the running INCA measurement session.
-     * 
+     *
      * @param idx   Index of the calibration parameter previously registered via the idx-th call to `add_param()`.
      * @param value New value to write to the parameter's implementation page.
-     * 
+     *
      * @note returns silently if @p idx is out of range.
      */
     auto PACEMAKER_INCA_EXPORT set_param(const std::size_t &idx, double value) -> void;
@@ -179,7 +179,7 @@ namespace pacemaker::inca
     struct Impl;
     std::unique_ptr<Impl> pimpl;
 
-    explicit Session(const std::function<IDispatch *(void)> &factory);
+    explicit Session(const std::function<std::any(void)> &factory);
 
     /**
      * @brief Minimum delay before stopping a recording to allow INCA to flush buffered measurement data.
