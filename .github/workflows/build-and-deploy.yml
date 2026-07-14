@@ -2,7 +2,7 @@ name: Build and Deploy documentation
 on:
   push:
     tags:
-      - v*.*.*
+      - v*
   workflow_dispatch:
 
 env: 
