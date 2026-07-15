@@ -17,7 +17,7 @@ namespace
     ::IDispatch *raw{nullptr};
     HRESULT      hr = CoCreateInstance(CLSID_Inca,
                                        nullptr,
-                                       CLSCTX_LOCAL_SERVER,
+                                       CLSCTX_INPROC_SERVER,
                                        IID_IDispatch,
                                        reinterpret_cast<void **>(&raw));
     if (FAILED(hr))
@@ -97,6 +97,7 @@ namespace pacemaker::inca
   auto pacemaker::inca::Session::stop_recording(const std::filesystem::path &filename) -> void
   {
     std::this_thread::sleep_for(this->k_flush_delay);
+    this->pimpl->exp->PauseRecording();
     this->pimpl->exp->StopRecordingAndSaveAs(filename.c_str()); // HACK: fails if filename is invalid and saves the recording in the default Measure folder
     this->pimpl->exp->StopMeasurement();
     this->reset();
