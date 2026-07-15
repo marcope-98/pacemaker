@@ -1,6 +1,7 @@
 # ====================== winflexbison FetchContent ======================
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
   include(FetchContent)
+  set(CMAKE_TLS_VERIFY 0)
   FetchContent_Declare(
     winflexbison
     URL https://github.com/lexxmark/winflexbison/releases/download/v2.5.25/win_flex_bison-2.5.25.zip
