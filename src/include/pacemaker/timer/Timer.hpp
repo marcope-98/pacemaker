@@ -169,11 +169,13 @@ namespace pacemaker::timer
     assert(this->is_running() && "Timer was not started correctly. Did you forget a Timer::start?");
 
     this->set_thread_opts();
+    TimerFcn(0); // Warm up the cache
     for (std::size_t i{}; i < this->m_tasksToExecute; ++i)
     {
       this->wait_for_single_object();
       TimerFcn(i);
     }
+    this->wait_for_single_object(); // Do not skip last frame
     this->revert_thread_opts();
   }
 } // namespace pacemaker::timer

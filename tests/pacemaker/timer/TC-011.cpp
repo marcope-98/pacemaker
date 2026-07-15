@@ -104,6 +104,7 @@ TEST_F(TC011, L)
              { vec.emplace_back(i); });
   std::vector<std::size_t> expected(10);
   std::iota(expected.begin(), expected.end(), 0);
+  expected.insert(expected.begin(), 0);
   EXPECT_EQ(vec, expected);
 }
 
